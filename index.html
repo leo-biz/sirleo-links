@@ -1127,15 +1127,15 @@
           <div class="wizard-form">
             <div class="form-field">
               <label class="form-label">Name</label>
-              <input class="form-input" type="text" placeholder="Your name" />
+              <input class="form-input" id="book-name" type="text" placeholder="Your name" />
             </div>
             <div class="form-field">
               <label class="form-label">Phone</label>
-              <input class="form-input" type="tel" placeholder="Your number" />
+              <input class="form-input" id="book-phone" type="tel" placeholder="Your number" />
             </div>
             <div class="form-field">
               <label class="form-label">Email</label>
-              <input class="form-input" type="email" placeholder="Your email" />
+              <input class="form-input" id="book-email" type="email" placeholder="Your email" />
             </div>
             <button class="wizard-submit" onclick="bookGoTo(4, null)">Submit Application</button>
           </div>
@@ -1206,15 +1206,15 @@
       <div class="modal-form" id="modalForm">
         <div class="form-field">
           <label class="form-label">Name</label>
-          <input class="form-input" type="text" placeholder="Your name" />
+          <input class="form-input" id="modal-name" type="text" placeholder="Your name" />
         </div>
         <div class="form-field">
           <label class="form-label">Phone</label>
-          <input class="form-input" type="tel" placeholder="Your number" />
+          <input class="form-input" id="modal-phone" type="tel" placeholder="Your number" />
         </div>
         <div class="form-field">
           <label class="form-label">Email</label>
-          <input class="form-input" type="email" placeholder="Your email" />
+          <input class="form-input" id="modal-email" type="email" placeholder="Your email" />
         </div>
         <button class="form-submit" onclick="submitForm()">Enter the World</button>
       </div>
@@ -1287,6 +1287,7 @@
         bookSelection = selection;
         if (stepNum === 3) {
           document.getElementById('book-selection-label').textContent = selection;
+          prefillFields('book-name', 'book-phone', 'book-email');
         }
       }
       const current = document.querySelector('#panel-book .panel-step.active');
@@ -1297,7 +1298,14 @@
       current.classList.add(goingForward ? 'slide-left' : 'slide-right');
       next.classList.remove('slide-left', 'slide-right');
       next.classList.add('active');
-      if (stepNum === 4) setTimeout(closeBookPanel, 2500);
+      if (stepNum === 4) {
+        saveContact(
+          document.getElementById('book-name').value,
+          document.getElementById('book-phone').value,
+          document.getElementById('book-email').value
+        );
+        setTimeout(closeBookPanel, 2500);
+      }
     }
 
     function bookGoBack(forceTo) {
@@ -1320,8 +1328,24 @@
       }, 500);
     }
 
+    // Session storage
+    function saveContact(name, phone, email) {
+      if (name) localStorage.setItem('sl_name', name);
+      if (phone) localStorage.setItem('sl_phone', phone);
+      if (email) localStorage.setItem('sl_email', email);
+    }
+    function prefillFields(nameId, phoneId, emailId) {
+      const name = localStorage.getItem('sl_name');
+      const phone = localStorage.getItem('sl_phone');
+      const email = localStorage.getItem('sl_email');
+      if (name && nameId) document.getElementById(nameId).value = name;
+      if (phone && phoneId) document.getElementById(phoneId).value = phone;
+      if (email && emailId) document.getElementById(emailId).value = email;
+    }
+
     // Contact modal
     function openModal() {
+      prefillFields('modal-name', 'modal-phone', 'modal-email');
       document.getElementById('modalOverlay').classList.add('open');
     }
     function closeModal() {
@@ -1331,13 +1355,18 @@
       if (e.target === document.getElementById('modalOverlay')) closeModal();
     }
     function submitForm() {
+      saveContact(
+        document.getElementById('modal-name').value,
+        document.getElementById('modal-phone').value,
+        document.getElementById('modal-email').value
+      );
       document.getElementById('modalForm').classList.add('hide');
       document.getElementById('modalConfirm').classList.add('show');
       setTimeout(closeModal, 2200);
     }
 
-    // Auto-open after 1.5s
-    setTimeout(openModal, 1500);
+    // Auto-open after 1.5s — skip if already saved
+    if (!localStorage.getItem('sl_name')) setTimeout(openModal, 1500);
   </script>
 </body>
 </html>
