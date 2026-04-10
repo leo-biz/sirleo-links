@@ -797,7 +797,7 @@
       background: rgba(8,8,8,0.88);
       z-index: 800;
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       justify-content: center;
       opacity: 0;
       pointer-events: none;
@@ -810,18 +810,19 @@
 
     /* Modal panel */
     .modal {
-      width: 100%;
-      max-width: 480px;
+      width: calc(100% - 48px);
+      max-width: 420px;
       background: #0e0e0e;
       border: 1px solid rgba(180,145,90,0.2);
-      border-bottom: none;
       padding: 40px 32px 48px;
-      transform: translateY(100%);
-      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: translateY(20px);
+      opacity: 0;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
       position: relative;
     }
     .modal-overlay.open .modal {
       transform: translateY(0);
+      opacity: 1;
     }
 
     .modal-close {
