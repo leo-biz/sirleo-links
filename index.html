@@ -411,10 +411,216 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* Floating connect button */
+    .float-btn {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: none;
+      opacity: 0;
+      animation: fadeUp 1s ease 2s forwards;
+    }
+    .float-btn-circle {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 1px solid rgba(180, 145, 90, 0.45);
+      background: rgba(8,8,8,0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 0 20px rgba(155,32,32,0.15);
+    }
+    .float-btn:hover .float-btn-circle {
+      border-color: var(--gold);
+      box-shadow: 0 0 28px rgba(180,145,90,0.25);
+    }
+    .float-btn-monogram {
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+      line-height: 1;
+    }
+    .float-btn-label {
+      font-family: 'Cinzel', serif;
+      font-size: 7px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(240,232,216,0.3);
+    }
+
+    /* Modal overlay */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(8,8,8,0.88);
+      z-index: 800;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* Modal panel */
+    .modal {
+      width: 100%;
+      max-width: 480px;
+      background: #0e0e0e;
+      border: 1px solid rgba(180,145,90,0.2);
+      border-bottom: none;
+      padding: 40px 32px 48px;
+      transform: translateY(100%);
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    .modal-overlay.open .modal {
+      transform: translateY(0);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: rgba(240,232,216,0.25);
+      cursor: none;
+      text-transform: uppercase;
+      transition: color 0.2s ease;
+      background: none;
+      border: none;
+      padding: 4px 8px;
+    }
+    .modal-close:hover { color: var(--muted); }
+
+    .modal-eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 8px;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--crimson-light);
+      opacity: 0.8;
+      margin-bottom: 10px;
+    }
+    .modal-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(22px, 5vw, 28px);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--cream);
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+    .modal-sub {
+      font-family: 'Raleway', sans-serif;
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      margin-bottom: 32px;
+    }
+
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-label {
+      font-family: 'Cinzel', serif;
+      font-size: 7.5px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(240,232,216,0.35);
+    }
+    .form-input {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(180,145,90,0.15);
+      color: var(--text);
+      font-family: 'Raleway', sans-serif;
+      font-weight: 300;
+      font-size: 14px;
+      padding: 13px 16px;
+      outline: none;
+      transition: border-color 0.3s ease;
+      -webkit-appearance: none;
+      border-radius: 0;
+    }
+    .form-input::placeholder { color: rgba(240,232,216,0.2); }
+    .form-input:focus { border-color: rgba(180,145,90,0.45); }
+
+    .form-submit {
+      margin-top: 8px;
+      padding: 16px;
+      background: transparent;
+      border: 1px solid var(--crimson);
+      color: var(--cream);
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      cursor: none;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    .form-submit:hover {
+      background: rgba(155,32,32,0.15);
+      border-color: var(--crimson-light);
+    }
+
+    /* Confirmation state */
+    .modal-confirm {
+      display: none;
+      text-align: center;
+      padding: 20px 0;
+    }
+    .modal-confirm.show { display: block; }
+    .modal-form.hide { display: none; }
+
+    .confirm-mark {
+      font-size: 28px;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+    .confirm-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-style: italic;
+      color: var(--cream);
+      margin-bottom: 8px;
+    }
+    .confirm-sub {
+      font-family: 'Raleway', sans-serif;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
     @media (max-width: 480px) {
       .page { padding: 0 16px 80px; }
       .link-item { padding: 15px 16px; }
       .logo-wrap img { width: 130px; height: 130px; }
+      .modal { padding: 32px 20px 40px; }
     }
   </style>
 </head>
@@ -567,6 +773,46 @@
     </div>
   </div>
 
+  <!-- Floating connect button -->
+  <button class="float-btn" id="floatBtn" onclick="openModal()">
+    <div class="float-btn-circle">
+      <span class="float-btn-monogram">SL</span>
+    </div>
+    <span class="float-btn-label">Connect</span>
+  </button>
+
+  <!-- Contact modal -->
+  <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">Close</button>
+      <p class="modal-eyebrow">Step Inside</p>
+      <h2 class="modal-title">Stay in the world<br>of Sir Leo.</h2>
+      <p class="modal-sub">Leave your details. I'll be in touch.</p>
+
+      <div class="modal-form" id="modalForm">
+        <div class="form-field">
+          <label class="form-label">Name</label>
+          <input class="form-input" type="text" placeholder="Your name" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">Phone</label>
+          <input class="form-input" type="tel" placeholder="Your number" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" placeholder="Your email" />
+        </div>
+        <button class="form-submit" onclick="submitForm()">Enter the World</button>
+      </div>
+
+      <div class="modal-confirm" id="modalConfirm">
+        <div class="confirm-mark">✦</div>
+        <p class="confirm-title">You're inside.</p>
+        <p class="confirm-sub">Expect to hear from Sir Leo.</p>
+      </div>
+    </div>
+  </div>
+
   <script>
     const cursor = document.getElementById('cursor');
     const ring = document.getElementById('cursorRing');
@@ -588,7 +834,7 @@
     }
     animateRing();
 
-    document.querySelectorAll('a').forEach(el => {
+    document.querySelectorAll('a, button').forEach(el => {
       el.addEventListener('mouseenter', () => {
         ring.style.width = '48px';
         ring.style.height = '48px';
@@ -600,6 +846,25 @@
         cursor.style.transform = 'translate(-50%, -50%) scale(1)';
       });
     });
+
+    // Modal
+    function openModal() {
+      document.getElementById('modalOverlay').classList.add('open');
+    }
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('open');
+    }
+    function handleOverlayClick(e) {
+      if (e.target === document.getElementById('modalOverlay')) closeModal();
+    }
+    function submitForm() {
+      document.getElementById('modalForm').classList.add('hide');
+      document.getElementById('modalConfirm').classList.add('show');
+      setTimeout(closeModal, 2200);
+    }
+
+    // Auto-open after 1.5s
+    setTimeout(openModal, 1500);
   </script>
 </body>
 </html>
