@@ -609,7 +609,96 @@
       font-size: 11px;
       color: var(--muted);
       letter-spacing: 0.08em;
+      line-height: 1.8;
     }
+    .wizard-confirm-sms {
+      margin-top: 20px;
+      padding: 14px;
+      width: 100%;
+      background: transparent;
+      border: 1px solid rgba(180,145,90,0.3);
+      color: var(--gold-light);
+      font-family: 'Cinzel', serif;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      cursor: none;
+      transition: background 0.3s ease;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+    }
+    .wizard-confirm-sms:hover { background: rgba(180,145,90,0.06); }
+
+    /* Form textarea */
+    .form-textarea {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(180,145,90,0.15);
+      color: var(--text);
+      font-family: 'Raleway', sans-serif;
+      font-weight: 300;
+      font-size: 13px;
+      padding: 13px 16px;
+      outline: none;
+      transition: border-color 0.3s ease;
+      -webkit-appearance: none;
+      border-radius: 0;
+      resize: none;
+      min-height: 90px;
+      width: 100%;
+    }
+    .form-textarea::placeholder { color: rgba(240,232,216,0.2); }
+    .form-textarea:focus { border-color: rgba(180,145,90,0.45); }
+
+    /* Form select */
+    .form-select {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(180,145,90,0.15);
+      color: var(--text);
+      font-family: 'Raleway', sans-serif;
+      font-weight: 300;
+      font-size: 13px;
+      padding: 13px 16px;
+      outline: none;
+      transition: border-color 0.3s ease;
+      -webkit-appearance: none;
+      border-radius: 0;
+      width: 100%;
+      cursor: none;
+    }
+    .form-select:focus { border-color: rgba(180,145,90,0.45); }
+    .form-select option { background: #0e0e0e; }
+
+    /* Choice cards (format selection) */
+    .choice-cards { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+    .choice-card {
+      padding: 16px 18px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.01);
+      cursor: none;
+      text-align: left;
+      width: 100%;
+      transition: border-color 0.3s ease, background 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .choice-card:hover { border-color: rgba(155,32,32,0.45); background: rgba(155,32,32,0.04); }
+    .choice-card-name {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--cream);
+    }
+    .choice-card-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 12px;
+      font-style: italic;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+    .choice-arrow { color: var(--crimson-dim); font-size: 12px; }
 
     /* Socials row */
     .socials {
@@ -1047,82 +1136,247 @@
 
   <!-- Book panel -->
   <div class="panel-overlay" id="panel-book" onclick="handlePanelClick(event, 'panel-book')">
-    <div class="panel">
+    <div class="panel" style="overflow-y:auto; max-height:92vh;">
       <button class="panel-close" onclick="closeBookPanel()">Close</button>
-
       <div class="panel-steps">
 
-        <!-- Step 1: Choose type -->
-        <div class="panel-step active" id="book-step-1">
+        <!-- S1: Type -->
+        <div class="panel-step active" id="bs-type">
           <p class="panel-eyebrow">Enter the Rite</p>
           <p class="panel-title">How can Sir Leo<br>serve you?</p>
           <div class="panel-options">
-            <a href="#" class="panel-option" onclick="bookGoTo(2, 'Private Session'); return false;">
-              <div>
-                <div class="panel-option-label">Private Session</div>
-                <div class="panel-option-sub">1-on-1 · From $300 · Apply to be considered</div>
-              </div>
+            <a href="#" class="panel-option" onclick="bNext('bs-private-format','Private Session'); return false;">
+              <div><div class="panel-option-label">Private Session</div><div class="panel-option-sub">1-on-1 or couple · Apply to be considered</div></div>
               <span class="panel-option-arrow">→</span>
             </a>
-            <a href="#" class="panel-option" onclick="bookGoTo(3, 'Group Experience'); return false;">
-              <div>
-                <div class="panel-option-label">Group Experience</div>
-                <div class="panel-option-sub">Curated gatherings · 8 spots per event</div>
-              </div>
+            <a href="#" class="panel-option" onclick="bNext('bs-group-format','Group Experience'); return false;">
+              <div><div class="panel-option-label">Group Experience</div><div class="panel-option-sub">Performance or interactive immersion</div></div>
               <span class="panel-option-arrow">→</span>
             </a>
-            <a href="#" class="panel-option" onclick="bookGoTo(3, 'Performance Booking'); return false;">
-              <div>
-                <div class="panel-option-label">Performance Booking</div>
-                <div class="panel-option-sub">Fire · Impact artistry · Events & clubs</div>
-              </div>
+            <a href="#" class="panel-option" onclick="bNext('bs-perf-q','Performance Booking'); return false;">
+              <div><div class="panel-option-label">Performance Booking</div><div class="panel-option-sub">Fire · Impact artistry · Events & clubs</div></div>
               <span class="panel-option-arrow">→</span>
             </a>
-            <a href="#" class="panel-option" onclick="bookGoTo(3, 'Workshop / Education'); return false;">
-              <div>
-                <div class="panel-option-label">Workshop / Education</div>
-                <div class="panel-option-sub">Conscious kink · Chicago & virtual</div>
-              </div>
+            <a href="#" class="panel-option" onclick="bNext('bs-workshop-q','Workshop / Education'); return false;">
+              <div><div class="panel-option-label">Workshop / Education</div><div class="panel-option-sub">Conscious kink · Chicago & virtual</div></div>
               <span class="panel-option-arrow">→</span>
             </a>
             <a href="https://kinkafterdark.short.gy/casting" target="_blank" rel="noopener" class="panel-option">
-              <div>
-                <div class="panel-option-label">Attend an Event</div>
-                <div class="panel-option-sub">Kink After Dark — apply now</div>
-              </div>
+              <div><div class="panel-option-label">Attend an Event</div><div class="panel-option-sub">Kink After Dark — apply now</div></div>
               <span class="panel-option-arrow">→</span>
             </a>
           </div>
         </div>
 
-        <!-- Step 2: Private Session — choose tier -->
-        <div class="panel-step slide-right" id="book-step-2">
-          <button class="panel-back" onclick="bookGoBack(1)">← Back</button>
+        <!-- S2a: Private — 1on1 or couple -->
+        <div class="panel-step slide-right" id="bs-private-format">
+          <button class="panel-back" onclick="bBack('bs-type')">← Back</button>
           <p class="panel-eyebrow">Private Session</p>
-          <p class="panel-title">Choose your<br>Rite.</p>
-          <div class="tier-options">
-            <button class="tier-card" onclick="bookGoTo(3, 'Sensual Surrender')">
-              <div class="tier-card-name">Sensual Surrender</div>
-              <div class="tier-card-desc">Massage, touch, restrained control</div>
-              <div class="tier-card-price">$300</div>
+          <p class="panel-title">Who is this<br>session for?</p>
+          <div class="choice-cards">
+            <button class="choice-card" onclick="bNext('bs-private-tier','1-on-1')">
+              <div><div class="choice-card-name">1-on-1</div><div class="choice-card-sub">Just you and Sir Leo</div></div>
+              <span class="choice-arrow">→</span>
             </button>
-            <button class="tier-card" onclick="bookGoTo(3, 'The Naughty Ritual')">
-              <div class="tier-card-name">The Naughty Ritual</div>
-              <div class="tier-card-desc">Moderate impact, erotic aggression</div>
-              <div class="tier-card-price">$400</div>
-            </button>
-            <button class="tier-card" onclick="bookGoTo(3, 'Rite of Dark Ruin')">
-              <div class="tier-card-name">Rite of Dark Ruin</div>
-              <div class="tier-card-desc">Heavy impact, full ritual domination</div>
-              <div class="tier-card-price">$500</div>
+            <button class="choice-card" onclick="bNext('bs-private-tier','Couple')">
+              <div><div class="choice-card-name">Couple</div><div class="choice-card-sub">You and your partner</div></div>
+              <span class="choice-arrow">→</span>
             </button>
           </div>
         </div>
 
-        <!-- Step 3: Contact info -->
-        <div class="panel-step slide-right" id="book-step-3">
-          <button class="panel-back" onclick="bookGoBack(null)">← Back</button>
-          <p class="panel-eyebrow" id="book-selection-label"></p>
+        <!-- S2b: Private — tier -->
+        <div class="panel-step slide-right" id="bs-private-tier">
+          <button class="panel-back" onclick="bBack('bs-private-format')">← Back</button>
+          <p class="panel-eyebrow">Choose Your Rite</p>
+          <p class="panel-title">How deep do you<br>want to go?</p>
+          <div class="tier-options">
+            <button class="tier-card" onclick="bNext('bs-private-q','Sensual Surrender')">
+              <div class="tier-card-name">Sensual Surrender</div>
+              <div class="tier-card-desc">Massage, touch, restrained control</div>
+            </button>
+            <button class="tier-card" onclick="bNext('bs-private-q','The Naughty Ritual')">
+              <div class="tier-card-name">The Naughty Ritual</div>
+              <div class="tier-card-desc">Moderate impact, erotic aggression</div>
+            </button>
+            <button class="tier-card" onclick="bNext('bs-private-q','Rite of Dark Ruin')">
+              <div class="tier-card-name">Rite of Dark Ruin</div>
+              <div class="tier-card-desc">Heavy impact, full ritual domination</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- S2c: Private — questions -->
+        <div class="panel-step slide-right" id="bs-private-q">
+          <button class="panel-back" onclick="bBack('bs-private-tier')">← Back</button>
+          <p class="panel-eyebrow" id="bs-private-q-label"></p>
+          <p class="panel-title">A few things<br>Sir Leo needs to know.</p>
+          <div class="wizard-form">
+            <div class="form-field">
+              <label class="form-label">Experience Level</label>
+              <select class="form-select" id="bpq-exp">
+                <option value="" disabled selected>Select your level</option>
+                <option>Never — this would be my first time</option>
+                <option>Curious beginner</option>
+                <option>Some experience</option>
+                <option>Experienced</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Any hard limits Sir Leo should know?</label>
+              <input class="form-input" id="bpq-limits" type="text" placeholder="Optional" />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Best days & times for a consultation call</label>
+              <input class="form-input" id="bpq-avail" type="text" placeholder="e.g. Weekday evenings, Saturday mornings" />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Anything else you'd like Sir Leo to know?</label>
+              <textarea class="form-textarea" id="bpq-note" placeholder="Open space — say whatever feels right"></textarea>
+            </div>
+            <button class="wizard-submit" onclick="bNext('bs-contact', null)">Continue</button>
+          </div>
+        </div>
+
+        <!-- S3a: Group — format -->
+        <div class="panel-step slide-right" id="bs-group-format">
+          <button class="panel-back" onclick="bBack('bs-type')">← Back</button>
+          <p class="panel-eyebrow">Group Experience</p>
+          <p class="panel-title">How do you want<br>to experience this?</p>
+          <div class="choice-cards">
+            <button class="choice-card" onclick="bNext('bs-group-q','Performance — Watch Only')">
+              <div><div class="choice-card-name">Performance</div><div class="choice-card-sub">Watch Sir Leo perform — no participation</div></div>
+              <span class="choice-arrow">→</span>
+            </button>
+            <button class="choice-card" onclick="bNext('bs-group-level','Interactive')">
+              <div><div class="choice-card-name">Interactive</div><div class="choice-card-sub">Watch and participate — choose your depth</div></div>
+              <span class="choice-arrow">→</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- S3b: Group — interactive level -->
+        <div class="panel-step slide-right" id="bs-group-level">
+          <button class="panel-back" onclick="bBack('bs-group-format')">← Back</button>
+          <p class="panel-eyebrow">Interactive Experience</p>
+          <p class="panel-title">How deep do you<br>want to go?</p>
+          <div class="choice-cards">
+            <button class="choice-card" onclick="bNext('bs-group-q','Interactive — Taste')">
+              <div><div class="choice-card-name">Taste</div><div class="choice-card-sub">A brief, introductory touch of the experience</div></div>
+              <span class="choice-arrow">→</span>
+            </button>
+            <button class="choice-card" onclick="bNext('bs-group-q','Interactive — Semi-Immersive')">
+              <div><div class="choice-card-name">Semi-Immersive</div><div class="choice-card-sub">Deeper participation — you're in it</div></div>
+              <span class="choice-arrow">→</span>
+            </button>
+            <button class="choice-card" onclick="bNext('bs-group-q','Interactive — Full Immersion')">
+              <div><div class="choice-card-name">Full Immersion</div><div class="choice-card-sub">As deep and wild as you desire</div></div>
+              <span class="choice-arrow">→</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- S3c: Group — questions -->
+        <div class="panel-step slide-right" id="bs-group-q">
+          <button class="panel-back" onclick="bBack('bs-group-format')">← Back</button>
+          <p class="panel-eyebrow" id="bs-group-q-label"></p>
+          <p class="panel-title">A few things<br>Sir Leo needs to know.</p>
+          <div class="wizard-form">
+            <div class="form-field" id="bs-group-exp-wrap">
+              <label class="form-label">Experience Level</label>
+              <select class="form-select" id="bgq-exp">
+                <option value="" disabled selected>Select your level</option>
+                <option>Never — this would be my first time</option>
+                <option>Curious beginner</option>
+                <option>Some experience</option>
+                <option>Experienced</option>
+              </select>
+            </div>
+            <div class="form-field" id="bs-group-limits-wrap">
+              <label class="form-label">Any limits Sir Leo should know?</label>
+              <input class="form-input" id="bgq-limits" type="text" placeholder="Optional" />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Availability</label>
+              <input class="form-input" id="bgq-avail" type="text" placeholder="e.g. Weekends, Friday evenings" />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Anything else you'd like Sir Leo to know?</label>
+              <textarea class="form-textarea" id="bgq-note" placeholder="Open space — say whatever feels right"></textarea>
+            </div>
+            <button class="wizard-submit" onclick="bNext('bs-contact', null)">Continue</button>
+          </div>
+        </div>
+
+        <!-- S4a: Performance Booking — questions -->
+        <div class="panel-step slide-right" id="bs-perf-q">
+          <button class="panel-back" onclick="bBack('bs-type')">← Back</button>
+          <p class="panel-eyebrow">Performance Booking</p>
+          <p class="panel-title">Tell Sir Leo<br>about your event.</p>
+          <div class="wizard-form">
+            <div class="form-field">
+              <label class="form-label">Event Type</label>
+              <select class="form-select" id="bperfq-type">
+                <option value="" disabled selected>Select event type</option>
+                <option>Club / Nightlife</option>
+                <option>Private party</option>
+                <option>Art gallery</option>
+                <option>Conference / Workshop</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Event Date & City</label>
+              <input class="form-input" id="bperfq-date" type="text" placeholder="e.g. June 14, Chicago" />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Budget Range</label>
+              <input class="form-input" id="bperfq-budget" type="text" placeholder="e.g. $500–$1,000" />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Anything else you'd like Sir Leo to know?</label>
+              <textarea class="form-textarea" id="bperfq-note" placeholder="Vision, vibe, expectations..."></textarea>
+            </div>
+            <button class="wizard-submit" onclick="bNext('bs-contact', null)">Continue</button>
+          </div>
+        </div>
+
+        <!-- S4b: Workshop — questions -->
+        <div class="panel-step slide-right" id="bs-workshop-q">
+          <button class="panel-back" onclick="bBack('bs-type')">← Back</button>
+          <p class="panel-eyebrow">Workshop / Education</p>
+          <p class="panel-title">Let's build<br>the right experience.</p>
+          <div class="wizard-form">
+            <div class="form-field">
+              <label class="form-label">Who is this for?</label>
+              <select class="form-select" id="bwq-who">
+                <option value="" disabled selected>Select</option>
+                <option>Just me</option>
+                <option>Me and my partner</option>
+                <option>A group</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Format</label>
+              <select class="form-select" id="bwq-format">
+                <option value="" disabled selected>Select</option>
+                <option>In-person (Chicago)</option>
+                <option>Virtual</option>
+                <option>Either works</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Anything else you'd like Sir Leo to know?</label>
+              <textarea class="form-textarea" id="bwq-note" placeholder="Topics of interest, goals, questions..."></textarea>
+            </div>
+            <button class="wizard-submit" onclick="bNext('bs-contact', null)">Continue</button>
+          </div>
+        </div>
+
+        <!-- S5: Contact -->
+        <div class="panel-step slide-right" id="bs-contact">
+          <button class="panel-back" onclick="bBack(null)">← Back</button>
+          <p class="panel-eyebrow" id="bs-contact-label"></p>
           <p class="panel-title">Your details.</p>
           <div class="wizard-form">
             <div class="form-field">
@@ -1137,16 +1391,17 @@
               <label class="form-label">Email</label>
               <input class="form-input" id="book-email" type="email" placeholder="Your email" />
             </div>
-            <button class="wizard-submit" onclick="bookGoTo(4, null)">Submit Application</button>
+            <button class="wizard-submit" onclick="bSubmit()">Submit Application</button>
           </div>
         </div>
 
-        <!-- Step 4: Confirmation -->
-        <div class="panel-step slide-right" id="book-step-4">
+        <!-- S6: Confirm -->
+        <div class="panel-step slide-right" id="bs-confirm">
           <div class="wizard-confirm">
             <div class="wizard-confirm-mark">✦</div>
             <p class="wizard-confirm-title">Application received.</p>
             <p class="wizard-confirm-sub">Sir Leo will be in touch.<br>Consider carefully — not all are chosen.</p>
+            <a href="#" id="bs-sms-btn" class="wizard-confirm-sms">Text Sir Leo Now →</a>
           </div>
         </div>
 
@@ -1156,39 +1411,173 @@
 
   <!-- Collaborate panel -->
   <div class="panel-overlay" id="panel-collab" onclick="handlePanelClick(event, 'panel-collab')">
-    <div class="panel">
-      <button class="panel-close" onclick="closePanel('panel-collab')">Close</button>
-      <p class="panel-eyebrow">Join the World</p>
-      <p class="panel-title">What role do you<br>play in this?</p>
-      <div class="panel-options">
-        <a href="#" class="panel-option">
-          <div>
-            <div class="panel-option-label">Service Submissive</div>
-            <div class="panel-option-sub">Dedicated · Discreet · Devoted</div>
+    <div class="panel" style="overflow-y:auto; max-height:92vh;">
+      <button class="panel-close" onclick="closeCollabPanel()">Close</button>
+      <div class="panel-steps">
+
+        <!-- C1: Role -->
+        <div class="panel-step active" id="cs-type">
+          <p class="panel-eyebrow">Join the World</p>
+          <p class="panel-title">What role do you<br>play in this?</p>
+          <div class="panel-options">
+            <a href="#" class="panel-option" onclick="cNext('cs-sub-q','Service Submissive'); return false;">
+              <div><div class="panel-option-label">Service Submissive</div><div class="panel-option-sub">Dedicated · Discreet · Devoted</div></div>
+              <span class="panel-option-arrow">→</span>
+            </a>
+            <a href="#" class="panel-option" onclick="cNext('cs-model-q','Model / Dancer'); return false;">
+              <div><div class="panel-option-label">Model / Dancer</div><div class="panel-option-sub">Performance & event talent</div></div>
+              <span class="panel-option-arrow">→</span>
+            </a>
+            <a href="#" class="panel-option" onclick="cNext('cs-photo-q','Photographer / Videographer'); return false;">
+              <div><div class="panel-option-label">Photographer / Videographer</div><div class="panel-option-sub">Capture the world of Sir Leo</div></div>
+              <span class="panel-option-arrow">→</span>
+            </a>
+            <a href="#" class="panel-option" onclick="cNext('cs-creator-q','Content Creator'); return false;">
+              <div><div class="panel-option-label">Content Creator</div><div class="panel-option-sub">Collab · Co-create · Amplify</div></div>
+              <span class="panel-option-arrow">→</span>
+            </a>
           </div>
-          <span class="panel-option-arrow">→</span>
-        </a>
-        <a href="#" class="panel-option">
-          <div>
-            <div class="panel-option-label">Model / Dancer</div>
-            <div class="panel-option-sub">Performance & event talent</div>
+        </div>
+
+        <!-- C2a: Submissive -->
+        <div class="panel-step slide-right" id="cs-sub-q">
+          <button class="panel-back" onclick="cBack('cs-type')">← Back</button>
+          <p class="panel-eyebrow">Service Submissive</p>
+          <p class="panel-title">Tell Sir Leo<br>about yourself.</p>
+          <div class="wizard-form">
+            <div class="form-field">
+              <label class="form-label">What draws you to serving Sir Leo?</label>
+              <textarea class="form-textarea" id="csub-why" placeholder="Be honest. Be yourself."></textarea>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Commitment</label>
+              <select class="form-select" id="csub-commit">
+                <option value="" disabled selected>Select</option>
+                <option>One-time experience</option>
+                <option>Ongoing</option>
+                <option>Open to either</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Any limits Sir Leo should know?</label>
+              <input class="form-input" id="csub-limits" type="text" placeholder="Optional" />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Anything else you'd like Sir Leo to know?</label>
+              <textarea class="form-textarea" id="csub-note" placeholder="Open space"></textarea>
+            </div>
+            <button class="wizard-submit" onclick="cNext('cs-contact', null)">Continue</button>
           </div>
-          <span class="panel-option-arrow">→</span>
-        </a>
-        <a href="#" class="panel-option">
-          <div>
-            <div class="panel-option-label">Photographer / Videographer</div>
-            <div class="panel-option-sub">Capture the world of Sir Leo</div>
+        </div>
+
+        <!-- C2b: Model/Dancer -->
+        <div class="panel-step slide-right" id="cs-model-q">
+          <button class="panel-back" onclick="cBack('cs-type')">← Back</button>
+          <p class="panel-eyebrow">Model / Dancer</p>
+          <p class="panel-title">Show Sir Leo<br>what you bring.</p>
+          <div class="wizard-form">
+            <div class="form-field">
+              <label class="form-label">Social handle or portfolio link</label>
+              <input class="form-input" id="cmod-link" type="text" placeholder="@handle or URL" />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Interested in</label>
+              <select class="form-select" id="cmod-type">
+                <option value="" disabled selected>Select</option>
+                <option>Events</option>
+                <option>Content creation</option>
+                <option>Both</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Anything else you'd like Sir Leo to know?</label>
+              <textarea class="form-textarea" id="cmod-note" placeholder="Experience, availability, vision..."></textarea>
+            </div>
+            <button class="wizard-submit" onclick="cNext('cs-contact', null)">Continue</button>
           </div>
-          <span class="panel-option-arrow">→</span>
-        </a>
-        <a href="#" class="panel-option">
-          <div>
-            <div class="panel-option-label">Content Creator</div>
-            <div class="panel-option-sub">Collab · Co-create · Amplify</div>
+        </div>
+
+        <!-- C2c: Photographer/Video -->
+        <div class="panel-step slide-right" id="cs-photo-q">
+          <button class="panel-back" onclick="cBack('cs-type')">← Back</button>
+          <p class="panel-eyebrow">Photographer / Videographer</p>
+          <p class="panel-title">Show Sir Leo<br>your eye.</p>
+          <div class="wizard-form">
+            <div class="form-field">
+              <label class="form-label">Portfolio or social handle</label>
+              <input class="form-input" id="cphoto-link" type="text" placeholder="@handle or URL" />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Specialty</label>
+              <select class="form-select" id="cphoto-type">
+                <option value="" disabled selected>Select</option>
+                <option>Photography</option>
+                <option>Videography</option>
+                <option>Both</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Anything else you'd like Sir Leo to know?</label>
+              <textarea class="form-textarea" id="cphoto-note" placeholder="Style, experience, availability..."></textarea>
+            </div>
+            <button class="wizard-submit" onclick="cNext('cs-contact', null)">Continue</button>
           </div>
-          <span class="panel-option-arrow">→</span>
-        </a>
+        </div>
+
+        <!-- C2d: Content Creator -->
+        <div class="panel-step slide-right" id="cs-creator-q">
+          <button class="panel-back" onclick="cBack('cs-type')">← Back</button>
+          <p class="panel-eyebrow">Content Creator</p>
+          <p class="panel-title">Let's build<br>something together.</p>
+          <div class="wizard-form">
+            <div class="form-field">
+              <label class="form-label">Platform(s) & handle(s)</label>
+              <input class="form-input" id="ccreate-handles" type="text" placeholder="e.g. IG @handle, TikTok @handle" />
+            </div>
+            <div class="form-field">
+              <label class="form-label">What collab interests you?</label>
+              <textarea class="form-textarea" id="ccreate-collab" placeholder="Your vision for working with Sir Leo"></textarea>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Anything else you'd like Sir Leo to know?</label>
+              <textarea class="form-textarea" id="ccreate-note" placeholder="Open space"></textarea>
+            </div>
+            <button class="wizard-submit" onclick="cNext('cs-contact', null)">Continue</button>
+          </div>
+        </div>
+
+        <!-- C3: Contact -->
+        <div class="panel-step slide-right" id="cs-contact">
+          <button class="panel-back" onclick="cBack(null)">← Back</button>
+          <p class="panel-eyebrow" id="cs-contact-label"></p>
+          <p class="panel-title">Your details.</p>
+          <div class="wizard-form">
+            <div class="form-field">
+              <label class="form-label">Name</label>
+              <input class="form-input" id="collab-name" type="text" placeholder="Your name" />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Phone</label>
+              <input class="form-input" id="collab-phone" type="tel" placeholder="Your number" />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Email</label>
+              <input class="form-input" id="collab-email" type="email" placeholder="Your email" />
+            </div>
+            <button class="wizard-submit" onclick="cSubmit()">Submit</button>
+          </div>
+        </div>
+
+        <!-- C4: Confirm -->
+        <div class="panel-step slide-right" id="cs-confirm">
+          <div class="wizard-confirm">
+            <div class="wizard-confirm-mark">✦</div>
+            <p class="wizard-confirm-title">Submission received.</p>
+            <p class="wizard-confirm-sub">Sir Leo will review and be in touch.</p>
+            <a href="#" id="cs-sms-btn" class="wizard-confirm-sms">Text Sir Leo Now →</a>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -1278,54 +1667,108 @@
       if (e.target === document.getElementById(id)) closePanel(id);
     }
 
-    // Book wizard
-    let bookPrevStep = 1;
-    let bookSelection = '';
-
-    function bookGoTo(stepNum, selection) {
-      if (selection) {
-        bookSelection = selection;
-        if (stepNum === 3) {
-          document.getElementById('book-selection-label').textContent = selection;
-          prefillFields('book-name', 'book-phone', 'book-email');
-        }
-      }
-      const current = document.querySelector('#panel-book .panel-step.active');
-      const next = document.getElementById('book-step-' + stepNum);
-      const goingForward = stepNum > parseInt(current.id.replace('book-step-', ''));
-      bookPrevStep = parseInt(current.id.replace('book-step-', ''));
+    // Generic wizard navigation
+    function wizardGo(panelSelector, toId, label) {
+      const current = document.querySelector(panelSelector + ' .panel-step.active');
+      const next = document.getElementById(toId);
+      if (!next) return;
       current.classList.remove('active');
-      current.classList.add(goingForward ? 'slide-left' : 'slide-right');
+      current.classList.add('slide-left');
       next.classList.remove('slide-left', 'slide-right');
       next.classList.add('active');
-      if (stepNum === 4) {
-        saveContact(
-          document.getElementById('book-name').value,
-          document.getElementById('book-phone').value,
-          document.getElementById('book-email').value
-        );
-        setTimeout(closeBookPanel, 2500);
+      if (label) {
+        const lbl = document.getElementById(toId + '-label');
+        if (lbl) lbl.textContent = label;
       }
     }
-
-    function bookGoBack(forceTo) {
-      const current = document.querySelector('#panel-book .panel-step.active');
-      const currentNum = parseInt(current.id.replace('book-step-', ''));
-      const targetNum = forceTo !== null ? forceTo : bookPrevStep;
-      bookGoTo(targetNum, null);
+    function wizardBack(panelSelector, toId) {
+      const current = document.querySelector(panelSelector + ' .panel-step.active');
+      const target = document.getElementById(toId);
+      if (!target) return;
+      current.classList.remove('active');
+      current.classList.add('slide-right');
+      target.classList.remove('slide-left', 'slide-right');
+      target.classList.add('active');
+    }
+    function resetWizard(panelId) {
+      document.querySelectorAll('#' + panelId + ' .panel-step').forEach((s, i) => {
+        s.classList.remove('active', 'slide-left', 'slide-right');
+        i === 0 ? s.classList.add('active') : s.classList.add('slide-right');
+      });
     }
 
+    // Book wizard
+    let bPrevContact = 'bs-type';
+    let bSelections = [];
+
+    function bNext(toId, label) {
+      if (label) bSelections.push(label);
+      if (toId === 'bs-contact') {
+        bPrevContact = document.querySelector('#panel-book .panel-step.active').id;
+        prefillFields('book-name', 'book-phone', 'book-email');
+        const lbl = document.getElementById('bs-contact-label');
+        if (lbl) lbl.textContent = bSelections.join(' · ');
+      }
+      if (toId === 'bs-private-q') {
+        document.getElementById('bs-private-q-label').textContent = bSelections.join(' · ');
+      }
+      if (toId === 'bs-group-q') {
+        document.getElementById('bs-group-q-label').textContent = bSelections.join(' · ');
+        const isPerf = bSelections.includes('Performance — Watch Only');
+        document.getElementById('bs-group-exp-wrap').style.display = isPerf ? 'none' : '';
+        document.getElementById('bs-group-limits-wrap').style.display = isPerf ? 'none' : '';
+      }
+      wizardGo('#panel-book', toId, null);
+    }
+    function bBack(toId) {
+      const target = toId || bPrevContact;
+      wizardBack('#panel-book', target);
+    }
+    function bSubmit() {
+      const name = document.getElementById('book-name').value;
+      const phone = document.getElementById('book-phone').value;
+      const email = document.getElementById('book-email').value;
+      saveContact(name, phone, email);
+      const smsText = encodeURIComponent('Hey Sir Leo — I\'m ' + (name || 'interested') + '. I just applied for ' + bSelections.join(' / ') + '.');
+      document.getElementById('bs-sms-btn').href = 'sms:+1XXXXXXXXXX?body=' + smsText;
+      wizardGo('#panel-book', 'bs-confirm', null);
+      setTimeout(closeBookPanel, 4000);
+    }
     function closeBookPanel() {
       closePanel('panel-book');
-      setTimeout(() => {
-        document.querySelectorAll('#panel-book .panel-step').forEach((s, i) => {
-          s.classList.remove('active', 'slide-left', 'slide-right');
-          if (i === 0) s.classList.add('active');
-          else s.classList.add('slide-right');
-        });
-        bookPrevStep = 1;
-        bookSelection = '';
-      }, 500);
+      setTimeout(() => { resetWizard('panel-book'); bSelections = []; }, 500);
+    }
+
+    // Collab wizard
+    let cPrevContact = 'cs-type';
+    let cSelections = [];
+
+    function cNext(toId, label) {
+      if (label) cSelections.push(label);
+      if (toId === 'cs-contact') {
+        cPrevContact = document.querySelector('#panel-collab .panel-step.active').id;
+        prefillFields('collab-name', 'collab-phone', 'collab-email');
+        const lbl = document.getElementById('cs-contact-label');
+        if (lbl) lbl.textContent = cSelections.join(' · ');
+      }
+      wizardGo('#panel-collab', toId, null);
+    }
+    function cBack(toId) {
+      wizardBack('#panel-collab', toId || cPrevContact);
+    }
+    function cSubmit() {
+      const name = document.getElementById('collab-name').value;
+      const phone = document.getElementById('collab-phone').value;
+      const email = document.getElementById('collab-email').value;
+      saveContact(name, phone, email);
+      const smsText = encodeURIComponent('Hey Sir Leo — I\'m ' + (name || 'reaching out') + '. I\'d love to collaborate as a ' + cSelections[0] + '.');
+      document.getElementById('cs-sms-btn').href = 'sms:+1XXXXXXXXXX?body=' + smsText;
+      wizardGo('#panel-collab', 'cs-confirm', null);
+      setTimeout(closeCollabPanel, 4000);
+    }
+    function closeCollabPanel() {
+      closePanel('panel-collab');
+      setTimeout(() => { resetWizard('panel-collab'); cSelections = []; }, 500);
     }
 
     // Session storage
