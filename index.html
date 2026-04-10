@@ -793,7 +793,23 @@
 
     <nav class="links">
 
-      <!-- Card 1: Reach Out -->
+      <!-- Card 0: Stay Connected (modal trigger) -->
+      <div class="expand-card" id="card-connect" style="border-color: rgba(180,145,90,0.3); background: rgba(180,145,90,0.03);">
+        <div class="expand-header" onclick="openModal()">
+          <div class="expand-left">
+            <div class="expand-icon">
+              <svg viewBox="0 0 24 24" style="fill:var(--gold)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+            </div>
+            <div>
+              <div class="expand-label" style="color:var(--gold-light)">Stay Connected</div>
+              <div class="expand-sub">Leave your details with Sir Leo</div>
+            </div>
+          </div>
+          <span class="expand-chevron" style="color:var(--gold-dim)">→</span>
+        </div>
+      </div>
+
+      <!-- Card 1: Contact Sir Leo -->
       <div class="expand-card" id="card-reach">
         <div class="expand-header" onclick="toggleCard('card-reach')">
           <div class="expand-left">
@@ -801,8 +817,8 @@
               <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
             </div>
             <div>
-              <div class="expand-label">Reach Out</div>
-              <div class="expand-sub">Text or email Sir Leo directly</div>
+              <div class="expand-label">Contact Sir Leo</div>
+              <div class="expand-sub">Text or email directly</div>
             </div>
           </div>
           <span class="expand-chevron">→</span>
