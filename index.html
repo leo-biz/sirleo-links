@@ -426,7 +426,7 @@
       background: rgba(8,8,8,0.88);
       z-index: 800;
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       justify-content: center;
       opacity: 0;
       pointer-events: none;
@@ -435,17 +435,17 @@
     .panel-overlay.open { opacity: 1; pointer-events: all; }
 
     .panel {
-      width: 100%;
+      width: calc(100% - 48px);
       max-width: 480px;
       background: #0e0e0e;
       border: 1px solid rgba(180,145,90,0.2);
-      border-bottom: none;
       padding: 36px 32px 48px;
-      transform: translateY(100%);
-      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: translateY(20px);
+      opacity: 0;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
       position: relative;
     }
-    .panel-overlay.open .panel { transform: translateY(0); }
+    .panel-overlay.open .panel { transform: translateY(0); opacity: 1; }
 
     .panel-close {
       position: absolute;
