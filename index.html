@@ -370,6 +370,16 @@
       color: var(--muted);
       margin-top: 2px;
     }
+    .expand-num {
+      font-family: 'Cinzel', serif;
+      font-size: 8px;
+      letter-spacing: 0.1em;
+      color: rgba(240,232,216,0.15);
+      position: absolute;
+      top: 10px;
+      left: 10px;
+    }
+    .expand-header { position: relative; }
     .expand-chevron {
       font-size: 12px;
       color: var(--crimson-dim);
@@ -796,13 +806,14 @@
       <!-- Card 0: Stay Connected (modal trigger) -->
       <div class="expand-card" id="card-connect" style="border-color: rgba(180,145,90,0.3); background: rgba(180,145,90,0.03);">
         <div class="expand-header" onclick="openModal()">
+          <span class="expand-num">01</span>
           <div class="expand-left">
             <div class="expand-icon">
               <svg viewBox="0 0 24 24" style="fill:var(--gold)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
             </div>
             <div>
               <div class="expand-label" style="color:var(--gold-light)">Stay Connected</div>
-              <div class="expand-sub">Leave your details with Sir Leo</div>
+              <div class="expand-sub">Leave your details</div>
             </div>
           </div>
           <span class="expand-chevron" style="color:var(--gold-dim)">→</span>
@@ -812,12 +823,13 @@
       <!-- Card 1: Contact Sir Leo -->
       <div class="expand-card" id="card-reach">
         <div class="expand-header" onclick="toggleCard('card-reach')">
+          <span class="expand-num">02</span>
           <div class="expand-left">
             <div class="expand-icon">
               <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
             </div>
             <div>
-              <div class="expand-label">Contact Sir Leo</div>
+              <div class="expand-label">Contact</div>
               <div class="expand-sub">Text or email directly</div>
             </div>
           </div>
@@ -838,12 +850,13 @@
       <!-- Card 2: Remember This -->
       <div class="expand-card" id="card-remember">
         <div class="expand-header" onclick="toggleCard('card-remember')">
+          <span class="expand-num">03</span>
           <div class="expand-left">
             <div class="expand-icon">
               <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
             </div>
             <div>
-              <div class="expand-label">Remember This</div>
+              <div class="expand-label">Remember</div>
               <div class="expand-sub">Save contact or add to calendar</div>
             </div>
           </div>
@@ -864,12 +877,13 @@
       <!-- Card 3: Follow -->
       <div class="expand-card" id="card-follow">
         <div class="expand-header" onclick="toggleCard('card-follow')">
+          <span class="expand-num">04</span>
           <div class="expand-left">
             <div class="expand-icon">
               <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
             </div>
             <div>
-              <div class="expand-label">Follow Sir Leo</div>
+              <div class="expand-label">Follow</div>
               <div class="expand-sub">Stay in the world</div>
             </div>
           </div>
@@ -893,12 +907,13 @@
       <!-- Card 4: Book Sir Leo -->
       <div class="expand-card" id="card-book" style="border-color: rgba(180,145,90,0.25);">
         <div class="expand-header" onclick="openPanel('panel-book')">
+          <span class="expand-num">05</span>
           <div class="expand-left">
             <div class="expand-icon">
               <svg viewBox="0 0 24 24" style="fill:var(--gold)"><path d="M12 1l2.5 8H22l-6.5 4.5 2.5 8L12 17l-6 4.5 2.5-8L3 9h7.5z"/></svg>
             </div>
             <div>
-              <div class="expand-label" style="color:var(--gold-light)">Book Sir Leo</div>
+              <div class="expand-label" style="color:var(--gold-light)">Book</div>
               <div class="expand-sub">Sessions · Performances · Events · Education</div>
             </div>
           </div>
@@ -909,12 +924,14 @@
       <!-- Card 5: Collaborate -->
       <div class="expand-card" id="card-collab">
         <div class="expand-header" onclick="openPanel('panel-collab')">
+          <span class="expand-num">06</span>
           <div class="expand-left">
             <div class="expand-icon">
               <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
             </div>
             <div>
               <div class="expand-label">Collaborate</div>
+
               <div class="expand-sub">Talent · Submissives · Creatives</div>
             </div>
           </div>
