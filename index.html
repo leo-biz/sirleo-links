@@ -1738,6 +1738,7 @@
       const phone = document.getElementById('book-phone').value;
       const email = document.getElementById('book-email').value;
       saveContact(name, phone, email);
+      submitToGoogleForm(name, phone, email, bSelections.join(' / '), '');
       const smsText = encodeURIComponent('Hey Sir Leo — I\'m ' + (name || 'interested') + '. I just applied for ' + bSelections.join(' / ') + '.');
       document.getElementById('bs-sms-btn').href = 'sms:+17732348238?body=' + smsText;
       wizardGo('#panel-book', 'bs-confirm', null);
@@ -1770,6 +1771,7 @@
       const phone = document.getElementById('collab-phone').value;
       const email = document.getElementById('collab-email').value;
       saveContact(name, phone, email);
+      submitToGoogleForm(name, phone, email, cSelections.join(' / '), '');
       const smsText = encodeURIComponent('Hey Sir Leo — I\'m ' + (name || 'reaching out') + '. I\'d love to collaborate as a ' + cSelections[0] + '.');
       document.getElementById('cs-sms-btn').href = 'sms:+17732348238?body=' + smsText;
       wizardGo('#panel-collab', 'cs-confirm', null);
@@ -1778,6 +1780,18 @@
     function closeCollabPanel() {
       closePanel('panel-collab');
       setTimeout(() => { resetWizard('panel-collab'); cSelections = []; }, 500);
+    }
+
+    // Google Forms submission
+    function submitToGoogleForm(name, phone, email, interest, notes) {
+      const formId = '1FAIpQLSfx5oPMT4IMTRQooyo9VIZMAEdrlRKyskOe3cPY7_4WaSaILA';
+      const url = 'https://docs.google.com/forms/d/e/' + formId + '/formResponse';
+      const body = new URLSearchParams({
+        'entry.822677538': name || '',
+        'entry.1256343272': phone || '',
+        'entry.1186389288': email || '',
+      });
+      fetch(url, { method: 'POST', mode: 'no-cors', body });
     }
 
     // Session storage
@@ -1807,11 +1821,11 @@
       if (e.target === document.getElementById('modalOverlay')) closeModal();
     }
     function submitForm() {
-      saveContact(
-        document.getElementById('modal-name').value,
-        document.getElementById('modal-phone').value,
-        document.getElementById('modal-email').value
-      );
+      const name = document.getElementById('modal-name').value;
+      const phone = document.getElementById('modal-phone').value;
+      const email = document.getElementById('modal-email').value;
+      saveContact(name, phone, email);
+      submitToGoogleForm(name, phone, email, 'Stay Connected', '');
       document.getElementById('modalForm').classList.add('hide');
       document.getElementById('modalConfirm').classList.add('show');
       setTimeout(closeModal, 2200);
