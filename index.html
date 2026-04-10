@@ -328,24 +328,181 @@
       flex-shrink: 0;
     }
 
-    /* Section divide */
-    .section-divide {
+    /* Expand card */
+    .expand-card {
       width: 100%;
-      max-width: 420px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.012);
+      overflow: hidden;
+      transition: border-color 0.3s ease;
+    }
+    .expand-card.open { border-color: rgba(180,145,90,0.35); }
+
+    .expand-header {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin: 20px 0 4px;
+      justify-content: space-between;
+      padding: 18px 22px;
+      cursor: none;
+      transition: color 0.3s ease;
     }
-    .section-divide-line { flex: 1; height: 1px; background: rgba(255,255,255,0.05); }
-    .section-divide-label {
+    .expand-header:hover { color: var(--cream); }
+    .expand-card.open .expand-header { color: var(--cream); }
+
+    .expand-left { display: flex; align-items: center; gap: 16px; }
+    .expand-icon {
+      width: 30px; height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0.55;
+      flex-shrink: 0;
+    }
+    .expand-icon svg { width: 17px; height: 17px; fill: var(--crimson-light); }
+    .expand-label {
       font-family: 'Cinzel', serif;
-      font-size: 7px;
-      letter-spacing: 0.4em;
+      font-size: 10.5px;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: rgba(240,232,216,0.2);
-      white-space: nowrap;
     }
+    .expand-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 12px;
+      font-style: italic;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .expand-chevron {
+      font-size: 12px;
+      color: var(--crimson-dim);
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
+    }
+    .expand-card.open .expand-chevron { transform: rotate(90deg); }
+
+    .expand-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .expand-card.open .expand-body { max-height: 300px; }
+
+    .expand-options {
+      border-top: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      flex-direction: column;
+    }
+    .expand-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 22px 14px 68px;
+      text-decoration: none;
+      color: var(--muted);
+      font-family: 'Cinzel', serif;
+      font-size: 9.5px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      transition: color 0.25s ease, background 0.25s ease;
+      cursor: none;
+    }
+    .expand-option:last-child { border-bottom: none; }
+    .expand-option:hover { color: var(--cream); background: rgba(180,145,90,0.04); }
+    .expand-option-arrow { color: var(--gold-dim); font-size: 11px; }
+
+    /* Slide panel (for booking/collab) */
+    .panel-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(8,8,8,0.88);
+      z-index: 800;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .panel-overlay.open { opacity: 1; pointer-events: all; }
+
+    .panel {
+      width: 100%;
+      max-width: 480px;
+      background: #0e0e0e;
+      border: 1px solid rgba(180,145,90,0.2);
+      border-bottom: none;
+      padding: 36px 32px 48px;
+      transform: translateY(100%);
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    .panel-overlay.open .panel { transform: translateY(0); }
+
+    .panel-close {
+      position: absolute;
+      top: 16px; right: 20px;
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: rgba(240,232,216,0.25);
+      cursor: none;
+      text-transform: uppercase;
+      background: none;
+      border: none;
+      padding: 4px 8px;
+      transition: color 0.2s ease;
+    }
+    .panel-close:hover { color: var(--muted); }
+
+    .panel-eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 8px;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--crimson-light);
+      opacity: 0.8;
+      margin-bottom: 8px;
+    }
+    .panel-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(20px, 5vw, 26px);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--cream);
+      margin-bottom: 24px;
+      line-height: 1.2;
+    }
+    .panel-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .panel-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.01);
+      text-decoration: none;
+      color: var(--text);
+      cursor: none;
+      transition: border-color 0.3s ease, color 0.3s ease;
+    }
+    .panel-option:hover { border-color: rgba(180,145,90,0.35); color: var(--cream); }
+    .panel-option-label {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .panel-option-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 11px;
+      font-style: italic;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .panel-option-arrow { color: var(--gold-dim); font-size: 12px; }
 
     /* Socials row */
     .socials {
@@ -634,121 +791,212 @@
       <div class="ornament-line right"></div>
     </div>
 
-    <!-- THE EXPERIENCE -->
-    <div class="section-divide">
-      <div class="section-divide-line"></div>
-      <span class="section-divide-label">The Experience</span>
-      <div class="section-divide-line"></div>
-    </div>
-
     <nav class="links">
 
-      <a href="#" class="link-item featured">
-        <div class="link-left">
-          <div class="link-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 1l2.5 8H22l-6.5 4.5 2.5 8L12 17l-6 4.5 2.5-8L3 9h7.5z"/></svg>
+      <!-- Card 1: Reach Out -->
+      <div class="expand-card" id="card-reach">
+        <div class="expand-header" onclick="toggleCard('card-reach')">
+          <div class="expand-left">
+            <div class="expand-icon">
+              <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+            </div>
+            <div>
+              <div class="expand-label">Reach Out</div>
+              <div class="expand-sub">Text or email Sir Leo directly</div>
+            </div>
           </div>
-          <div>
-            <div class="link-label">Enter a Rite</div>
-            <div class="link-sub">Private sessions · From $300 · Apply to be considered</div>
+          <span class="expand-chevron">→</span>
+        </div>
+        <div class="expand-body">
+          <div class="expand-options">
+            <a href="sms:+1XXXXXXXXXX?body=Hey Sir Leo — I want to stay connected." class="expand-option">
+              Text Sir Leo <span class="expand-option-arrow">→</span>
+            </a>
+            <a href="mailto:kinkafterdarkllc@gmail.com" class="expand-option">
+              Email Sir Leo <span class="expand-option-arrow">→</span>
+            </a>
           </div>
         </div>
-        <span class="link-arrow">→</span>
-      </a>
-
-      <a href="#" class="link-item">
-        <div class="link-left">
-          <div class="link-icon">
-            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-          </div>
-          <div>
-            <div class="link-label">Group Experiences</div>
-            <div class="link-sub">Curated gatherings · 8 spots per event</div>
-          </div>
-        </div>
-        <span class="link-arrow">→</span>
-      </a>
-
-      <!-- THE STAGE -->
-      <div class="section-divide" style="margin-top:16px;">
-        <div class="section-divide-line"></div>
-        <span class="section-divide-label">The Stage</span>
-        <div class="section-divide-line"></div>
       </div>
 
-      <a href="#" class="link-item">
-        <div class="link-left">
-          <div class="link-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+      <!-- Card 2: Remember This -->
+      <div class="expand-card" id="card-remember">
+        <div class="expand-header" onclick="toggleCard('card-remember')">
+          <div class="expand-left">
+            <div class="expand-icon">
+              <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+            </div>
+            <div>
+              <div class="expand-label">Remember This</div>
+              <div class="expand-sub">Save contact or add to calendar</div>
+            </div>
           </div>
-          <div>
-            <div class="link-label">Book a Performance</div>
-            <div class="link-sub">Fire · Impact artistry · Commanding presence</div>
+          <span class="expand-chevron">→</span>
+        </div>
+        <div class="expand-body">
+          <div class="expand-options">
+            <a href="#" class="expand-option">
+              Save Contact <span class="expand-option-arrow">→</span>
+            </a>
+            <a href="#" class="expand-option">
+              Add to Calendar <span class="expand-option-arrow">→</span>
+            </a>
           </div>
         </div>
-        <span class="link-arrow">→</span>
-      </a>
-
-      <a href="https://kinkafterdark.short.gy/casting" target="_blank" rel="noopener" class="link-item">
-        <div class="link-left">
-          <div class="link-icon">
-            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
-          </div>
-          <div>
-            <div class="link-label">Kink After Dark</div>
-            <div class="link-sub">Casting call — apply now</div>
-          </div>
-        </div>
-        <span class="link-arrow">→</span>
-      </a>
-
-      <!-- THE KNOWLEDGE -->
-      <div class="section-divide" style="margin-top:16px;">
-        <div class="section-divide-line"></div>
-        <span class="section-divide-label">The Knowledge</span>
-        <div class="section-divide-line"></div>
       </div>
 
-      <a href="#" class="link-item">
-        <div class="link-left">
-          <div class="link-icon">
-            <svg viewBox="0 0 24 24"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/></svg>
+      <!-- Card 3: Follow -->
+      <div class="expand-card" id="card-follow">
+        <div class="expand-header" onclick="toggleCard('card-follow')">
+          <div class="expand-left">
+            <div class="expand-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </div>
+            <div>
+              <div class="expand-label">Follow Sir Leo</div>
+              <div class="expand-sub">Stay in the world</div>
+            </div>
           </div>
-          <div>
-            <div class="link-label">Workshops & Education</div>
-            <div class="link-sub">Conscious kink · Chicago & virtual</div>
+          <span class="expand-chevron">→</span>
+        </div>
+        <div class="expand-body">
+          <div class="expand-options">
+            <a href="https://instagram.com/sir_black_leo" target="_blank" rel="noopener" class="expand-option">
+              Instagram <span class="expand-option-arrow">→</span>
+            </a>
+            <a href="https://x.com/sir_leo_black" target="_blank" rel="noopener" class="expand-option">
+              X / Twitter <span class="expand-option-arrow">→</span>
+            </a>
+            <a href="https://fetlife.com/users/sirleo" target="_blank" rel="noopener" class="expand-option">
+              FetLife <span class="expand-option-arrow">→</span>
+            </a>
           </div>
         </div>
-        <span class="link-arrow">→</span>
-      </a>
+      </div>
+
+      <!-- Card 4: Book Sir Leo -->
+      <div class="expand-card" id="card-book" style="border-color: rgba(180,145,90,0.25);">
+        <div class="expand-header" onclick="openPanel('panel-book')">
+          <div class="expand-left">
+            <div class="expand-icon">
+              <svg viewBox="0 0 24 24" style="fill:var(--gold)"><path d="M12 1l2.5 8H22l-6.5 4.5 2.5 8L12 17l-6 4.5 2.5-8L3 9h7.5z"/></svg>
+            </div>
+            <div>
+              <div class="expand-label" style="color:var(--gold-light)">Book Sir Leo</div>
+              <div class="expand-sub">Sessions · Performances · Events · Education</div>
+            </div>
+          </div>
+          <span class="expand-chevron" style="color:var(--gold-dim)">→</span>
+        </div>
+      </div>
+
+      <!-- Card 5: Collaborate -->
+      <div class="expand-card" id="card-collab">
+        <div class="expand-header" onclick="openPanel('panel-collab')">
+          <div class="expand-left">
+            <div class="expand-icon">
+              <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            </div>
+            <div>
+              <div class="expand-label">Collaborate</div>
+              <div class="expand-sub">Talent · Submissives · Creatives</div>
+            </div>
+          </div>
+          <span class="expand-chevron">→</span>
+        </div>
+      </div>
 
     </nav>
 
-    <!-- Socials -->
-    <div class="socials">
-      <a href="https://instagram.com/sir_black_leo" target="_blank" rel="noopener" class="social-item">
-        <span class="social-icon">
-          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-        </span>
-        <span class="social-label">Instagram</span>
-      </a>
-      <a href="https://x.com/sir_leo_black" target="_blank" rel="noopener" class="social-item">
-        <span class="social-icon">
-          <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-        </span>
-        <span class="social-label">X / Twitter</span>
-      </a>
-      <a href="https://fetlife.com/users/sirleo" target="_blank" rel="noopener" class="social-item">
-        <span class="social-icon">
-          <svg viewBox="0 0 24 24"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>
-        </span>
-        <span class="social-label">FetLife</span>
-      </a>
-    </div>
 
     <div class="bottom-section">
       <div class="bottom-rule"></div>
       <p class="tagline"><strong>Not for everyone.</strong><br>Made for those who know.</p>
+    </div>
+  </div>
+
+  <!-- Book panel -->
+  <div class="panel-overlay" id="panel-book" onclick="handlePanelClick(event, 'panel-book')">
+    <div class="panel">
+      <button class="panel-close" onclick="closePanel('panel-book')">Close</button>
+      <p class="panel-eyebrow">Enter the Rite</p>
+      <p class="panel-title">How can Sir Leo<br>serve you?</p>
+      <div class="panel-options">
+        <a href="#" class="panel-option">
+          <div>
+            <div class="panel-option-label">Private Session</div>
+            <div class="panel-option-sub">1-on-1 · From $300 · Apply to be considered</div>
+          </div>
+          <span class="panel-option-arrow">→</span>
+        </a>
+        <a href="#" class="panel-option">
+          <div>
+            <div class="panel-option-label">Group Experience</div>
+            <div class="panel-option-sub">Curated gatherings · 8 spots per event</div>
+          </div>
+          <span class="panel-option-arrow">→</span>
+        </a>
+        <a href="#" class="panel-option">
+          <div>
+            <div class="panel-option-label">Performance Booking</div>
+            <div class="panel-option-sub">Fire · Impact artistry · Events & clubs</div>
+          </div>
+          <span class="panel-option-arrow">→</span>
+        </a>
+        <a href="#" class="panel-option">
+          <div>
+            <div class="panel-option-label">Workshop / Education</div>
+            <div class="panel-option-sub">Conscious kink · Chicago & virtual</div>
+          </div>
+          <span class="panel-option-arrow">→</span>
+        </a>
+        <a href="https://kinkafterdark.short.gy/casting" target="_blank" rel="noopener" class="panel-option">
+          <div>
+            <div class="panel-option-label">Attend an Event</div>
+            <div class="panel-option-sub">Kink After Dark — apply now</div>
+          </div>
+          <span class="panel-option-arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Collaborate panel -->
+  <div class="panel-overlay" id="panel-collab" onclick="handlePanelClick(event, 'panel-collab')">
+    <div class="panel">
+      <button class="panel-close" onclick="closePanel('panel-collab')">Close</button>
+      <p class="panel-eyebrow">Join the World</p>
+      <p class="panel-title">What role do you<br>play in this?</p>
+      <div class="panel-options">
+        <a href="#" class="panel-option">
+          <div>
+            <div class="panel-option-label">Service Submissive</div>
+            <div class="panel-option-sub">Dedicated · Discreet · Devoted</div>
+          </div>
+          <span class="panel-option-arrow">→</span>
+        </a>
+        <a href="#" class="panel-option">
+          <div>
+            <div class="panel-option-label">Model / Dancer</div>
+            <div class="panel-option-sub">Performance & event talent</div>
+          </div>
+          <span class="panel-option-arrow">→</span>
+        </a>
+        <a href="#" class="panel-option">
+          <div>
+            <div class="panel-option-label">Photographer / Videographer</div>
+            <div class="panel-option-sub">Capture the world of Sir Leo</div>
+          </div>
+          <span class="panel-option-arrow">→</span>
+        </a>
+        <a href="#" class="panel-option">
+          <div>
+            <div class="panel-option-label">Content Creator</div>
+            <div class="panel-option-sub">Collab · Co-create · Amplify</div>
+          </div>
+          <span class="panel-option-arrow">→</span>
+        </a>
+      </div>
     </div>
   </div>
 
@@ -821,7 +1069,24 @@
       });
     });
 
-    // Modal
+    // Expand cards
+    function toggleCard(id) {
+      const card = document.getElementById(id);
+      card.classList.toggle('open');
+    }
+
+    // Slide panels
+    function openPanel(id) {
+      document.getElementById(id).classList.add('open');
+    }
+    function closePanel(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+    function handlePanelClick(e, id) {
+      if (e.target === document.getElementById(id)) closePanel(id);
+    }
+
+    // Contact modal
     function openModal() {
       document.getElementById('modalOverlay').classList.add('open');
     }
