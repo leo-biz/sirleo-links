@@ -418,44 +418,23 @@
       left: 50%;
       transform: translateX(-50%);
       z-index: 500;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
       cursor: none;
       opacity: 0;
       animation: fadeUp 1s ease 2s forwards;
-    }
-    .float-btn-circle {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      border: 1px solid rgba(180, 145, 90, 0.45);
-      background: rgba(8,8,8,0.92);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: rgba(8,8,8,0.95);
+      border: 1px solid rgba(180,145,90,0.35);
+      padding: 12px 28px;
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 0 20px rgba(155,32,32,0.15);
-    }
-    .float-btn:hover .float-btn-circle {
-      border-color: var(--gold);
-      box-shadow: 0 0 28px rgba(180,145,90,0.25);
-    }
-    .float-btn-monogram {
+      box-shadow: 0 0 20px rgba(155,32,32,0.12);
       font-family: 'Cinzel', serif;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--gold);
-      letter-spacing: 0.05em;
-      line-height: 1;
-    }
-    .float-btn-label {
-      font-family: 'Cinzel', serif;
-      font-size: 7px;
-      letter-spacing: 0.35em;
+      font-size: 9px;
+      letter-spacing: 0.4em;
       text-transform: uppercase;
-      color: rgba(240,232,216,0.3);
+      color: var(--gold);
+    }
+    .float-btn:hover {
+      border-color: var(--gold);
+      box-shadow: 0 0 28px rgba(180,145,90,0.2);
     }
 
     /* Modal overlay */
@@ -774,12 +753,7 @@
   </div>
 
   <!-- Floating connect button -->
-  <button class="float-btn" id="floatBtn" onclick="openModal()">
-    <div class="float-btn-circle">
-      <span class="float-btn-monogram">SL</span>
-    </div>
-    <span class="float-btn-label">Connect</span>
-  </button>
+  <button class="float-btn" id="floatBtn" onclick="openModal()">Connect</button>
 
   <!-- Contact modal -->
   <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
