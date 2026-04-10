@@ -1024,7 +1024,7 @@
         </div>
         <div class="expand-body">
           <div class="expand-options">
-            <a href="sms:+1XXXXXXXXXX?body=Hey Sir Leo — I want to stay connected." class="expand-option">
+            <a href="sms:+17732348238?body=Hey Sir Leo — I want to stay connected." class="expand-option">
               Text Sir Leo <span class="expand-option-arrow">→</span>
             </a>
             <a href="mailto:kinkafterdarkllc@gmail.com" class="expand-option">
@@ -1736,7 +1736,7 @@
       const email = document.getElementById('book-email').value;
       saveContact(name, phone, email);
       const smsText = encodeURIComponent('Hey Sir Leo — I\'m ' + (name || 'interested') + '. I just applied for ' + bSelections.join(' / ') + '.');
-      document.getElementById('bs-sms-btn').href = 'sms:+1XXXXXXXXXX?body=' + smsText;
+      document.getElementById('bs-sms-btn').href = 'sms:+17732348238?body=' + smsText;
       wizardGo('#panel-book', 'bs-confirm', null);
       setTimeout(closeBookPanel, 4000);
     }
@@ -1768,7 +1768,7 @@
       const email = document.getElementById('collab-email').value;
       saveContact(name, phone, email);
       const smsText = encodeURIComponent('Hey Sir Leo — I\'m ' + (name || 'reaching out') + '. I\'d love to collaborate as a ' + cSelections[0] + '.');
-      document.getElementById('cs-sms-btn').href = 'sms:+1XXXXXXXXXX?body=' + smsText;
+      document.getElementById('cs-sms-btn').href = 'sms:+17732348238?body=' + smsText;
       wizardGo('#panel-collab', 'cs-confirm', null);
       setTimeout(closeCollabPanel, 4000);
     }
