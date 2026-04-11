@@ -1794,8 +1794,11 @@
       const name = document.getElementById('book-name').value;
       const phone = document.getElementById('book-phone').value;
       const email = document.getElementById('book-email').value;
+      const noteMap = { 'bs-private-q': 'bpq-note', 'bs-group-q': 'bgq-note', 'bs-perf-q': 'bperfq-note', 'bs-workshop-q': 'bwq-note' };
+      const noteEl = document.getElementById(noteMap[bPrevContact]);
+      const notes = noteEl ? noteEl.value : '';
       saveContact(name, phone, email);
-      submitToGoogleForm(name, phone, email, bSelections.join(' / '), '');
+      submitToGoogleForm(name, phone, email, bSelections.join(' / '), notes);
       const smsText = encodeURIComponent('Hey Sir Leo — I\'m ' + (name || 'interested') + '. I just applied for ' + bSelections.join(' / ') + '.');
       document.getElementById('bs-sms-btn').href = 'sms:+17732348238?body=' + smsText;
       wizardGo('#panel-book', 'bs-confirm', null);
@@ -1827,8 +1830,11 @@
       const name = document.getElementById('collab-name').value;
       const phone = document.getElementById('collab-phone').value;
       const email = document.getElementById('collab-email').value;
+      const cNoteMap = { 'cs-sub-q': 'csub-note', 'cs-model-q': 'cmod-note', 'cs-photo-q': 'cphoto-note', 'cs-creator-q': 'ccreate-note' };
+      const cNoteEl = document.getElementById(cNoteMap[cPrevContact]);
+      const notes = cNoteEl ? cNoteEl.value : '';
       saveContact(name, phone, email);
-      submitToGoogleForm(name, phone, email, cSelections.join(' / '), '');
+      submitToGoogleForm(name, phone, email, cSelections.join(' / '), notes);
       const smsText = encodeURIComponent('Hey Sir Leo — I\'m ' + (name || 'reaching out') + '. I\'d love to collaborate as a ' + cSelections[0] + '.');
       document.getElementById('cs-sms-btn').href = 'sms:+17732348238?body=' + smsText;
       wizardGo('#panel-collab', 'cs-confirm', null);
@@ -1848,6 +1854,7 @@
         'entry.1256343272': phone || '',
         'entry.1186389288': email || '',
         'entry.379165230': interest || '',
+        'entry.827857821': notes || '',
       });
       fetch(url, { method: 'POST', mode: 'no-cors', body });
     }
