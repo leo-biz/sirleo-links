@@ -1070,7 +1070,7 @@
         </div>
         <div class="expand-body">
           <div class="expand-options">
-            <a href="sms:+17732348238?body=Hey Sir Leo — I want to stay connected." class="expand-option">
+            <a href="#" id="text-sir-leo-link" class="expand-option">
               Text Sir Leo <span class="expand-option-arrow">→</span>
             </a>
             <a href="mailto:sir.black.leo@gmail.com" class="expand-option">
@@ -1887,6 +1887,7 @@
         .join(', ') || 'Stay Connected';
       saveContact(name, phone, email);
       submitToGoogleForm(name, phone, email, interests, '');
+      updateTextLink();
       document.getElementById('modalForm').classList.add('hide');
       document.getElementById('modalConfirm').classList.add('show');
       setTimeout(closeModal, 2200);
@@ -1894,6 +1895,17 @@
 
     // Auto-open after 1.5s — skip if already saved
     if (!localStorage.getItem('sl_name')) setTimeout(openModal, 1500);
+
+    // Build Text Sir Leo link with name
+    function updateTextLink() {
+      const name = localStorage.getItem('sl_name');
+      const msg = name
+        ? 'Hey Sir Leo — I\'m ' + name + '. I want to stay connected.'
+        : 'Hey Sir Leo — I want to stay connected.';
+      const link = document.getElementById('text-sir-leo-link');
+      if (link) link.href = 'sms:+17732348238?body=' + encodeURIComponent(msg);
+    }
+    updateTextLink();
   </script>
 </body>
 </html>
