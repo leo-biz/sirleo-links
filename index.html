@@ -1103,7 +1103,7 @@
             <a href="#" class="expand-option">
               Save Contact <span class="expand-option-arrow">→</span>
             </a>
-            <a href="#" class="expand-option">
+            <a href="#" onclick="addToCalendar(); return false;" class="expand-option">
               Add to Calendar <span class="expand-option-arrow">→</span>
             </a>
           </div>
@@ -1895,6 +1895,71 @@
 
     // Auto-open after 1.5s — skip if already saved
     if (!localStorage.getItem('sl_name')) setTimeout(openModal, 1500);
+
+    // Add to Calendar — two events in one ICS
+    function addToCalendar() {
+      const pad = n => String(n).padStart(2,'0');
+      const fmt = d => d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate());
+      const today = new Date();
+      const reminder = new Date(today); reminder.setDate(today.getDate() + 3);
+      const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+      const reminderEnd = new Date(reminder); reminderEnd.setDate(reminder.getDate() + 1);
+
+      const desc1 = [
+        'On this day\\, you experienced the presence of Sir Leo.',
+        'Below are your instructions\\, skip steps you have already completed:\\n',
+        'Step 1. Visit https://sirleo-links.netlify.app',
+        'Step 2. A pop up will appear\\, insert your contact info and complete the checkbox of interest',
+        'Step 3. Click Contact > Text Sir Leo. It will auto create a text\\, be sure to press send',
+        'Step 4. Recognize\\, Schedule a call is present for future endeavors',
+        'Step 5. Click Follow\\, and follow Sir Leo on all social medias listed',
+        'Step 6. Click Book\\, and click the options of interest',
+        'Step 7. Click Collaborate if you are looking to do so\\n',
+        'Sir Leo',
+        'Phone: +1 (773) 234-8238',
+        'Email: sir.black.leo@gmail.com',
+        'Site: https://sirleo-links.netlify.app'
+      ].join('\\n');
+
+      const desc2 = [
+        'Your reminder to follow through with Sir Leo.\\n',
+        'Site: https://sirleo-links.netlify.app',
+        'Phone: +1 (773) 234-8238',
+        'Email: sir.black.leo@gmail.com',
+        'Text: +17732348238'
+      ].join('\\n');
+
+      const ics = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Sir Leo//sirleo-links//EN',
+        // Event 1 — Met Sir Leo
+        'BEGIN:VEVENT',
+        'UID:met-sirleo-' + Date.now() + '@sirleo-links.netlify.app',
+        'DTSTART;VALUE=DATE:' + fmt(today),
+        'DTEND;VALUE=DATE:' + fmt(tomorrow),
+        'SUMMARY:Met Sir Leo',
+        'DESCRIPTION:' + desc1,
+        'END:VEVENT',
+        // Event 2 — Reminder
+        'BEGIN:VEVENT',
+        'UID:remind-sirleo-' + Date.now() + '@sirleo-links.netlify.app',
+        'DTSTART;VALUE=DATE:' + fmt(reminder),
+        'DTEND;VALUE=DATE:' + fmt(reminderEnd),
+        'SUMMARY:Connect with Sir Leo',
+        'DESCRIPTION:' + desc2,
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ].join('\r\n');
+
+      const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'sir-leo.ics';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
 
     // Build Text Sir Leo link with name
     function updateTextLink() {
