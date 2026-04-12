@@ -1105,7 +1105,7 @@
         </div>
         <div class="expand-body">
           <div class="expand-options">
-            <a href="#" class="expand-option">
+            <a href="#" onclick="saveVCard(); return false;" class="expand-option">
               Save Contact <span class="expand-option-arrow">→</span>
             </a>
             <a href="#" onclick="addToCalendar(); return false;" class="expand-option">
@@ -1135,14 +1135,11 @@
             <a href="https://instagram.com/sir_black_leo" target="_blank" rel="noopener" class="expand-option">
               Instagram <span class="expand-option-arrow">→</span>
             </a>
-            <a href="https://x.com/sir_leo_black" target="_blank" rel="noopener" class="expand-option">
-              X / Twitter <span class="expand-option-arrow">→</span>
+            <a href="https://www.facebook.com/sirblackleo" target="_blank" rel="noopener" class="expand-option">
+              Facebook <span class="expand-option-arrow">→</span>
             </a>
             <a href="https://fetlife.com/Sir__Leo" target="_blank" rel="noopener" class="expand-option">
               FetLife <span class="expand-option-arrow">→</span>
-            </a>
-            <a href="https://www.facebook.com/sirblackleo" target="_blank" rel="noopener" class="expand-option">
-              Facebook <span class="expand-option-arrow">→</span>
             </a>
           </div>
         </div>
@@ -1908,6 +1905,31 @@
 
     // Auto-open after 1.5s — skip if already saved
     if (!localStorage.getItem('sl_name')) setTimeout(openModal, 1500);
+
+    // Save Contact — vCard download
+    function saveVCard() {
+      const vcard = [
+        'BEGIN:VCARD',
+        'VERSION:3.0',
+        'FN:Sir Leo',
+        'N:Leo;Sir;;;',
+        'TEL;TYPE=CELL:+17732348238',
+        'EMAIL:sir.black.leo@gmail.com',
+        'URL:https://sirleo-links.netlify.app',
+        'X-SOCIALPROFILE;type=instagram:https://instagram.com/sir_black_leo',
+        'X-SOCIALPROFILE;type=facebook:https://www.facebook.com/sirblackleo',
+        'X-SOCIALPROFILE;type=fetlife:https://fetlife.com/Sir__Leo',
+        'NOTE:Luxury Dominance & Performance Art',
+        'END:VCARD'
+      ].join('\r\n');
+      const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'sir-leo.vcf';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
 
     // Add to Calendar — two events in one ICS
     function addToCalendar() {
