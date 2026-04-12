@@ -1911,12 +1911,28 @@
 
     // Add to Calendar — two events in one ICS
     function addToCalendar() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          pos => buildAndDownloadICS(pos.coords.latitude, pos.coords.longitude),
+          ()  => buildAndDownloadICS(null, null),
+          { timeout: 5000 }
+        );
+      } else {
+        buildAndDownloadICS(null, null);
+      }
+    }
+
+    function buildAndDownloadICS(lat, lon) {
       const pad = n => String(n).padStart(2,'0');
       const fmt = d => d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate());
       const today = new Date();
       const reminder = new Date(today); reminder.setDate(today.getDate() + 3);
       const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
       const reminderEnd = new Date(reminder); reminderEnd.setDate(reminder.getDate() + 1);
+
+      const locationLine = (lat && lon)
+        ? 'GEO:' + lat.toFixed(6) + ';' + lon.toFixed(6)
+        : null;
 
       const desc1 = [
         'On this day\\, you experienced the presence of Sir Leo.',
@@ -1942,28 +1958,28 @@
         'Text: +17732348238'
       ].join('\\n');
 
-      const ics = [
-        'BEGIN:VCALENDAR',
-        'VERSION:2.0',
-        'PRODID:-//Sir Leo//sirleo-links//EN',
-        // Event 1 — Met Sir Leo
+      const event1 = [
         'BEGIN:VEVENT',
         'UID:met-sirleo-' + Date.now() + '@sirleo-links.netlify.app',
         'DTSTART;VALUE=DATE:' + fmt(today),
         'DTEND;VALUE=DATE:' + fmt(tomorrow),
         'SUMMARY:Met Sir Leo',
         'DESCRIPTION:' + desc1,
-        'END:VEVENT',
-        // Event 2 — Reminder
+        locationLine,
+        'END:VEVENT'
+      ].filter(Boolean).join('\r\n');
+
+      const event2 = [
         'BEGIN:VEVENT',
         'UID:remind-sirleo-' + Date.now() + '@sirleo-links.netlify.app',
         'DTSTART;VALUE=DATE:' + fmt(reminder),
         'DTEND;VALUE=DATE:' + fmt(reminderEnd),
         'SUMMARY:Connect with Sir Leo',
         'DESCRIPTION:' + desc2,
-        'END:VEVENT',
-        'END:VCALENDAR'
+        'END:VEVENT'
       ].join('\r\n');
+
+      const ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Sir Leo//sirleo-links//EN\r\n' + event1 + '\r\n' + event2 + '\r\nEND:VCALENDAR';
 
       const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
       const url = URL.createObjectURL(blob);
