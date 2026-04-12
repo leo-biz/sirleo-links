@@ -1132,13 +1132,13 @@
         </div>
         <div class="expand-body">
           <div class="expand-options">
-            <a href="https://instagram.com/sir_black_leo" target="_blank" rel="noopener" class="expand-option">
+            <a href="https://instagram.com/sir_black_leo" target="_blank" rel="noopener" class="expand-option" onclick="logSocialTap('ig')">
               Instagram <span class="expand-option-arrow">→</span>
             </a>
-            <a href="https://www.facebook.com/sirblackleo" target="_blank" rel="noopener" class="expand-option">
+            <a href="https://www.facebook.com/sirblackleo" target="_blank" rel="noopener" class="expand-option" onclick="logSocialTap('fb')">
               Facebook <span class="expand-option-arrow">→</span>
             </a>
-            <a href="https://fetlife.com/Sir__Leo" target="_blank" rel="noopener" class="expand-option">
+            <a href="https://fetlife.com/Sir__Leo" target="_blank" rel="noopener" class="expand-option" onclick="logSocialTap('fl')">
               FetLife <span class="expand-option-arrow">→</span>
             </a>
           </div>
@@ -1801,6 +1801,7 @@
       const notes = noteEl ? noteEl.value : '';
       saveContact(name, phone, email);
       submitToGoogleForm(name, phone, email, bSelections.join(' / '), notes);
+      sheetUpdate({ name, phone, email, interest: bSelections.join(' / '), bookingType: bSelections.join(' / '), notes });
       const smsText = encodeURIComponent('Hey Sir Leo — I\'m ' + (name || 'interested') + '. I just applied for ' + bSelections.join(' / ') + '.');
       document.getElementById('bs-sms-btn').href = 'sms:+17732348238?body=' + smsText;
       wizardGo('#panel-book', 'bs-confirm', null);
@@ -1837,6 +1838,7 @@
       const notes = cNoteEl ? cNoteEl.value : '';
       saveContact(name, phone, email);
       submitToGoogleForm(name, phone, email, cSelections.join(' / '), notes);
+      sheetUpdate({ name, phone, email, interest: cSelections.join(' / '), bookingType: cSelections.join(' / '), notes });
       const smsText = encodeURIComponent('Hey Sir Leo — I\'m ' + (name || 'reaching out') + '. I\'d love to collaborate as a ' + cSelections[0] + '.');
       document.getElementById('cs-sms-btn').href = 'sms:+17732348238?body=' + smsText;
       wizardGo('#panel-collab', 'cs-confirm', null);
@@ -1845,6 +1847,41 @@
     function closeCollabPanel() {
       closePanel('panel-collab');
       setTimeout(() => { resetWizard('panel-collab'); cSelections = []; }, 500);
+    }
+
+    // ─── CONFIG ─────────────────────────────────────────────────────────────
+    // Paste your Google Apps Script Web App URL below when ready
+    const SHEET_URL = '';
+    // ────────────────────────────────────────────────────────────────────────
+
+    // Session ID — one per visitor, persists across page visits
+    function getSession() {
+      let id = localStorage.getItem('sl_session');
+      if (!id) {
+        id = 'sl_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+        localStorage.setItem('sl_session', id);
+      }
+      return id;
+    }
+
+    // Google Sheet — upsert row by session ID
+    // Columns: Session ID | Timestamp | Name | Phone | Email | Interest | Notes |
+    //          Booking Type | IG Tapped | FB Tapped | FL Tapped | X Tapped |
+    //          IG Handle | FB Handle | FL Handle | X Handle
+    function sheetUpdate(data) {
+      if (!SHEET_URL) return;
+      const payload = Object.assign({ sessionId: getSession() }, data);
+      fetch(SHEET_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    }
+
+    function logSocialTap(platform) {
+      const tapField = platform + 'Tapped';
+      sheetUpdate({ [tapField]: true });
     }
 
     // Google Forms submission
@@ -1897,6 +1934,7 @@
         .join(', ') || 'Stay Connected';
       saveContact(name, phone, email);
       submitToGoogleForm(name, phone, email, interests, '');
+      sheetUpdate({ name, phone, email, interest: interests, timestamp: new Date().toISOString() });
       updateTextLink();
       document.getElementById('modalForm').classList.add('hide');
       document.getElementById('modalConfirm').classList.add('show');
