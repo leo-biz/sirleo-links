@@ -1,7 +1,12 @@
-const CACHE = 'sirleo-v4';
+const CACHE = 'sirleo-v5';
 const ASSETS = [
   '/',
   '/index.html',
+  '/calendar.html',
+  '/contact.html',
+  '/text.html',
+  '/book.html',
+  '/follow.html',
   '/logo.jpeg',
   '/hero.jpeg',
   '/manifest.json',

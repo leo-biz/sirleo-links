@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sir Leo — Save Contact</title>
+  <style>
+    body { margin: 0; background: #080808; color: #b4915a; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; text-align: center; }
+    p { font-size: 14px; opacity: 0.7; margin-top: 8px; }
+    a { color: #b4915a; }
+  </style>
+</head>
+<body>
+  <div>
+    <div style="font-family:'Cinzel',serif;font-size:18px;letter-spacing:0.1em;">Saving contact...</div>
+    <p>If it doesn't start, <a href="#" id="manual">tap here</a>.</p>
+    <p style="margin-top:24px;"><a href="/">← Back to Sir Leo</a></p>
+  </div>
+  <script>
+    const vcard = [
+      'BEGIN:VCARD',
+      'VERSION:3.0',
+      'FN:Sir Leo',
+      'N:Leo;Sir;;;',
+      'TEL;TYPE=CELL:+17732348238',
+      'EMAIL:sir.black.leo@gmail.com',
+      'URL:https://sirleo-links.netlify.app',
+      'X-SOCIALPROFILE;type=instagram:https://instagram.com/sir_black_leo',
+      'X-SOCIALPROFILE;type=facebook:https://www.facebook.com/sirblackleo',
+      'X-SOCIALPROFILE;type=fetlife:https://fetlife.com/Sir__Leo',
+      'NOTE:Luxury Dominance & Performance Art',
+      'END:VCARD'
+    ].join('\r\n');
+
+    const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'sir-leo.vcf'; a.click();
+    URL.revokeObjectURL(url);
+    document.getElementById('manual').onclick = () => { a.click(); return false; };
+  </script>
+</body>
+</html>

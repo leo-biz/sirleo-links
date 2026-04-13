@@ -2061,6 +2061,13 @@
     }
     updateTextLink();
 
+    // Deep link via ?open= param
+    (function() {
+      const action = new URLSearchParams(location.search).get('open');
+      if (action === 'book') setTimeout(() => openPanel('panel-book'), 400);
+      if (action === 'follow') setTimeout(() => toggleCard('card-follow'), 400);
+    })();
+
     // Service worker registration
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js');
