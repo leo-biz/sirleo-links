@@ -278,6 +278,7 @@ function submitForm() {
   saveContact(name, phone, email);
   submitToGoogleForm(name, phone, email, interests, '');
   logContact(name, phone, email, interests, '', '');
+  localStorage.setItem('sl_submitted', '1');
   logEvent('modalSubmitted', interests);
   updateTextLink();
   document.getElementById('modalForm').classList.add('hide');
@@ -285,8 +286,8 @@ function submitForm() {
   setTimeout(closeModal, 2200);
 }
 
-// Auto-open after 1.5s — skip if already saved
-if (!localStorage.getItem('sl_name')) setTimeout(openModal, 1500);
+// Auto-open after 1.5s — skip if already submitted
+if (!localStorage.getItem('sl_submitted')) setTimeout(openModal, 1500);
 
 // Save Contact — vCard download
 function saveVCard() {
