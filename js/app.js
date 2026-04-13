@@ -194,15 +194,37 @@ function getSession() {
 }
 
 // ─── Sheet logging ───────────────────────────────────────────────────────────
-function _post(payload) {
+const _QUEUE_KEY = 'sl_queue';
+
+function _flushQueue() {
   if (!SL.sheetUrl) return;
+  const queue = JSON.parse(localStorage.getItem(_QUEUE_KEY) || '[]');
+  if (!queue.length) return;
+  localStorage.removeItem(_QUEUE_KEY);
+  queue.forEach(payload => _send(payload));
+}
+
+function _send(payload) {
   fetch(SL.sheetUrl, {
     method: 'POST',
     mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(Object.assign({ sessionId: getSession(), timestamp: new Date().toISOString() }, payload))
+    body: JSON.stringify(payload)
+  }).catch(() => {
+    // Re-queue on failure
+    const queue = JSON.parse(localStorage.getItem(_QUEUE_KEY) || '[]');
+    queue.push(payload);
+    localStorage.setItem(_QUEUE_KEY, JSON.stringify(queue));
   });
 }
+
+function _post(payload) {
+  if (!SL.sheetUrl) return;
+  _send(Object.assign({ sessionId: getSession(), timestamp: new Date().toISOString() }, payload));
+}
+
+// Drain any queued payloads from previous offline visits
+_flushQueue();
 
 function logContact(name, phone, email, interest, bookingType, notes) {
   _post({ type: 'contact', name, phone, email, interest, bookingType: bookingType || '', notes: notes || '' });
