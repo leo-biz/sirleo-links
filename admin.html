@@ -114,11 +114,16 @@
 
 <script>
   // ── Auth ──────────────────────────────────────────────────────────────────
-  const PASS_KEY = 'sl_admin_auth';
+  // Hash of the admin password — plaintext never stored anywhere in code.
+  // To change password: sha256 the new one and update this constant.
+  const PASS_HASH = '19759dbcde50ee7702be4d0a37e1782ac7c96115a51d2f4f442be4f93d34d26a';
+  const PASS_KEY  = 'sl_admin_auth';
 
-  function checkPw() {
+  async function checkPw() {
     const val = document.getElementById('pw-input').value;
-    if (val === SL.adminPass) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(val));
+    const hex = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    if (hex === PASS_HASH) {
       sessionStorage.setItem(PASS_KEY, '1');
       showDash();
     } else {
