@@ -24,6 +24,6 @@ const SL = {
   gformId:      '1FAIpQLSfx5oPMT4IMTRQooyo9VIZMAEdrlRKyskOe3cPY7_4WaSaILA',
 
   // Google Sheet Web App URL
-  sheetUrl:     'https://script.google.com/macros/s/AKfycbyRj7BRxkVAqt0Hd4NfbGDBbSN7qI8-vfN4Ld4Gp2QpRwunmUP2Vel-K8MiOpQv8kFZVg/exec',
+  sheetUrl:     'https://script.google.com/macros/s/AKfycbzTBaQIJ52YRMwBr6xe8_UlkR6Z9U4Una1eEuXtKePT94dXf-t4QpRJrQ8z88nUPsqhTg/exec',
 };
 // ─────────────────────────────────────────────────────────────────────────────

@@ -115,13 +115,16 @@ function bSubmit() {
   const notes = noteEl ? noteEl.value : '';
   saveContact(name, phone, email);
   submitToGoogleForm(name, phone, email, bSelections.join(' / '), notes);
-  sheetUpdate({ name, phone, email, interest: bSelections.join(' / '), bookingType: bSelections.join(' / '), notes });
+  logContact(name, phone, email, bSelections.join(' / '), bSelections.join(' / '), notes);
+  logEvent('bookCompleted', bSelections.join(' / '));
   const smsText = encodeURIComponent('Hey Sir Leo — I\'m ' + (name || 'interested') + '. I just applied for ' + bSelections.join(' / ') + '.');
   document.getElementById('bs-sms-btn').href = 'sms:+17732348238?body=' + smsText;
   wizardGo('#panel-book', 'bs-confirm', null);
   setTimeout(closeBookPanel, 4000);
 }
 function closeBookPanel() {
+  const active = document.querySelector('#panel-book .panel-step.active');
+  if (active && active.id !== 'bs-confirm') logEvent('bookDropped', active.id);
   closePanel('panel-book');
   setTimeout(() => { resetWizard('panel-book'); bSelections = []; }, 500);
 }
@@ -152,13 +155,16 @@ function cSubmit() {
   const notes = cNoteEl ? cNoteEl.value : '';
   saveContact(name, phone, email);
   submitToGoogleForm(name, phone, email, cSelections.join(' / '), notes);
-  sheetUpdate({ name, phone, email, interest: cSelections.join(' / '), bookingType: cSelections.join(' / '), notes });
+  logContact(name, phone, email, cSelections.join(' / '), cSelections.join(' / '), notes);
+  logEvent('collabCompleted', cSelections.join(' / '));
   const smsText = encodeURIComponent('Hey Sir Leo — I\'m ' + (name || 'reaching out') + '. I\'d love to collaborate as a ' + cSelections[0] + '.');
   document.getElementById('cs-sms-btn').href = 'sms:+17732348238?body=' + smsText;
   wizardGo('#panel-collab', 'cs-confirm', null);
   setTimeout(closeCollabPanel, 4000);
 }
 function closeCollabPanel() {
+  const active = document.querySelector('#panel-collab .panel-step.active');
+  if (active && active.id !== 'cs-confirm') logEvent('collabDropped', active.id);
   closePanel('panel-collab');
   setTimeout(() => { resetWizard('panel-collab'); cSelections = []; }, 500);
 }
@@ -173,24 +179,49 @@ function getSession() {
   return id;
 }
 
-// Google Sheet — upsert row by session ID
-// Columns: Session ID | Timestamp | Name | Phone | Email | Interest | Notes |
-//          Booking Type | IG Tapped | FB Tapped | FL Tapped | X Tapped |
-//          IG Handle | FB Handle | FL Handle | X Handle
-function sheetUpdate(data) {
+// ─── Sheet logging ───────────────────────────────────────────────────────────
+function _post(payload) {
   if (!SL.sheetUrl) return;
-  const payload = Object.assign({ sessionId: getSession() }, data);
   fetch(SL.sheetUrl, {
     method: 'POST',
     mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(Object.assign({ sessionId: getSession(), timestamp: new Date().toISOString() }, payload))
   });
 }
 
-function logSocialTap(platform) {
-  sheetUpdate({ [platform + 'Tapped']: true });
+function logContact(name, phone, email, interest, bookingType, notes) {
+  _post({ type: 'contact', name, phone, email, interest, bookingType: bookingType || '', notes: notes || '' });
 }
+
+function logEvent(event, value) {
+  _post({ type: 'event', event, value: value || '' });
+}
+
+function logSession(data) {
+  _post(Object.assign({ type: 'session' }, data));
+}
+
+function logSocialTap(platform) {
+  logEvent('socialTap', platform);
+}
+
+// ─── Session init — IP + device on page load ─────────────────────────────────
+(function initSession() {
+  const views = (parseInt(localStorage.getItem('sl_views') || '0')) + 1;
+  localStorage.setItem('sl_views', String(views));
+
+  const ua = navigator.userAgent;
+  const device   = /mobile|android|iphone|ipad/i.test(ua) ? (/ipad|tablet/i.test(ua) ? 'tablet' : 'mobile') : 'desktop';
+  const os       = /iphone|ipad|ipod/i.test(ua) ? 'iOS' : /android/i.test(ua) ? 'Android' : /windows/i.test(ua) ? 'Windows' : /mac/i.test(ua) ? 'macOS' : 'Other';
+  const browser  = /edg/i.test(ua) ? 'Edge' : /chrome/i.test(ua) ? 'Chrome' : /firefox/i.test(ua) ? 'Firefox' : /safari/i.test(ua) ? 'Safari' : 'Other';
+
+  fetch('https://ipapi.co/json/')
+    .then(r => r.json())
+    .then(ip => logSession({ ip: ip.ip, city: ip.city, country: ip.country_name, device, os, browser, pageViews: views }))
+    .catch(() => logSession({ device, os, browser, pageViews: views }));
+})();
+// ─────────────────────────────────────────────────────────────────────────────
 
 // Google Forms submission
 function submitToGoogleForm(name, phone, email, interest, notes) {
@@ -241,7 +272,8 @@ function submitForm() {
     .join(', ') || 'Stay Connected';
   saveContact(name, phone, email);
   submitToGoogleForm(name, phone, email, interests, '');
-  sheetUpdate({ name, phone, email, interest: interests, timestamp: new Date().toISOString() });
+  logContact(name, phone, email, interests, '', '');
+  logEvent('modalSubmitted', interests);
   updateTextLink();
   document.getElementById('modalForm').classList.add('hide');
   document.getElementById('modalConfirm').classList.add('show');

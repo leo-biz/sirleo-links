@@ -49,7 +49,7 @@
 
       <!-- Card 01: Stay Connected -->
       <div class="expand-card" id="card-connect" style="border-color: rgba(180,145,90,0.3); background: rgba(180,145,90,0.03);">
-        <div class="expand-header" onclick="openModal()">
+        <div class="expand-header" onclick="openModal(); logEvent('cardOpen','connect')">
           <span class="expand-num">01</span>
           <div class="expand-left">
             <div class="expand-icon">
@@ -66,7 +66,7 @@
 
       <!-- Card 02: Contact -->
       <div class="expand-card" id="card-reach">
-        <div class="expand-header" onclick="toggleCard('card-reach')">
+        <div class="expand-header" onclick="toggleCard('card-reach'); logEvent('cardOpen','contact')">
           <span class="expand-num">02</span>
           <div class="expand-left">
             <div class="expand-icon">
@@ -81,13 +81,13 @@
         </div>
         <div class="expand-body">
           <div class="expand-options">
-            <a href="#" id="text-sir-leo-link" class="expand-option">
+            <a href="#" id="text-sir-leo-link" class="expand-option" onclick="logEvent('textClicked')">
               Text Sir Leo <span class="expand-option-arrow">→</span>
             </a>
-            <a href="mailto:sir.black.leo@gmail.com" class="expand-option">
+            <a href="mailto:sir.black.leo@gmail.com" class="expand-option" onclick="logEvent('emailClicked')">
               Email Sir Leo <span class="expand-option-arrow">→</span>
             </a>
-            <a href="https://calendly.com/PLACEHOLDER" target="_blank" rel="noopener" class="expand-option">
+            <a href="https://calendly.com/PLACEHOLDER" target="_blank" rel="noopener" class="expand-option" onclick="logEvent('callClicked')">
               Schedule a Call <span class="expand-option-arrow">→</span>
             </a>
           </div>
@@ -96,7 +96,7 @@
 
       <!-- Card 03: Remember -->
       <div class="expand-card" id="card-remember">
-        <div class="expand-header" onclick="toggleCard('card-remember')">
+        <div class="expand-header" onclick="toggleCard('card-remember'); logEvent('cardOpen','remember')">
           <span class="expand-num">03</span>
           <div class="expand-left">
             <div class="expand-icon">
@@ -111,10 +111,10 @@
         </div>
         <div class="expand-body">
           <div class="expand-options">
-            <a href="#" onclick="saveVCard(); return false;" class="expand-option">
+            <a href="#" onclick="logEvent('saveContactClicked'); saveVCard(); return false;" class="expand-option">
               Save Contact <span class="expand-option-arrow">→</span>
             </a>
-            <a href="#" onclick="addToCalendar(); return false;" class="expand-option">
+            <a href="#" onclick="logEvent('calendarClicked'); addToCalendar(); return false;" class="expand-option">
               Add to Calendar <span class="expand-option-arrow">→</span>
             </a>
           </div>
@@ -123,7 +123,7 @@
 
       <!-- Card 04: Follow -->
       <div class="expand-card" id="card-follow">
-        <div class="expand-header" onclick="toggleCard('card-follow')">
+        <div class="expand-header" onclick="toggleCard('card-follow'); logEvent('cardOpen','follow')">
           <span class="expand-num">04</span>
           <div class="expand-left">
             <div class="expand-icon">
@@ -153,7 +153,7 @@
 
       <!-- Card 05: Book -->
       <div class="expand-card" id="card-book" style="border-color: rgba(180,145,90,0.25);">
-        <div class="expand-header" onclick="openPanel('panel-book')">
+        <div class="expand-header" onclick="openPanel('panel-book'); logEvent('cardOpen','book')">
           <span class="expand-num">05</span>
           <div class="expand-left">
             <div class="expand-icon">
@@ -170,7 +170,7 @@
 
       <!-- Card 06: Collaborate -->
       <div class="expand-card" id="card-collab">
-        <div class="expand-header" onclick="openPanel('panel-collab')">
+        <div class="expand-header" onclick="openPanel('panel-collab'); logEvent('cardOpen','collab')">
           <span class="expand-num">06</span>
           <div class="expand-left">
             <div class="expand-icon">
