@@ -110,6 +110,13 @@ function bSubmit() {
   const name = document.getElementById('book-name').value;
   const phone = document.getElementById('book-phone').value;
   const email = document.getElementById('book-email').value;
+  if (!phone.trim()) {
+    const el = document.getElementById('book-phone');
+    el.focus();
+    el.style.borderColor = 'rgba(155,32,32,0.8)';
+    setTimeout(() => el.style.borderColor = '', 2000);
+    return;
+  }
   const noteMap = { 'bs-private-q': 'bpq-note', 'bs-group-q': 'bgq-note', 'bs-perf-q': 'bperfq-note', 'bs-workshop-q': 'bwq-note' };
   const noteEl = document.getElementById(noteMap[bPrevContact]);
   const notes = noteEl ? noteEl.value : '';
@@ -150,6 +157,13 @@ function cSubmit() {
   const name = document.getElementById('collab-name').value;
   const phone = document.getElementById('collab-phone').value;
   const email = document.getElementById('collab-email').value;
+  if (!phone.trim()) {
+    const el = document.getElementById('collab-phone');
+    el.focus();
+    el.style.borderColor = 'rgba(155,32,32,0.8)';
+    setTimeout(() => el.style.borderColor = '', 2000);
+    return;
+  }
   const cNoteMap = { 'cs-sub-q': 'csub-note', 'cs-model-q': 'cmod-note', 'cs-photo-q': 'cphoto-note', 'cs-creator-q': 'ccreate-note' };
   const cNoteEl = document.getElementById(cNoteMap[cPrevContact]);
   const notes = cNoteEl ? cNoteEl.value : '';
@@ -271,6 +285,13 @@ function submitForm() {
   const name = document.getElementById('modal-name').value;
   const phone = document.getElementById('modal-phone').value;
   const email = document.getElementById('modal-email').value;
+  if (!phone.trim()) {
+    const el = document.getElementById('modal-phone');
+    el.focus();
+    el.style.borderColor = 'rgba(155,32,32,0.8)';
+    setTimeout(() => el.style.borderColor = '', 2000);
+    return;
+  }
   const interests = ['int-curious','int-session','int-group','int-event','int-collab','int-learn']
     .filter(id => document.getElementById(id).checked)
     .map(id => document.querySelector('label[for="'+id+'"]').textContent)
