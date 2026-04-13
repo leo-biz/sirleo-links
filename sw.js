@@ -1,7 +1,8 @@
-const CACHE = 'sirleo-v6';
+const CACHE = 'sirleo-v7';
 const ASSETS = [
   '/',
   '/index.html',
+  '/config.js',
   '/css/style.css',
   '/js/app.js',
   '/calendar.html',
@@ -9,8 +10,8 @@ const ASSETS = [
   '/text.html',
   '/book.html',
   '/follow.html',
-  '/logo.jpeg',
-  '/hero.jpeg',
+  '/images/logo.jpeg',
+  '/images/hero.jpeg',
   '/manifest.json',
   'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600&family=Raleway:wght@200;300;400&display=swap'
 ];

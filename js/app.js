@@ -1,7 +1,4 @@
-// ─── CONFIG ─────────────────────────────────────────────────────────────────
-// Paste your Google Apps Script Web App URL below when ready
-const SHEET_URL = '';
-// ────────────────────────────────────────────────────────────────────────────
+// Config loaded from /config.js — edit that file, not here
 
 // Custom cursor
 const cursor = document.getElementById('cursor');
@@ -181,9 +178,9 @@ function getSession() {
 //          Booking Type | IG Tapped | FB Tapped | FL Tapped | X Tapped |
 //          IG Handle | FB Handle | FL Handle | X Handle
 function sheetUpdate(data) {
-  if (!SHEET_URL) return;
+  if (!SL.sheetUrl) return;
   const payload = Object.assign({ sessionId: getSession() }, data);
-  fetch(SHEET_URL, {
+  fetch(SL.sheetUrl, {
     method: 'POST',
     mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
@@ -197,8 +194,7 @@ function logSocialTap(platform) {
 
 // Google Forms submission
 function submitToGoogleForm(name, phone, email, interest, notes) {
-  const formId = '1FAIpQLSfx5oPMT4IMTRQooyo9VIZMAEdrlRKyskOe3cPY7_4WaSaILA';
-  const url = 'https://docs.google.com/forms/d/e/' + formId + '/formResponse';
+  const url = 'https://docs.google.com/forms/d/e/' + SL.gformId + '/formResponse';
   const body = new URLSearchParams({
     'entry.822677538': name || '',
     'entry.1256343272': phone || '',
@@ -262,12 +258,12 @@ function saveVCard() {
     'VERSION:3.0',
     'FN:Sir Leo',
     'N:Leo;Sir;;;',
-    'TEL;TYPE=CELL:+17732348238',
-    'EMAIL:sir.black.leo@gmail.com',
-    'URL:https://sirleo-links.netlify.app',
-    'X-SOCIALPROFILE;type=instagram:https://instagram.com/sir_black_leo',
-    'X-SOCIALPROFILE;type=facebook:https://www.facebook.com/sirblackleo',
-    'X-SOCIALPROFILE;type=fetlife:https://fetlife.com/Sir__Leo',
+    'TEL;TYPE=CELL:' + SL.phone,
+    'EMAIL:' + SL.email,
+    'URL:' + SL.siteUrl,
+    'X-SOCIALPROFILE;type=instagram:' + SL.instagram,
+    'X-SOCIALPROFILE;type=facebook:' + SL.facebook,
+    'X-SOCIALPROFILE;type=fetlife:' + SL.fetlife,
     'NOTE:Luxury Dominance & Performance Art',
     'END:VCARD'
   ].join('\r\n');
@@ -306,7 +302,7 @@ function buildAndDownloadICS(lat, lon) {
   const desc1 = [
     'On this day\\, you experienced the presence of Sir Leo.',
     'Below are your instructions\\, skip steps you have already completed:\\n',
-    'Step 1. Visit https://sirleo-links.netlify.app',
+    'Step 1. Visit ' + SL.siteUrl,
     'Step 2. A pop up will appear\\, insert your contact info and complete the checkbox of interest',
     'Step 3. Click Contact > Text Sir Leo. It will auto create a text\\, be sure to press send',
     'Step 4. Recognize\\, Schedule a call is present for future endeavors',
@@ -314,17 +310,17 @@ function buildAndDownloadICS(lat, lon) {
     'Step 6. Click Book\\, and click the options of interest',
     'Step 7. Click Collaborate if you are looking to do so\\n',
     'Sir Leo',
-    'Phone: +1 (773) 234-8238',
-    'Email: sir.black.leo@gmail.com',
-    'Site: https://sirleo-links.netlify.app'
+    'Phone: ' + SL.phoneDisplay,
+    'Email: ' + SL.email,
+    'Site: ' + SL.siteUrl
   ].join('\\n');
 
   const desc2 = [
     'Your reminder to follow through with Sir Leo.\\n',
-    'Site: https://sirleo-links.netlify.app',
-    'Phone: +1 (773) 234-8238',
-    'Email: sir.black.leo@gmail.com',
-    'Text: +17732348238'
+    'Site: ' + SL.siteUrl,
+    'Phone: ' + SL.phoneDisplay,
+    'Email: ' + SL.email,
+    'Text: ' + SL.phone
   ].join('\\n');
 
   const event1 = [
@@ -365,7 +361,7 @@ function updateTextLink() {
     ? 'Hey Sir Leo — I\'m ' + name + '. I want to stay connected.'
     : 'Hey Sir Leo — I want to stay connected.';
   const link = document.getElementById('text-sir-leo-link');
-  if (link) link.href = 'sms:+17732348238?body=' + encodeURIComponent(msg);
+  if (link) link.href = 'sms:' + SL.phone + '?body=' + encodeURIComponent(msg);
 }
 updateTextLink();
 
