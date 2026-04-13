@@ -25,5 +25,8 @@ const SL = {
 
   // Google Sheet Web App URL
   sheetUrl:     'https://script.google.com/macros/s/AKfycbzTBaQIJ52YRMwBr6xe8_UlkR6Z9U4Una1eEuXtKePT94dXf-t4QpRJrQ8z88nUPsqhTg/exec',
+
+  // Admin dashboard password
+  adminPass:    'sirleo2025',
 };
 // ─────────────────────────────────────────────────────────────────────────────
