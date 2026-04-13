@@ -225,10 +225,14 @@ function logSocialTap(platform) {
   const views = (parseInt(localStorage.getItem('sl_views') || '0')) + 1;
   localStorage.setItem('sl_views', String(views));
 
-  // Capture ?src= on first visit and persist it
-  const srcParam = new URLSearchParams(location.search).get('src');
+  // Capture ?src= and ?ref= on first visit and persist them
+  const params = new URLSearchParams(location.search);
+  const srcParam = params.get('src');
+  const refParam = params.get('ref');
   if (srcParam) localStorage.setItem('sl_source', srcParam);
+  if (refParam) localStorage.setItem('sl_ref', refParam);
   const source = localStorage.getItem('sl_source') || '';
+  const ref    = localStorage.getItem('sl_ref') || '';
 
   const ua = navigator.userAgent;
   const device   = /mobile|android|iphone|ipad/i.test(ua) ? (/ipad|tablet/i.test(ua) ? 'tablet' : 'mobile') : 'desktop';
@@ -237,8 +241,8 @@ function logSocialTap(platform) {
 
   fetch('https://ipapi.co/json/')
     .then(r => r.json())
-    .then(ip => logSession({ ip: ip.ip, city: ip.city, country: ip.country_name, device, os, browser, pageViews: views, source }))
-    .catch(() => logSession({ device, os, browser, pageViews: views, source }));
+    .then(ip => logSession({ ip: ip.ip, city: ip.city, country: ip.country_name, device, os, browser, pageViews: views, source, ref }))
+    .catch(() => logSession({ device, os, browser, pageViews: views, source, ref }));
 })();
 // ─────────────────────────────────────────────────────────────────────────────
 
