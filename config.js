@@ -23,7 +23,7 @@ const SL = {
   // Google Forms ID
   gformId:      '1FAIpQLSfx5oPMT4IMTRQooyo9VIZMAEdrlRKyskOe3cPY7_4WaSaILA',
 
-  // Google Sheet Web App URL (paste when ready)
-  sheetUrl:     '',
+  // Google Sheet Web App URL
+  sheetUrl:     'https://script.google.com/macros/s/AKfycbyRj7BRxkVAqt0Hd4NfbGDBbSN7qI8-vfN4Ld4Gp2QpRwunmUP2Vel-K8MiOpQv8kFZVg/exec',
 };
 // ─────────────────────────────────────────────────────────────────────────────
