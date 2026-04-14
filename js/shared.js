@@ -73,9 +73,13 @@ function applyRemoteConfig() {
   // Event banner
   const banner = document.getElementById('event-banner');
   if (banner && SL.eventName) {
-    const text = SL.eventDate
-      ? SL.eventName + ' · ' + SL.eventDate
-      : SL.eventName;
+    let dateStr = '';
+    if (SL.eventDate) {
+      try {
+        dateStr = new Date(SL.eventDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      } catch(e) { dateStr = SL.eventDate; }
+    }
+    const text = dateStr ? SL.eventName + ' · ' + dateStr : SL.eventName;
     document.getElementById('event-banner-text').textContent = text;
     banner.style.display = 'flex';
   }

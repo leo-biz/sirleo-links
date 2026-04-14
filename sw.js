@@ -1,4 +1,4 @@
-const CACHE = 'sirleo-v41';
+const CACHE = 'sirleo-v42';
 const ASSETS = [
   '/',
   '/index.html',

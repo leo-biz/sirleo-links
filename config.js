@@ -3,9 +3,9 @@
 // when the sheet is unreachable. Sheet values always win at runtime.
 
 const SL = {
-  version:  '41',
+  version:  '42',
   // Sheet — never overridden (it's the source itself)
-  sheetUrl:     'https://script.google.com/macros/s/AKfycbxWiHd4hrzrybSoLQ9cP9AZt4VHDBxYB1m3PI2sVetFp67YzfqqEhz8cphnHEPBGkB2nA/exec',
+  sheetUrl:     'https://script.google.com/macros/s/AKfycbxmxd48z16jgjXHuP9SbwoIapNla_SEfSCkWyeqrXxpHOx1QNRuTkUgCBMpMQcxfAFiTw/exec',
 
   // Identity fallbacks
   name:         'Sir Leo',
