@@ -239,7 +239,9 @@ function _post(payload) {
 _flushQueue();
 
 function logContact(name, phone, email, interest, bookingType, notes) {
-  _post({ type: 'contact', name, phone, email, interest, bookingType: bookingType || '', notes: notes || '' });
+  const source = localStorage.getItem('sl_source') || '';
+  const ref    = localStorage.getItem('sl_ref') || '';
+  _post({ type: 'contact', name, phone, email, interest, bookingType: bookingType || '', notes: notes || '', source, ref });
 }
 
 function logEvent(event, value) {
@@ -361,6 +363,11 @@ function submitForm() {
   document.getElementById('modalForm').classList.add('hide');
   document.getElementById('modalConfirm').classList.add('show');
   setTimeout(closeModal, 2200);
+}
+
+// FAQ accordion
+function toggleFaq(el) {
+  el.classList.toggle('open');
 }
 
 // All of the above checkbox
