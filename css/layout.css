@@ -48,7 +48,7 @@
 }
 .hero-eyebrow {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.45em;
   color: var(--crimson-light);
   text-transform: uppercase;
@@ -84,7 +84,7 @@
 }
 .hero-location {
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 9px;
   letter-spacing: 0.35em;
   color: var(--gold);
   text-transform: uppercase;
@@ -176,7 +176,7 @@
 .link-icon svg { width: 17px; height: 17px; fill: var(--crimson-light); }
 .link-label {
   font-family: 'Cinzel', serif;
-  font-size: 10.5px;
+  font-size: 11px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
 }
@@ -222,7 +222,7 @@
 .social-icon svg { width: 14px; height: 14px; fill: var(--gold); display: block; }
 .social-label {
   font-family: 'Cinzel', serif;
-  font-size: 7.5px;
+  font-size: 9px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
 }

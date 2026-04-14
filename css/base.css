@@ -12,8 +12,8 @@
   --crimson-light: #c0392b;
   --crimson-dim: rgba(155, 32, 32, 0.35);
   --cream: #f0e8d8;
-  --muted: rgba(240, 232, 216, 0.45);
-  --text: #e8dcc8;
+  --muted: rgba(240, 232, 216, 0.55);
+  --text: #f5ede0;
 }
 
 html { scroll-behavior: smooth; }
