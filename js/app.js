@@ -44,7 +44,10 @@ document.querySelectorAll('a, button').forEach(el => {
 
 // Expand cards
 function toggleCard(id) {
-  document.getElementById(id).classList.toggle('open');
+  const card = document.getElementById(id);
+  const wasOpen = card.classList.contains('open');
+  card.classList.toggle('open');
+  if (wasOpen) logEvent('cardDropped', id);
 }
 
 // Slide panels
@@ -306,11 +309,17 @@ function prefillFields(nameId, phoneId, emailId) {
 }
 
 // Contact modal
+let _modalOpen = false;
+let _modalDone = false;
 function openModal() {
+  _modalOpen = true;
+  _modalDone = false;
   prefillFields('modal-name', 'modal-phone', 'modal-email');
   document.getElementById('modalOverlay').classList.add('open');
 }
 function closeModal() {
+  if (_modalOpen && !_modalDone) logEvent('modalDropped');
+  _modalOpen = false;
   document.getElementById('modalOverlay').classList.remove('open');
 }
 function handleOverlayClick(e) {
@@ -333,6 +342,7 @@ function submitForm() {
     : _allIds.filter(id => document.getElementById(id).checked)
         .map(id => document.querySelector('label[for="'+id+'"]').textContent)
         .join(', ') || 'Stay Connected';
+  _modalDone = true;
   saveContact(name, phone, email, interests);
   submitToGoogleForm(name, phone, email, interests, '');
   logContact(name, phone, email, interests, '', '');

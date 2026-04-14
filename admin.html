@@ -85,7 +85,42 @@
 
     /* Two col layout on wider screens */
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-    @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+    @media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+    /* Stat accents */
+    .stat.live .stat-num { color: #4caf7d; }
+    .stat.dim  .stat-num { color: var(--muted); font-size: 20px; }
+
+    /* Session timeline */
+    .sess-load-btn { background: none; border: 1px solid var(--border); color: var(--muted);
+      padding: 10px 24px; font-family: 'Cinzel', serif; font-size: 11px;
+      letter-spacing: 0.15em; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
+    .sess-load-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .sess-row { border-bottom: 1px solid rgba(180,145,90,0.07); cursor: pointer; }
+    .sess-row:hover .sess-main { background: rgba(180,145,90,0.03); }
+    .sess-main { display: grid; grid-template-columns: auto 1fr auto auto; gap: 12px;
+      align-items: center; padding: 10px 8px; font-size: 13px; }
+    .sess-live { display: inline-block; padding: 2px 7px; font-size: 9px;
+      letter-spacing: 0.15em; background: rgba(76,175,125,0.15);
+      border: 1px solid rgba(76,175,125,0.4); color: #4caf7d;
+      text-transform: uppercase; font-family: 'Cinzel', serif; }
+    .sess-name { font-weight: 400; }
+    .sess-meta { font-size: 11px; color: var(--muted); }
+    .sess-tag { display: inline-block; padding: 2px 7px; font-size: 10px;
+      border: 1px solid var(--border); color: var(--muted); margin-right: 4px; }
+    .sess-tag.gold { border-color: rgba(180,145,90,0.4); color: var(--gold); }
+    .sess-chevron { color: var(--muted); font-size: 11px; transition: transform 0.2s; }
+    .sess-row.open .sess-chevron { transform: rotate(90deg); }
+    .sess-timeline { display: none; padding: 8px 8px 14px 24px;
+      border-top: 1px solid rgba(255,255,255,0.04); }
+    .sess-row.open .sess-timeline { display: block; }
+    .tl-item { display: flex; gap: 12px; align-items: baseline;
+      padding: 4px 0; font-size: 12px; border-left: 1px solid rgba(180,145,90,0.15);
+      padding-left: 12px; margin-left: 4px; }
+    .tl-time { color: rgba(240,232,216,0.3); font-size: 10px; white-space: nowrap; flex-shrink: 0; }
+    .tl-ev { color: var(--text); }
+    .tl-val { color: var(--gold); font-size: 11px; }
 
     /* QR generator */
     .qr-section { margin-bottom: 40px; }
@@ -317,69 +352,176 @@
   function render(d) {
     document.getElementById('dash-updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
 
-    const topSrc = Object.entries(d.sources || {}).sort((a,b) => b[1]-a[1]).slice(0, 8);
-    const topRef = Object.entries(d.refs || {}).sort((a,b) => b[1]-a[1]).slice(0, 8);
-    const topEvents = Object.entries(d.topEvents || {}).sort((a,b) => b[1]-a[1]).slice(0, 8);
-    const maxSrc = topSrc[0]?.[1] || 1;
-    const maxRef = topRef[0]?.[1] || 1;
-    const maxEv  = topEvents[0]?.[1] || 1;
+    const topSrc    = Object.entries(d.sources    || {}).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    const topRef    = Object.entries(d.refs       || {}).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    const topEvents = Object.entries(d.topEvents  || {}).sort((a,b)=>b[1]-a[1]).slice(0,10);
+    const devices   = Object.entries(d.deviceCounts  || {}).sort((a,b)=>b[1]-a[1]);
+    const oses      = Object.entries(d.osCounts      || {}).sort((a,b)=>b[1]-a[1]);
+    const browsers  = Object.entries(d.browserCounts || {}).sort((a,b)=>b[1]-a[1]);
+    const countries = Object.entries(d.countryCounts || {}).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    const cities    = Object.entries(d.cityCounts    || {}).sort((a,b)=>b[1]-a[1]).slice(0,8);
 
-    const recentContacts = (d.contacts || []).slice(0, 15).map(c =>
+    const maxSrc  = topSrc[0]?.[1]    || 1;
+    const maxRef  = topRef[0]?.[1]    || 1;
+    const maxEv   = topEvents[0]?.[1] || 1;
+    const maxDev  = devices[0]?.[1]   || 1;
+    const maxOs   = oses[0]?.[1]      || 1;
+    const maxBr   = browsers[0]?.[1]  || 1;
+    const maxCo   = countries[0]?.[1] || 1;
+    const maxCi   = cities[0]?.[1]    || 1;
+
+    const convRate = d.totalSessions
+      ? Math.round((d.totalContacts / d.totalSessions) * 100) + '%'
+      : '—';
+
+    const recentContacts = (d.contacts || []).slice(0,15).map(c =>
       `<tr>
-        <td>${c.name || '—'}</td>
-        <td>${c.phone || '—'}</td>
-        <td><span class="badge gold">${c.interest || '—'}</span></td>
+        <td>${c.name||'—'}</td><td>${c.phone||'—'}</td>
+        <td><span class="badge gold">${c.interest||'—'}</span></td>
         <td style="color:var(--muted)">${fmt(c.timestamp)}</td>
-      </tr>`
-    ).join('');
+      </tr>`).join('');
 
-    const recentEvents = (d.recentEvents || []).slice(0, 20).map(e =>
+    const recentEvents = (d.recentEvents || []).slice(0,20).map(e =>
       `<tr>
         <td style="color:var(--muted)">${fmt(e.timestamp)}</td>
-        <td>${e.event || '—'}</td>
-        <td style="color:var(--muted)">${e.value || ''}</td>
-      </tr>`
-    ).join('');
+        <td>${e.event||'—'}</td>
+        <td style="color:var(--muted)">${e.value||''}</td>
+      </tr>`).join('');
+
+    const none = '<div style="color:var(--muted);font-size:13px;padding:8px 0">No data yet</div>';
 
     document.getElementById('dash-body').innerHTML = `
       <div class="stats">
-        <div class="stat"><div class="stat-num">${d.totalContacts ?? '—'}</div><div class="stat-label">Contacts</div></div>
-        <div class="stat"><div class="stat-num">${d.totalSessions ?? '—'}</div><div class="stat-label">Sessions</div></div>
-        <div class="stat"><div class="stat-num">${d.bookCompleted ?? '—'}</div><div class="stat-label">Books</div></div>
-        <div class="stat"><div class="stat-num">${d.collabCompleted ?? '—'}</div><div class="stat-label">Collabs</div></div>
-        <div class="stat"><div class="stat-num">${d.totalEvents ?? '—'}</div><div class="stat-label">Events</div></div>
+        <div class="stat"><div class="stat-num">${d.totalContacts??'—'}</div><div class="stat-label">Contacts</div></div>
+        <div class="stat"><div class="stat-num">${d.totalSessions??'—'}</div><div class="stat-label">Sessions</div></div>
+        <div class="stat live"><div class="stat-num">${d.activeSessions??'—'}</div><div class="stat-label">Active Now</div></div>
+        <div class="stat dim"><div class="stat-num">${d.returnVisitors??'—'}</div><div class="stat-label">Return</div></div>
+        <div class="stat"><div class="stat-num">${d.bookCompleted??'—'}</div><div class="stat-label">Books</div></div>
+        <div class="stat"><div class="stat-num">${d.collabCompleted??'—'}</div><div class="stat-label">Collabs</div></div>
+        <div class="stat dim"><div class="stat-num">${convRate}</div><div class="stat-label">Conv. Rate</div></div>
       </div>
 
       <div class="grid-2">
         <div class="section">
           <div class="section-title">Sources</div>
-          ${topSrc.length ? bar(topSrc, maxSrc) : '<div style="color:var(--muted);font-size:13px">No data yet</div>'}
+          ${topSrc.length ? bar(topSrc,maxSrc) : none}
         </div>
         <div class="section">
           <div class="section-title">Referrals</div>
-          ${topRef.length ? bar(topRef, maxRef) : '<div style="color:var(--muted);font-size:13px">No data yet</div>'}
+          ${topRef.length ? bar(topRef,maxRef) : none}
         </div>
       </div>
 
       <div class="section">
         <div class="section-title">Top Actions</div>
-        ${topEvents.length ? bar(topEvents, maxEv) : '<div style="color:var(--muted);font-size:13px">No data yet</div>'}
+        ${topEvents.length ? bar(topEvents,maxEv) : none}
+      </div>
+
+      <div class="grid-3">
+        <div class="section">
+          <div class="section-title">Device</div>
+          ${devices.length ? bar(devices,maxDev) : none}
+        </div>
+        <div class="section">
+          <div class="section-title">OS</div>
+          ${oses.length ? bar(oses,maxOs) : none}
+        </div>
+        <div class="section">
+          <div class="section-title">Browser</div>
+          ${browsers.length ? bar(browsers,maxBr) : none}
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="section">
+          <div class="section-title">Country</div>
+          ${countries.length ? bar(countries,maxCo) : none}
+        </div>
+        <div class="section">
+          <div class="section-title">City</div>
+          ${cities.length ? bar(cities,maxCi) : none}
+        </div>
       </div>
 
       <div class="section">
         <div class="section-title">Recent Contacts</div>
         ${recentContacts
           ? `<table class="tbl"><thead><tr><th>Name</th><th>Phone</th><th>Interest</th><th>When</th></tr></thead><tbody>${recentContacts}</tbody></table>`
-          : '<div style="color:var(--muted);font-size:13px">No contacts yet</div>'}
+          : none}
       </div>
 
       <div class="section">
         <div class="section-title">Event Log</div>
         ${recentEvents
           ? `<table class="tbl"><thead><tr><th>When</th><th>Event</th><th>Value</th></tr></thead><tbody>${recentEvents}</tbody></table>`
-          : '<div style="color:var(--muted);font-size:13px">No events yet</div>'}
+          : none}
+      </div>
+
+      <div class="section" id="sess-section">
+        <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;">
+          Session Timeline
+          <button class="sess-load-btn" onclick="loadSessions()">Load Sessions</button>
+        </div>
+        <div id="sess-body"></div>
       </div>
     `;
+  }
+
+  // ── Session timeline ───────────────────────────────────────────────────────
+  function loadSessions() {
+    document.getElementById('sess-body').innerHTML = '<div class="loading">Loading…</div>';
+    fetch(SL.sheetUrl + '?action=sessions&limit=40')
+      .then(r => r.json())
+      .then(renderSessions)
+      .catch(() => {
+        document.getElementById('sess-body').innerHTML =
+          '<div class="error-msg">Could not load sessions. Update the Apps Script first.</div>';
+      });
+  }
+
+  function renderSessions(sessions) {
+    if (!sessions.length) {
+      document.getElementById('sess-body').innerHTML =
+        '<div style="color:var(--muted);font-size:13px;padding:8px 0">No sessions yet</div>';
+      return;
+    }
+    document.getElementById('sess-body').innerHTML = sessions.map((s, i) => {
+      const label = s.name || '<span style="color:var(--muted)">Anonymous</span>';
+      const loc   = [s.city, s.country].filter(Boolean).join(', ') || '—';
+      const src   = s.source ? `<span class="sess-tag">${s.source}</span>` : '';
+      const ref   = s.ref    ? `<span class="sess-tag gold">${s.ref}</span>` : '';
+      const live  = s.active ? '<span class="sess-live">Live</span> ' : '';
+      const evCount = s.events ? s.events.length : 0;
+      const hasContact = s.phone;
+
+      const timeline = (s.events || []).map(e => {
+        const t = fmtShort(e.timestamp);
+        const val = e.value ? `<span class="tl-val">${e.value}</span>` : '';
+        return `<div class="tl-item"><span class="tl-time">${t}</span><span class="tl-ev">${e.event}</span>${val}</div>`;
+      }).join('');
+
+      return `
+        <div class="sess-row" id="sr-${i}" onclick="toggleSessRow(${i})">
+          <div class="sess-main">
+            <div>${live}<span class="sess-name">${label}</span>${hasContact ? ' <span class="badge gold">✓</span>' : ''}</div>
+            <div class="sess-meta">${loc} &nbsp;·&nbsp; ${s.device||'?'} &nbsp;·&nbsp; ${src}${ref}</div>
+            <div class="sess-meta" style="text-align:right">${evCount} events<br>${fmtShort(s.lastSeen||s.timestamp)}</div>
+            <div class="sess-chevron">→</div>
+          </div>
+          <div class="sess-timeline">${timeline || '<span style="color:var(--muted);font-size:12px">No events</span>'}</div>
+        </div>`;
+    }).join('');
+  }
+
+  function toggleSessRow(i) {
+    document.getElementById('sr-' + i).classList.toggle('open');
+  }
+
+  function fmtShort(iso) {
+    if (!iso) return '—';
+    try {
+      return new Date(iso).toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+    } catch { return iso; }
   }
 </script>
 </body>
