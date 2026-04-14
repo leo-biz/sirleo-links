@@ -124,7 +124,7 @@ function bSubmit() {
   submitToGoogleForm(name, phone, email, bInterest, notes);
   logContact(name, phone, email, bInterest, bInterest, notes);
   logEvent('bookCompleted', bInterest);
-  document.getElementById('bs-sms-btn').href = 'sms:' + SL.phone + '?body=' + encodeURIComponent(buildSmsBody(name, bInterest));
+  document.getElementById('bs-sms-btn').href = 'sms:' + SL.phone + '?body=' + encodeURIComponent(buildSmsBody(name, bInterest, SL.eventName));
   wizardGo('#panel-book', 'bs-confirm', null);
   setTimeout(closeBookPanel, 4000);
 }
@@ -171,7 +171,7 @@ function cSubmit() {
   submitToGoogleForm(name, phone, email, cInterest, notes);
   logContact(name, phone, email, cInterest, cInterest, notes);
   logEvent('collabCompleted', cInterest);
-  document.getElementById('cs-sms-btn').href = 'sms:' + SL.phone + '?body=' + encodeURIComponent(buildSmsBody(name, cInterest));
+  document.getElementById('cs-sms-btn').href = 'sms:' + SL.phone + '?body=' + encodeURIComponent(buildSmsBody(name, cInterest, SL.eventName));
   wizardGo('#panel-collab', 'cs-confirm', null);
   setTimeout(closeCollabPanel, 4000);
 }
@@ -341,7 +341,7 @@ if (!localStorage.getItem('sl_submitted')) setTimeout(openModal, 1500);
 function updateTextLink() {
   const name     = localStorage.getItem('sl_name');
   const interest = localStorage.getItem('sl_interest');
-  const msg  = buildSmsBody(name, interest);
+  const msg  = buildSmsBody(name, interest, SL.eventName);
   const link = document.getElementById('text-sir-leo-link');
   if (link) link.href = 'sms:' + SL.phone + '?body=' + encodeURIComponent(msg);
 }

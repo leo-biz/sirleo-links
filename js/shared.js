@@ -1,9 +1,10 @@
 // ─── Shared functions — loaded by index.html and all action pages ──────────────
 
 // Build SMS body — consistent across all flows
-function buildSmsBody(name, interest) {
+function buildSmsBody(name, interest, event) {
   let msg = 'Hey ' + (SL.name || 'Sir Leo');
-  if (name)     msg += ' — I\'m ' + name;
+  if (event)    msg += ' — We recently met at ' + event;
+  if (name)     msg += '. I\'m ' + name;
   if (interest) msg += '. I\'m interested in ' + interest;
   else          msg += '. I want to stay connected';
   msg += '.';

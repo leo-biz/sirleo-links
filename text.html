@@ -25,8 +25,7 @@
     const interest = params.get('interest') || localStorage.getItem('sl_interest') || '';
     const event    = params.get('event')    || SL.eventName || '';
 
-    let msg = buildSmsBody(name, interest);
-    if (event) msg = msg.replace('.', ' (met at ' + event + ').');
+    const msg = buildSmsBody(name, interest, event);
 
     const smsUrl = 'sms:' + SL.phone + '?body=' + encodeURIComponent(msg);
     document.getElementById('manual').href = smsUrl;
