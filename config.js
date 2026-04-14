@@ -3,7 +3,7 @@
 // when the sheet is unreachable. Sheet values always win at runtime.
 
 const SL = {
-  version:  '40',
+  version:  '41',
   // Sheet — never overridden (it's the source itself)
   sheetUrl:     'https://script.google.com/macros/s/AKfycbxWiHd4hrzrybSoLQ9cP9AZt4VHDBxYB1m3PI2sVetFp67YzfqqEhz8cphnHEPBGkB2nA/exec',
 
@@ -25,8 +25,8 @@ const SL = {
 
   // Config fallbacks
   calendlyUrl:  '',
-  eventName:    'Exxxotica Chicago',
-  eventDate:    'Nov 2025',
+  eventName:    '',
+  eventDate:    '',
   bookingOpen:  true,
   collabOpen:   true,
   heroTagline:  '',
