@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Text</title>
   <script src="/config.js"></script>
+  <script src="/js/shared.js"></script>
   <style>
     body { margin: 0; background: #080808; color: #b4915a; font-family: sans-serif;
       display: flex; align-items: center; justify-content: center; height: 100vh; text-align: center; }
@@ -20,16 +21,12 @@
   </div>
   <script>
     const params   = new URLSearchParams(location.search);
-    const name     = params.get('name')     || '';
-    const interest = params.get('interest') || '';
+    const name     = params.get('name')     || localStorage.getItem('sl_name')     || '';
+    const interest = params.get('interest') || localStorage.getItem('sl_interest') || '';
     const event    = params.get('event')    || SL.eventName || '';
 
-    let msg = 'Hey ' + (SL.name || 'Sir Leo');
-    if (name)     msg += ' — I\'m ' + name;
-    if (interest) msg += '. I\'m interested in ' + interest;
-    else          msg += '. I want to stay connected';
-    if (event)    msg += ' (met at ' + event + ')';
-    msg += '.';
+    let msg = buildSmsBody(name, interest);
+    if (event) msg = msg.replace('.', ' (met at ' + event + ').');
 
     const smsUrl = 'sms:' + SL.phone + '?body=' + encodeURIComponent(msg);
     document.getElementById('manual').href = smsUrl;

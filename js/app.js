@@ -1,6 +1,6 @@
 // Config loaded from /config.js (fallbacks) + Identity/Config sheets (live values)
 // Shared functions (saveVCard, ICS, remote config) are in /js/shared.js
-= document.getElementById('cursor');
+const cursor = document.getElementById('cursor');
 const ring = document.getElementById('cursorRing');
 let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
 
@@ -119,12 +119,12 @@ function bSubmit() {
   const noteMap = { 'bs-private-q': 'bpq-note', 'bs-group-q': 'bgq-note', 'bs-perf-q': 'bperfq-note', 'bs-workshop-q': 'bwq-note' };
   const noteEl = document.getElementById(noteMap[bPrevContact]);
   const notes = noteEl ? noteEl.value : '';
-  saveContact(name, phone, email);
-  submitToGoogleForm(name, phone, email, bSelections.join(' / '), notes);
-  logContact(name, phone, email, bSelections.join(' / '), bSelections.join(' / '), notes);
-  logEvent('bookCompleted', bSelections.join(' / '));
-  const smsText = encodeURIComponent('Hey Sir Leo — I\'m ' + (name || 'interested') + '. I just applied for ' + bSelections.join(' / ') + '.');
-  document.getElementById('bs-sms-btn').href = 'sms:' + SL.phone + '?body=' + smsText;
+  const bInterest = bSelections.join(' / ');
+  saveContact(name, phone, email, bInterest);
+  submitToGoogleForm(name, phone, email, bInterest, notes);
+  logContact(name, phone, email, bInterest, bInterest, notes);
+  logEvent('bookCompleted', bInterest);
+  document.getElementById('bs-sms-btn').href = 'sms:' + SL.phone + '?body=' + encodeURIComponent(buildSmsBody(name, bInterest));
   wizardGo('#panel-book', 'bs-confirm', null);
   setTimeout(closeBookPanel, 4000);
 }
@@ -166,12 +166,12 @@ function cSubmit() {
   const cNoteMap = { 'cs-sub-q': 'csub-note', 'cs-model-q': 'cmod-note', 'cs-photo-q': 'cphoto-note', 'cs-creator-q': 'ccreate-note' };
   const cNoteEl = document.getElementById(cNoteMap[cPrevContact]);
   const notes = cNoteEl ? cNoteEl.value : '';
-  saveContact(name, phone, email);
-  submitToGoogleForm(name, phone, email, cSelections.join(' / '), notes);
-  logContact(name, phone, email, cSelections.join(' / '), cSelections.join(' / '), notes);
-  logEvent('collabCompleted', cSelections.join(' / '));
-  const smsText = encodeURIComponent('Hey Sir Leo — I\'m ' + (name || 'reaching out') + '. I\'d love to collaborate as a ' + cSelections[0] + '.');
-  document.getElementById('cs-sms-btn').href = 'sms:' + SL.phone + '?body=' + smsText;
+  const cInterest = cSelections.join(' / ');
+  saveContact(name, phone, email, cInterest);
+  submitToGoogleForm(name, phone, email, cInterest, notes);
+  logContact(name, phone, email, cInterest, cInterest, notes);
+  logEvent('collabCompleted', cInterest);
+  document.getElementById('cs-sms-btn').href = 'sms:' + SL.phone + '?body=' + encodeURIComponent(buildSmsBody(name, cInterest));
   wizardGo('#panel-collab', 'cs-confirm', null);
   setTimeout(closeCollabPanel, 4000);
 }
@@ -281,10 +281,11 @@ function submitToGoogleForm(name, phone, email, interest, notes) {
 }
 
 // Session storage
-function saveContact(name, phone, email) {
-  if (name) localStorage.setItem('sl_name', name);
-  if (phone) localStorage.setItem('sl_phone', phone);
-  if (email) localStorage.setItem('sl_email', email);
+function saveContact(name, phone, email, interest) {
+  if (name)     localStorage.setItem('sl_name', name);
+  if (phone)    localStorage.setItem('sl_phone', phone);
+  if (email)    localStorage.setItem('sl_email', email);
+  if (interest) localStorage.setItem('sl_interest', interest);
 }
 function prefillFields(nameId, phoneId, emailId) {
   const name = localStorage.getItem('sl_name');
@@ -321,7 +322,7 @@ function submitForm() {
     .filter(id => document.getElementById(id).checked)
     .map(id => document.querySelector('label[for="'+id+'"]').textContent)
     .join(', ') || 'Stay Connected';
-  saveContact(name, phone, email);
+  saveContact(name, phone, email, interests);
   submitToGoogleForm(name, phone, email, interests, '');
   logContact(name, phone, email, interests, '', '');
   localStorage.setItem('sl_submitted', '1');
@@ -336,12 +337,11 @@ function submitForm() {
 if (!localStorage.getItem('sl_submitted')) setTimeout(openModal, 1500);
 
 
-// Build Text Sir Leo link with name
+// Build Text Sir Leo link with name + interest
 function updateTextLink() {
-  const name = localStorage.getItem('sl_name');
-  const msg = name
-    ? 'Hey Sir Leo — I\'m ' + name + '. I want to stay connected.'
-    : 'Hey Sir Leo — I want to stay connected.';
+  const name     = localStorage.getItem('sl_name');
+  const interest = localStorage.getItem('sl_interest');
+  const msg  = buildSmsBody(name, interest);
   const link = document.getElementById('text-sir-leo-link');
   if (link) link.href = 'sms:' + SL.phone + '?body=' + encodeURIComponent(msg);
 }
