@@ -113,6 +113,33 @@
   opacity: 0.7;
 }
 
+/* ─── Event banner ───────────────────────────────────────────────────────────*/
+.event-banner {
+  width: 100%; max-width: 420px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeUp 1s ease 1.15s forwards;
+}
+.event-banner-line {
+  flex: 1; height: 1px;
+  background: linear-gradient(to right, transparent, rgba(180,145,90,0.4));
+}
+.event-banner-line:last-child {
+  background: linear-gradient(to left, transparent, rgba(180,145,90,0.4));
+}
+.event-banner-text {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold);
+  white-space: nowrap;
+  opacity: 0.85;
+}
+
 /* ─── Links ──────────────────────────────────────────────────────────────────*/
 .links {
   width: 100%; max-width: 420px;

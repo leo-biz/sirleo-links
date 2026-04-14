@@ -68,6 +68,16 @@ function applyRemoteConfig() {
     }
   }
 
+  // Event banner
+  const banner = document.getElementById('event-banner');
+  if (banner && SL.eventName) {
+    const text = SL.eventDate
+      ? SL.eventName + ' · ' + SL.eventDate
+      : SL.eventName;
+    document.getElementById('event-banner-text').textContent = text;
+    banner.style.display = 'flex';
+  }
+
   // Refresh text link with updated name
   updateTextLink();
 }
