@@ -103,7 +103,7 @@ body.high-contrast {
   --surface:     #d6d1c6;
   --border:      rgba(110, 85, 45, 0.28);
   --text:        #1a1714;
-  --muted:       rgba(26, 23, 20, 0.6);
+  --muted:       rgba(26, 23, 20, 0.75);
   --cream:       #1a1714;
   --gold-dim:    rgba(140, 110, 55, 0.45);
   --crimson-dim: rgba(120, 28, 28, 0.35);

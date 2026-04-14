@@ -3,8 +3,8 @@
 
 // ─── Brightness toggle ────────────────────────────────────────────────────────
 (function() {
-  // Default is light mode — only go dark if user explicitly chose it
-  if (localStorage.getItem('sl_hc') !== 'dark') document.body.classList.add('high-contrast');
+  // Default is dark — only go light if user explicitly chose it
+  if (localStorage.getItem('sl_hc') === 'light') document.body.classList.add('high-contrast');
 })();
 function toggleBrightness() {
   const on = document.body.classList.toggle('high-contrast');
