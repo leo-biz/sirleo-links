@@ -86,6 +86,36 @@
     /* Two col layout on wider screens */
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
     @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    /* QR generator */
+    .qr-section { margin-bottom: 40px; }
+    .qr-body { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: start; }
+    @media (max-width: 560px) { .qr-body { grid-template-columns: 1fr; } }
+    .qr-fields { display: flex; flex-direction: column; gap: 10px; }
+    .qr-field { display: flex; flex-direction: column; gap: 5px; }
+    .qr-field label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted); font-family: 'Cinzel', serif; }
+    .qr-field input { background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); padding: 10px 14px; font-family: inherit; font-size: 13px;
+      outline: none; transition: border-color 0.2s; }
+    .qr-field input:focus { border-color: var(--gold); }
+    .qr-url-preview { font-size: 11px; color: rgba(180,145,90,0.6);
+      word-break: break-all; margin-top: 2px; }
+    .qr-actions { display: flex; gap: 8px; margin-top: 6px; }
+    .qr-btn { flex: 1; background: none; border: 1px solid var(--border); color: var(--muted);
+      padding: 9px 14px; font-family: 'Cinzel', serif; font-size: 11px;
+      letter-spacing: 0.12em; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
+    .qr-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .qr-btn.primary { border-color: rgba(180,145,90,0.5); color: var(--gold); }
+    .qr-btn.primary:hover { background: rgba(180,145,90,0.08); }
+    .qr-preview-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    #qr-canvas-wrap { background: var(--surface); border: 1px solid var(--border); padding: 16px; }
+    #qr-canvas-wrap canvas { display: block; }
+    .qr-size-row { display: flex; gap: 6px; }
+    .qr-size-btn { background: none; border: 1px solid var(--border); color: var(--muted);
+      padding: 5px 10px; font-size: 11px; cursor: pointer; font-family: inherit;
+      transition: border-color 0.2s, color 0.2s; }
+    .qr-size-btn.active, .qr-size-btn:hover { border-color: var(--gold); color: var(--gold); }
   </style>
 </head>
 <body>
@@ -109,9 +139,44 @@
       <button class="refresh-btn" onclick="loadData()">Refresh</button>
     </div>
 
+    <!-- QR Code Generator -->
+    <div class="section qr-section">
+      <div class="section-title">QR Code Generator</div>
+      <div class="qr-body">
+        <div class="qr-fields">
+          <div class="qr-field">
+            <label>Base URL</label>
+            <input type="text" id="qr-base" placeholder="https://sirleo-links.netlify.app" oninput="qrUpdate()" />
+          </div>
+          <div class="qr-field">
+            <label>Source <span style="opacity:0.5;font-size:9px">(?src=)</span></label>
+            <input type="text" id="qr-src" placeholder="e.g. exxxotica-booth" oninput="qrUpdate()" />
+          </div>
+          <div class="qr-field">
+            <label>Ref Person <span style="opacity:0.5;font-size:9px">(?ref=)</span></label>
+            <input type="text" id="qr-ref" placeholder="e.g. janet" oninput="qrUpdate()" />
+          </div>
+          <div class="qr-url-preview" id="qr-url-preview"></div>
+          <div class="qr-actions">
+            <button class="qr-btn primary" onclick="qrDownload()">Download PNG</button>
+            <button class="qr-btn" onclick="qrCopy()">Copy URL</button>
+          </div>
+        </div>
+        <div class="qr-preview-wrap">
+          <div id="qr-canvas-wrap"></div>
+          <div class="qr-size-row">
+            <button class="qr-size-btn" onclick="qrSetSize(160)" data-size="160">S</button>
+            <button class="qr-size-btn active" onclick="qrSetSize(240)" data-size="240">M</button>
+            <button class="qr-size-btn" onclick="qrSetSize(340)" data-size="340">L</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="dash-body"><div class="loading">Loading data…</div></div>
   </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
   // ── Auth ──────────────────────────────────────────────────────────────────
   // Hash is stored in the Config sheet — never hardcoded here.
@@ -153,6 +218,72 @@
   }
 
   if (sessionStorage.getItem(PASS_KEY)) showDash();
+
+  // ── QR Generator ─────────────────────────────────────────────────────────
+  let _qr = null;
+  let _qrSize = 240;
+
+  function qrInit() {
+    document.getElementById('qr-base').value = (SL.siteUrl || window.location.origin);
+    qrUpdate();
+  }
+
+  function qrBuildUrl() {
+    const base = document.getElementById('qr-base').value.trim();
+    const src  = document.getElementById('qr-src').value.trim();
+    const ref  = document.getElementById('qr-ref').value.trim();
+    const params = [];
+    if (src) params.push('src=' + encodeURIComponent(src));
+    if (ref) params.push('ref=' + encodeURIComponent(ref));
+    return params.length ? base + '?' + params.join('&') : base;
+  }
+
+  function qrUpdate() {
+    const url = qrBuildUrl();
+    document.getElementById('qr-url-preview').textContent = url;
+    const wrap = document.getElementById('qr-canvas-wrap');
+    wrap.innerHTML = '';
+    _qr = new QRCode(wrap, {
+      text: url,
+      width: _qrSize, height: _qrSize,
+      colorDark: '#f5ede0',
+      colorLight: '#141414',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
+
+  function qrSetSize(size) {
+    _qrSize = size;
+    document.querySelectorAll('.qr-size-btn').forEach(b => {
+      b.classList.toggle('active', parseInt(b.dataset.size) === size);
+    });
+    qrUpdate();
+  }
+
+  function qrDownload() {
+    const canvas = document.querySelector('#qr-canvas-wrap canvas');
+    if (!canvas) return;
+    const src = document.getElementById('qr-src').value.trim();
+    const ref = document.getElementById('qr-ref').value.trim();
+    const name = ['sirleo-qr', src, ref].filter(Boolean).join('-') + '.png';
+    const a = document.createElement('a');
+    a.download = name;
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+  }
+
+  function qrCopy() {
+    navigator.clipboard.writeText(qrBuildUrl()).then(() => {
+      const btn = document.querySelector('.qr-actions .qr-btn:last-child');
+      const orig = btn.textContent;
+      btn.textContent = 'Copied';
+      setTimeout(() => btn.textContent = orig, 1500);
+    });
+  }
+
+  // init QR after dash is shown
+  const _origShowDash = showDash;
+  showDash = function() { _origShowDash(); qrInit(); };
 
   // ── Data ──────────────────────────────────────────────────────────────────
   function loadData() {
