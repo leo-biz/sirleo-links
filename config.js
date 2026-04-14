@@ -4,7 +4,7 @@
 
 const SL = {
   // Sheet — never overridden (it's the source itself)
-  sheetUrl:     'https://script.google.com/macros/s/AKfycbzTBaQIJ52YRMwBr6xe8_UlkR6Z9U4Una1eEuXtKePT94dXf-t4QpRJrQ8z88nUPsqhTg/exec',
+  sheetUrl:     'https://script.google.com/macros/s/AKfycbxWiHd4hrzrybSoLQ9cP9AZt4VHDBxYB1m3PI2sVetFp67YzfqqEhz8cphnHEPBGkB2nA/exec',
 
   // Identity fallbacks
   name:         'Sir Leo',
