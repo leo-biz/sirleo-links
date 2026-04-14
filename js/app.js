@@ -3,11 +3,12 @@
 
 // ─── Brightness toggle ────────────────────────────────────────────────────────
 (function() {
-  if (localStorage.getItem('sl_hc') === '1') document.body.classList.add('high-contrast');
+  // Default is light mode — only go dark if user explicitly chose it
+  if (localStorage.getItem('sl_hc') !== 'dark') document.body.classList.add('high-contrast');
 })();
 function toggleBrightness() {
   const on = document.body.classList.toggle('high-contrast');
-  localStorage.setItem('sl_hc', on ? '1' : '0');
+  localStorage.setItem('sl_hc', on ? 'light' : 'dark');
 }
 const cursor = document.getElementById('cursor');
 const ring = document.getElementById('cursorRing');
