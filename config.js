@@ -3,9 +3,7 @@
 // when the sheet is unreachable. Sheet values always win at runtime.
 
 const SL = {
-  version:  '45',
-  // Sheet — never overridden (it's the source itself)
-  sheetUrl:     'https://script.google.com/macros/s/AKfycbxmxd48z16jgjXHuP9SbwoIapNla_SEfSCkWyeqrXxpHOx1QNRuTkUgCBMpMQcxfAFiTw/exec',
+  version:  '46',
 
   // Identity fallbacks
   name:         'Sir Leo',
@@ -21,7 +19,6 @@ const SL = {
   facebook:     'https://www.facebook.com/sirblackleo',
   fetlife:      'https://fetlife.com/Sir__Leo',
   x:            '',
-  gformId:      '1FAIpQLSfx5oPMT4IMTRQooyo9VIZMAEdrlRKyskOe3cPY7_4WaSaILA',
 
   // Config fallbacks
   calendlyUrl:  '',

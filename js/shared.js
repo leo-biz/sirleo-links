@@ -11,21 +11,9 @@ function buildSmsBody(name, interest, event) {
   return msg;
 }
 
-// ─── Remote config — fetch Identity + Config sheets, merge into SL ───────────
+// ─── Remote config — apply config.js values directly (Apps Script removed) ───
 (function loadRemoteConfig() {
-  const base = SL.sheetUrl;
-  Promise.all([
-    fetch(base + '?action=identity').then(r => r.json()).catch(() => ({})),
-    fetch(base + '?action=config').then(r => r.json()).catch(() => ({}))
-  ]).then(([identity, config]) => {
-    // Strip empty strings so blank sheet rows don't override config.js fallbacks
-    const strip = obj => Object.fromEntries(Object.entries(obj).filter(([,v]) => v !== ''));
-    Object.assign(SL, strip(identity), strip(config));
-    // Booleans arrive as strings from the sheet
-    SL.bookingOpen = config.bookingOpen !== 'false' && config.bookingOpen !== false;
-    SL.collabOpen  = config.collabOpen  !== 'false' && config.collabOpen  !== false;
-    applyRemoteConfig();
-  });
+  applyRemoteConfig();
 })();
 
 function _setText(id, val) {

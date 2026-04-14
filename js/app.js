@@ -134,8 +134,7 @@ function bSubmit() {
   const notes = noteEl ? noteEl.value : '';
   const bInterest = bSelections.join(' / ');
   saveContact(name, phone, email, bInterest);
-  submitToGoogleForm(name, phone, email, bInterest, notes);
-  logContact(name, phone, email, bInterest, bInterest, notes);
+  submitContact(name, phone, email, bInterest, bInterest, notes);
   logEvent('bookCompleted', bInterest);
   document.getElementById('bs-sms-btn').href = 'sms:' + SL.phone + '?body=' + encodeURIComponent(buildSmsBody(name, bInterest, SL.eventName));
   wizardGo('#panel-book', 'bs-confirm', null);
@@ -181,8 +180,7 @@ function cSubmit() {
   const notes = cNoteEl ? cNoteEl.value : '';
   const cInterest = cSelections.join(' / ');
   saveContact(name, phone, email, cInterest);
-  submitToGoogleForm(name, phone, email, cInterest, notes);
-  logContact(name, phone, email, cInterest, cInterest, notes);
+  submitContact(name, phone, email, cInterest, cInterest, notes);
   logEvent('collabCompleted', cInterest);
   document.getElementById('cs-sms-btn').href = 'sms:' + SL.phone + '?body=' + encodeURIComponent(buildSmsBody(name, cInterest, SL.eventName));
   wizardGo('#panel-collab', 'cs-confirm', null);
@@ -195,113 +193,48 @@ function closeCollabPanel() {
   setTimeout(() => { resetWizard('panel-collab'); cSelections = []; }, 500);
 }
 
-// Session ID — one per visitor, persists across page visits
-function getSession() {
-  let id = localStorage.getItem('sl_session');
-  if (!id) {
-    id = 'sl_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
-    localStorage.setItem('sl_session', id);
-  }
-  return id;
-}
 
-// ─── Sheet logging ───────────────────────────────────────────────────────────
-const _QUEUE_KEY = 'sl_queue';
 
-function _flushQueue() {
-  if (!SL.sheetUrl) return;
-  const queue = JSON.parse(localStorage.getItem(_QUEUE_KEY) || '[]');
-  if (!queue.length) return;
-  localStorage.removeItem(_QUEUE_KEY);
-  queue.forEach(payload => _send(payload));
-}
-
-function _send(payload) {
-  fetch(SL.sheetUrl, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  }).catch(() => {
-    // Re-queue on failure
-    const queue = JSON.parse(localStorage.getItem(_QUEUE_KEY) || '[]');
-    queue.push(payload);
-    localStorage.setItem(_QUEUE_KEY, JSON.stringify(queue));
-  });
-}
-
-function _post(payload) {
-  if (!SL.sheetUrl) return;
-  _send(Object.assign({ sessionId: getSession(), timestamp: new Date().toISOString() }, payload));
-}
-
-// Drain any queued payloads from previous offline visits
-_flushQueue();
-
-function logContact(name, phone, email, interest, bookingType, notes) {
-  const source = localStorage.getItem('sl_source') || '';
-  const ref    = localStorage.getItem('sl_ref') || '';
-  _post({ type: 'contact', name, phone, email, interest, bookingType: bookingType || '', notes: notes || '', source, ref });
-}
-
-function logEvent(event, value) {
-  _post({ type: 'event', event, value: value || '' });
-}
-
-function logSession(data) {
-  _post(Object.assign({ type: 'session' }, data));
-}
-
-function logSocialTap(platform) {
-  logEvent('socialTap', platform);
-}
-
-// ─── Session init — IP + device on page load ─────────────────────────────────
-(function initSession() {
-  const views = (parseInt(localStorage.getItem('sl_views') || '0')) + 1;
-  localStorage.setItem('sl_views', String(views));
-
-  // Capture ?src= and ?ref= on first visit and persist them
+// ─── Source tracking — capture ?src= and ?ref= from URL ─────────────────────
+(function() {
   const params = new URLSearchParams(location.search);
-  const srcParam = params.get('src');
-  const refParam = params.get('ref');
-  if (srcParam) localStorage.setItem('sl_source', srcParam);
-  if (refParam) localStorage.setItem('sl_ref', refParam);
-
+  const src = params.get('src');
+  const ref = params.get('ref');
+  if (src) localStorage.setItem('sl_source', src);
+  if (ref) localStorage.setItem('sl_ref', ref);
   // Pre-fill contact fields from URL params (?name=, ?phone=, ?email=)
-  const nameParam  = params.get('name');
-  const phoneParam = params.get('phone');
-  const emailParam = params.get('email');
-  if (nameParam)  localStorage.setItem('sl_name',  nameParam);
-  if (phoneParam) localStorage.setItem('sl_phone', phoneParam);
-  if (emailParam) localStorage.setItem('sl_email', emailParam);
-  const source = localStorage.getItem('sl_source') || '';
-  const ref    = localStorage.getItem('sl_ref') || '';
-
-  const ua = navigator.userAgent;
-  const device   = /mobile|android|iphone|ipad/i.test(ua) ? (/ipad|tablet/i.test(ua) ? 'tablet' : 'mobile') : 'desktop';
-  const os       = /iphone|ipad|ipod/i.test(ua) ? 'iOS' : /android/i.test(ua) ? 'Android' : /windows/i.test(ua) ? 'Windows' : /mac/i.test(ua) ? 'macOS' : 'Other';
-  const browser  = /edg/i.test(ua) ? 'Edge' : /chrome/i.test(ua) ? 'Chrome' : /firefox/i.test(ua) ? 'Firefox' : /safari/i.test(ua) ? 'Safari' : 'Other';
-
-  fetch('https://ipapi.co/json/')
-    .then(r => r.json())
-    .then(ip => logSession({ ip: ip.ip, city: ip.city, country: ip.country_name, device, os, browser, pageViews: views, source, ref }))
-    .catch(() => logSession({ device, os, browser, pageViews: views, source, ref }));
+  const name  = params.get('name');
+  const phone = params.get('phone');
+  const email = params.get('email');
+  if (name)  localStorage.setItem('sl_name',  name);
+  if (phone) localStorage.setItem('sl_phone', phone);
+  if (email) localStorage.setItem('sl_email', email);
 })();
-// ─────────────────────────────────────────────────────────────────────────────
 
-// Google Forms submission
-function submitToGoogleForm(name, phone, email, interest, notes) {
-  const url = 'https://docs.google.com/forms/d/e/' + SL.gformId + '/formResponse';
-  const body = new URLSearchParams({
-    'entry.822677538': name || '',
-    'entry.1256343272': phone || '',
-    'entry.1186389288': email || '',
-    'entry.379165230': interest || '',
-    'entry.827857821': notes || '',
-  });
-  fetch(url, { method: 'POST', mode: 'no-cors', body });
+// ─── Netlify Forms submission ─────────────────────────────────────────────────
+function submitContact(name, phone, email, interest, bookingType, notes) {
+  const source = localStorage.getItem('sl_source') || '';
+  const ref    = localStorage.getItem('sl_ref')    || '';
+  fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      'form-name':  'contact',
+      name:         name        || '',
+      phone:        phone       || '',
+      email:        email       || '',
+      interest:     interest    || '',
+      bookingType:  bookingType || '',
+      notes:        notes       || '',
+      source,
+      ref
+    })
+  }).catch(() => {});
 }
+
+// No-op stubs — analytics removed, calls left in place to avoid errors
+function logEvent() {}
+function logContact() {}
 
 // Session storage
 function saveContact(name, phone, email, interest) {
@@ -355,8 +288,7 @@ function submitForm() {
         .join(', ') || 'Stay Connected';
   _modalDone = true;
   saveContact(name, phone, email, interests);
-  submitToGoogleForm(name, phone, email, interests, '');
-  logContact(name, phone, email, interests, '', '');
+  submitContact(name, phone, email, interests, '', '');
   localStorage.setItem('sl_submitted', '1');
   logEvent('modalSubmitted', interests);
   updateTextLink();
