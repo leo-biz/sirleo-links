@@ -206,78 +206,78 @@
   </div>
 
   <!-- Book panel -->
-  <div class="panel-overlay" id="panel-book" onclick="handlePanelClick(event, 'panel-book')">
-    <div class="panel" style="overflow-y:auto; max-height:92vh;">
-      <button class="panel-close" onclick="closeBookPanel()">Close</button>
+  <div class="dialog-overlay" id="panel-book" onclick="handlePanelClick(event, 'panel-book')">
+    <div class="dialog" style="overflow-y:auto; max-height:92vh;">
+      <button class="dialog-close" onclick="closeBookPanel()">Close</button>
       <div class="panel-steps">
 
         <div class="panel-step active" id="bs-type">
-          <p class="panel-eyebrow">Enter the Rite</p>
-          <p class="panel-title">How can Sir Leo<br>serve you?</p>
+          <p class="eyebrow">Enter the Rite</p>
+          <p class="dialog-title">How can Sir Leo<br>serve you?</p>
           <div class="panel-options">
             <a href="#" class="panel-option" onclick="bNext('bs-private-format','Private Session'); return false;">
-              <div><div class="panel-option-label">Private Session</div><div class="panel-option-sub">1-on-1 or couple · Apply to be considered</div></div>
-              <span class="panel-option-arrow">→</span>
+              <div><div class="card-row-label">Private Session</div><div class="card-row-sub">1-on-1 or couple · Apply to be considered</div></div>
+              <span class="card-row-arrow">→</span>
             </a>
             <a href="#" class="panel-option" onclick="bNext('bs-group-format','Group Experience'); return false;">
-              <div><div class="panel-option-label">Group Experience</div><div class="panel-option-sub">Performance or interactive immersion</div></div>
-              <span class="panel-option-arrow">→</span>
+              <div><div class="card-row-label">Group Experience</div><div class="card-row-sub">Performance or interactive immersion</div></div>
+              <span class="card-row-arrow">→</span>
             </a>
             <a href="#" class="panel-option" onclick="bNext('bs-perf-q','Performance Booking'); return false;">
-              <div><div class="panel-option-label">Performance Booking</div><div class="panel-option-sub">Fire · Impact artistry · Events & clubs</div></div>
-              <span class="panel-option-arrow">→</span>
+              <div><div class="card-row-label">Performance Booking</div><div class="card-row-sub">Fire · Impact artistry · Events & clubs</div></div>
+              <span class="card-row-arrow">→</span>
             </a>
             <a href="#" class="panel-option" onclick="bNext('bs-workshop-q','Workshop / Education'); return false;">
-              <div><div class="panel-option-label">Workshop / Education</div><div class="panel-option-sub">Conscious kink · Chicago & virtual</div></div>
-              <span class="panel-option-arrow">→</span>
+              <div><div class="card-row-label">Workshop / Education</div><div class="card-row-sub">Conscious kink · Chicago & virtual</div></div>
+              <span class="card-row-arrow">→</span>
             </a>
             <a href="https://kinkafterdark.short.gy/casting" target="_blank" rel="noopener" class="panel-option">
-              <div><div class="panel-option-label">Attend an Event</div><div class="panel-option-sub">Kink After Dark — apply now</div></div>
-              <span class="panel-option-arrow">→</span>
+              <div><div class="card-row-label">Attend an Event</div><div class="card-row-sub">Kink After Dark — apply now</div></div>
+              <span class="card-row-arrow">→</span>
             </a>
           </div>
         </div>
 
         <div class="panel-step slide-right" id="bs-private-format">
           <button class="panel-back" onclick="bBack('bs-type')">← Back</button>
-          <p class="panel-eyebrow">Private Session</p>
-          <p class="panel-title">Who is this<br>session for?</p>
+          <p class="eyebrow">Private Session</p>
+          <p class="dialog-title">Who is this<br>session for?</p>
           <div class="choice-cards">
-            <button class="choice-card" onclick="bNext('bs-private-tier','1-on-1')">
-              <div><div class="choice-card-name">1-on-1</div><div class="choice-card-sub">Just you and Sir Leo</div></div>
-              <span class="choice-arrow">→</span>
+            <button class="card-row card-row--flex" onclick="bNext('bs-private-tier','1-on-1')">
+              <div><div class="card-row-label">1-on-1</div><div class="card-row-sub">Just you and Sir Leo</div></div>
+              <span class="card-row-arrow">→</span>
             </button>
-            <button class="choice-card" onclick="bNext('bs-private-tier','Couple')">
-              <div><div class="choice-card-name">Couple</div><div class="choice-card-sub">You and your partner</div></div>
-              <span class="choice-arrow">→</span>
+            <button class="card-row card-row--flex" onclick="bNext('bs-private-tier','Couple')">
+              <div><div class="card-row-label">Couple</div><div class="card-row-sub">You and your partner</div></div>
+              <span class="card-row-arrow">→</span>
             </button>
           </div>
         </div>
 
         <div class="panel-step slide-right" id="bs-private-tier">
           <button class="panel-back" onclick="bBack('bs-private-format')">← Back</button>
-          <p class="panel-eyebrow">Choose Your Rite</p>
-          <p class="panel-title">How deep do you<br>want to go?</p>
+          <p class="eyebrow">Choose Your Rite</p>
+          <p class="dialog-title">How deep do you<br>want to go?</p>
           <div class="tier-options">
-            <button class="tier-card" onclick="bNext('bs-private-q','Sensual Surrender')">
-              <div class="tier-card-name">Sensual Surrender</div>
-              <div class="tier-card-desc">Massage, touch, restrained control</div>
+            <button class="card-row" onclick="bNext('bs-private-q','Sensual Surrender')">
+              <div class="card-row-label">Sensual Surrender</div>
+              <div class="card-row-sub">Massage, touch, restrained control</div>
             </button>
-            <button class="tier-card" onclick="bNext('bs-private-q','The Naughty Ritual')">
-              <div class="tier-card-name">The Naughty Ritual</div>
-              <div class="tier-card-desc">Moderate impact, erotic aggression</div>
+            <button class="card-row" onclick="bNext('bs-private-q','The Naughty Ritual')">
+              <div class="card-row-label">The Naughty Ritual</div>
+              <div class="card-row-sub">Moderate impact, erotic aggression</div>
             </button>
-            <button class="tier-card" onclick="bNext('bs-private-q','Rite of Dark Ruin')">
-              <div class="tier-card-name">Rite of Dark Ruin</div>
-              <div class="tier-card-desc">Heavy impact, full ritual domination</div>
+            <button class="card-row" onclick="bNext('bs-private-q','Rite of Dark Ruin')">
+              <div class="card-row-label">Rite of Dark Ruin</div>
+              <div class="card-row-sub">Heavy impact, full ritual domination</div>
             </button>
           </div>
         </div>
 
         <div class="panel-step slide-right" id="bs-private-q">
           <button class="panel-back" onclick="bBack('bs-private-tier')">← Back</button>
-          <p class="panel-eyebrow" id="bs-private-q-label"></p>
-          <p class="panel-title">A few things<br>Sir Leo needs to know.</p>
+          <p class="eyebrow" id="bs-private-q-label"></p>
+          <p class="dialog-title">A few things<br>Sir Leo needs to know.</p>
           <div class="wizard-form">
             <div class="form-field">
               <label class="form-label">Experience Level</label>
@@ -301,50 +301,50 @@
               <label class="form-label">Anything else you'd like Sir Leo to know?</label>
               <textarea class="form-textarea" id="bpq-note" placeholder="Open space — say whatever feels right"></textarea>
             </div>
-            <button class="wizard-submit" onclick="bNext('bs-contact', null)">Continue</button>
+            <button class="btn-submit" onclick="bNext('bs-contact', null)">Continue</button>
           </div>
         </div>
 
         <div class="panel-step slide-right" id="bs-group-format">
           <button class="panel-back" onclick="bBack('bs-type')">← Back</button>
-          <p class="panel-eyebrow">Group Experience</p>
-          <p class="panel-title">How do you want<br>to experience this?</p>
+          <p class="eyebrow">Group Experience</p>
+          <p class="dialog-title">How do you want<br>to experience this?</p>
           <div class="choice-cards">
-            <button class="choice-card" onclick="bNext('bs-group-q','Performance — Watch Only')">
-              <div><div class="choice-card-name">Performance</div><div class="choice-card-sub">Watch Sir Leo perform — no participation</div></div>
-              <span class="choice-arrow">→</span>
+            <button class="card-row card-row--flex" onclick="bNext('bs-group-q','Performance — Watch Only')">
+              <div><div class="card-row-label">Performance</div><div class="card-row-sub">Watch Sir Leo perform — no participation</div></div>
+              <span class="card-row-arrow">→</span>
             </button>
-            <button class="choice-card" onclick="bNext('bs-group-level','Interactive')">
-              <div><div class="choice-card-name">Interactive</div><div class="choice-card-sub">Watch and participate — choose your depth</div></div>
-              <span class="choice-arrow">→</span>
+            <button class="card-row card-row--flex" onclick="bNext('bs-group-level','Interactive')">
+              <div><div class="card-row-label">Interactive</div><div class="card-row-sub">Watch and participate — choose your depth</div></div>
+              <span class="card-row-arrow">→</span>
             </button>
           </div>
         </div>
 
         <div class="panel-step slide-right" id="bs-group-level">
           <button class="panel-back" onclick="bBack('bs-group-format')">← Back</button>
-          <p class="panel-eyebrow">Interactive Experience</p>
-          <p class="panel-title">How deep do you<br>want to go?</p>
+          <p class="eyebrow">Interactive Experience</p>
+          <p class="dialog-title">How deep do you<br>want to go?</p>
           <div class="choice-cards">
-            <button class="choice-card" onclick="bNext('bs-group-q','Interactive — Taste')">
-              <div><div class="choice-card-name">Taste</div><div class="choice-card-sub">A brief, introductory touch of the experience</div></div>
-              <span class="choice-arrow">→</span>
+            <button class="card-row card-row--flex" onclick="bNext('bs-group-q','Interactive — Taste')">
+              <div><div class="card-row-label">Taste</div><div class="card-row-sub">A brief, introductory touch of the experience</div></div>
+              <span class="card-row-arrow">→</span>
             </button>
-            <button class="choice-card" onclick="bNext('bs-group-q','Interactive — Semi-Immersive')">
-              <div><div class="choice-card-name">Semi-Immersive</div><div class="choice-card-sub">Deeper participation — you're in it</div></div>
-              <span class="choice-arrow">→</span>
+            <button class="card-row card-row--flex" onclick="bNext('bs-group-q','Interactive — Semi-Immersive')">
+              <div><div class="card-row-label">Semi-Immersive</div><div class="card-row-sub">Deeper participation — you're in it</div></div>
+              <span class="card-row-arrow">→</span>
             </button>
-            <button class="choice-card" onclick="bNext('bs-group-q','Interactive — Full Immersion')">
-              <div><div class="choice-card-name">Full Immersion</div><div class="choice-card-sub">As deep and wild as you desire</div></div>
-              <span class="choice-arrow">→</span>
+            <button class="card-row card-row--flex" onclick="bNext('bs-group-q','Interactive — Full Immersion')">
+              <div><div class="card-row-label">Full Immersion</div><div class="card-row-sub">As deep and wild as you desire</div></div>
+              <span class="card-row-arrow">→</span>
             </button>
           </div>
         </div>
 
         <div class="panel-step slide-right" id="bs-group-q">
           <button class="panel-back" onclick="bBack('bs-group-format')">← Back</button>
-          <p class="panel-eyebrow" id="bs-group-q-label"></p>
-          <p class="panel-title">A few things<br>Sir Leo needs to know.</p>
+          <p class="eyebrow" id="bs-group-q-label"></p>
+          <p class="dialog-title">A few things<br>Sir Leo needs to know.</p>
           <div class="wizard-form">
             <div class="form-field" id="bs-group-exp-wrap">
               <label class="form-label">Experience Level</label>
@@ -368,14 +368,14 @@
               <label class="form-label">Anything else you'd like Sir Leo to know?</label>
               <textarea class="form-textarea" id="bgq-note" placeholder="Open space — say whatever feels right"></textarea>
             </div>
-            <button class="wizard-submit" onclick="bNext('bs-contact', null)">Continue</button>
+            <button class="btn-submit" onclick="bNext('bs-contact', null)">Continue</button>
           </div>
         </div>
 
         <div class="panel-step slide-right" id="bs-perf-q">
           <button class="panel-back" onclick="bBack('bs-type')">← Back</button>
-          <p class="panel-eyebrow">Performance Booking</p>
-          <p class="panel-title">Tell Sir Leo<br>about your event.</p>
+          <p class="eyebrow">Performance Booking</p>
+          <p class="dialog-title">Tell Sir Leo<br>about your event.</p>
           <div class="wizard-form">
             <div class="form-field">
               <label class="form-label">Event Type</label>
@@ -400,14 +400,14 @@
               <label class="form-label">Anything else you'd like Sir Leo to know?</label>
               <textarea class="form-textarea" id="bperfq-note" placeholder="Vision, vibe, expectations..."></textarea>
             </div>
-            <button class="wizard-submit" onclick="bNext('bs-contact', null)">Continue</button>
+            <button class="btn-submit" onclick="bNext('bs-contact', null)">Continue</button>
           </div>
         </div>
 
         <div class="panel-step slide-right" id="bs-workshop-q">
           <button class="panel-back" onclick="bBack('bs-type')">← Back</button>
-          <p class="panel-eyebrow">Workshop / Education</p>
-          <p class="panel-title">Let's build<br>the right experience.</p>
+          <p class="eyebrow">Workshop / Education</p>
+          <p class="dialog-title">Let's build<br>the right experience.</p>
           <div class="wizard-form">
             <div class="form-field">
               <label class="form-label">Who is this for?</label>
@@ -431,14 +431,14 @@
               <label class="form-label">Anything else you'd like Sir Leo to know?</label>
               <textarea class="form-textarea" id="bwq-note" placeholder="Topics of interest, goals, questions..."></textarea>
             </div>
-            <button class="wizard-submit" onclick="bNext('bs-contact', null)">Continue</button>
+            <button class="btn-submit" onclick="bNext('bs-contact', null)">Continue</button>
           </div>
         </div>
 
         <div class="panel-step slide-right" id="bs-contact">
           <button class="panel-back" onclick="bBack(null)">← Back</button>
-          <p class="panel-eyebrow" id="bs-contact-label"></p>
-          <p class="panel-title">Your details.</p>
+          <p class="eyebrow" id="bs-contact-label"></p>
+          <p class="dialog-title">Your details.</p>
           <div class="wizard-form">
             <div class="form-field">
               <label class="form-label">Name</label>
@@ -452,17 +452,17 @@
               <label class="form-label">Email</label>
               <input class="form-input" id="book-email" type="email" placeholder="Your email" />
             </div>
-            <button class="wizard-submit" onclick="bSubmit()">Submit Application</button>
+            <button class="btn-submit" onclick="bSubmit()">Submit Application</button>
           </div>
         </div>
 
         <div class="panel-step slide-right" id="bs-confirm">
-          <div class="wizard-confirm">
-            <div class="wizard-confirm-mark">✦</div>
-            <p class="wizard-confirm-title">Application received.</p>
-            <p class="wizard-confirm-sub">Sir Leo will be in touch.<br>Consider carefully — not all are chosen.</p>
+          <div class="confirm">
+            <div class="confirm-mark">✦</div>
+            <p class="confirm-title">Application received.</p>
+            <p class="confirm-sub">Sir Leo will be in touch.<br>Consider carefully — not all are chosen.</p>
             <a href="https://calendly.com/PLACEHOLDER" target="_blank" rel="noopener" class="wizard-confirm-sms sl-calendly">Book Your Consultation Call →</a>
-            <a href="#" id="bs-sms-btn" class="wizard-confirm-sms" style="margin-top:8px; border-color:rgba(155,32,32,0.35); color:var(--muted);">Text Sir Leo Now →</a>
+            <a href="#" id="bs-sms-btn" class="confirm-action" style="margin-top:8px; border-color:rgba(155,32,32,0.35); color:var(--muted);">Text Sir Leo Now →</a>
           </div>
         </div>
 
@@ -471,38 +471,38 @@
   </div>
 
   <!-- Collaborate panel -->
-  <div class="panel-overlay" id="panel-collab" onclick="handlePanelClick(event, 'panel-collab')">
-    <div class="panel" style="overflow-y:auto; max-height:92vh;">
-      <button class="panel-close" onclick="closeCollabPanel()">Close</button>
+  <div class="dialog-overlay" id="panel-collab" onclick="handlePanelClick(event, 'panel-collab')">
+    <div class="dialog" style="overflow-y:auto; max-height:92vh;">
+      <button class="dialog-close" onclick="closeCollabPanel()">Close</button>
       <div class="panel-steps">
 
         <div class="panel-step active" id="cs-type">
-          <p class="panel-eyebrow">Join the World</p>
-          <p class="panel-title">What role do you<br>play in this?</p>
+          <p class="eyebrow">Join the World</p>
+          <p class="dialog-title">What role do you<br>play in this?</p>
           <div class="panel-options">
             <a href="#" class="panel-option" onclick="cNext('cs-sub-q','Service Submissive'); return false;">
-              <div><div class="panel-option-label">Service Submissive</div><div class="panel-option-sub">Dedicated · Discreet · Devoted</div></div>
-              <span class="panel-option-arrow">→</span>
+              <div><div class="card-row-label">Service Submissive</div><div class="card-row-sub">Dedicated · Discreet · Devoted</div></div>
+              <span class="card-row-arrow">→</span>
             </a>
             <a href="#" class="panel-option" onclick="cNext('cs-model-q','Model / Dancer'); return false;">
-              <div><div class="panel-option-label">Model / Dancer</div><div class="panel-option-sub">Performance & event talent</div></div>
-              <span class="panel-option-arrow">→</span>
+              <div><div class="card-row-label">Model / Dancer</div><div class="card-row-sub">Performance & event talent</div></div>
+              <span class="card-row-arrow">→</span>
             </a>
             <a href="#" class="panel-option" onclick="cNext('cs-photo-q','Photographer / Videographer'); return false;">
-              <div><div class="panel-option-label">Photographer / Videographer</div><div class="panel-option-sub">Capture the world of Sir Leo</div></div>
-              <span class="panel-option-arrow">→</span>
+              <div><div class="card-row-label">Photographer / Videographer</div><div class="card-row-sub">Capture the world of Sir Leo</div></div>
+              <span class="card-row-arrow">→</span>
             </a>
             <a href="#" class="panel-option" onclick="cNext('cs-creator-q','Content Creator'); return false;">
-              <div><div class="panel-option-label">Content Creator</div><div class="panel-option-sub">Collab · Co-create · Amplify</div></div>
-              <span class="panel-option-arrow">→</span>
+              <div><div class="card-row-label">Content Creator</div><div class="card-row-sub">Collab · Co-create · Amplify</div></div>
+              <span class="card-row-arrow">→</span>
             </a>
           </div>
         </div>
 
         <div class="panel-step slide-right" id="cs-sub-q">
           <button class="panel-back" onclick="cBack('cs-type')">← Back</button>
-          <p class="panel-eyebrow">Service Submissive</p>
-          <p class="panel-title">Tell Sir Leo<br>about yourself.</p>
+          <p class="eyebrow">Service Submissive</p>
+          <p class="dialog-title">Tell Sir Leo<br>about yourself.</p>
           <div class="wizard-form">
             <div class="form-field">
               <label class="form-label">What draws you to serving Sir Leo?</label>
@@ -525,14 +525,14 @@
               <label class="form-label">Anything else you'd like Sir Leo to know?</label>
               <textarea class="form-textarea" id="csub-note" placeholder="Open space"></textarea>
             </div>
-            <button class="wizard-submit" onclick="cNext('cs-contact', null)">Continue</button>
+            <button class="btn-submit" onclick="cNext('cs-contact', null)">Continue</button>
           </div>
         </div>
 
         <div class="panel-step slide-right" id="cs-model-q">
           <button class="panel-back" onclick="cBack('cs-type')">← Back</button>
-          <p class="panel-eyebrow">Model / Dancer</p>
-          <p class="panel-title">Show Sir Leo<br>what you bring.</p>
+          <p class="eyebrow">Model / Dancer</p>
+          <p class="dialog-title">Show Sir Leo<br>what you bring.</p>
           <div class="wizard-form">
             <div class="form-field">
               <label class="form-label">Social handle or portfolio link</label>
@@ -551,14 +551,14 @@
               <label class="form-label">Anything else you'd like Sir Leo to know?</label>
               <textarea class="form-textarea" id="cmod-note" placeholder="Experience, availability, vision..."></textarea>
             </div>
-            <button class="wizard-submit" onclick="cNext('cs-contact', null)">Continue</button>
+            <button class="btn-submit" onclick="cNext('cs-contact', null)">Continue</button>
           </div>
         </div>
 
         <div class="panel-step slide-right" id="cs-photo-q">
           <button class="panel-back" onclick="cBack('cs-type')">← Back</button>
-          <p class="panel-eyebrow">Photographer / Videographer</p>
-          <p class="panel-title">Show Sir Leo<br>your eye.</p>
+          <p class="eyebrow">Photographer / Videographer</p>
+          <p class="dialog-title">Show Sir Leo<br>your eye.</p>
           <div class="wizard-form">
             <div class="form-field">
               <label class="form-label">Portfolio or social handle</label>
@@ -577,14 +577,14 @@
               <label class="form-label">Anything else you'd like Sir Leo to know?</label>
               <textarea class="form-textarea" id="cphoto-note" placeholder="Style, experience, availability..."></textarea>
             </div>
-            <button class="wizard-submit" onclick="cNext('cs-contact', null)">Continue</button>
+            <button class="btn-submit" onclick="cNext('cs-contact', null)">Continue</button>
           </div>
         </div>
 
         <div class="panel-step slide-right" id="cs-creator-q">
           <button class="panel-back" onclick="cBack('cs-type')">← Back</button>
-          <p class="panel-eyebrow">Content Creator</p>
-          <p class="panel-title">Let's build<br>something together.</p>
+          <p class="eyebrow">Content Creator</p>
+          <p class="dialog-title">Let's build<br>something together.</p>
           <div class="wizard-form">
             <div class="form-field">
               <label class="form-label">Platform(s) & handle(s)</label>
@@ -598,14 +598,14 @@
               <label class="form-label">Anything else you'd like Sir Leo to know?</label>
               <textarea class="form-textarea" id="ccreate-note" placeholder="Open space"></textarea>
             </div>
-            <button class="wizard-submit" onclick="cNext('cs-contact', null)">Continue</button>
+            <button class="btn-submit" onclick="cNext('cs-contact', null)">Continue</button>
           </div>
         </div>
 
         <div class="panel-step slide-right" id="cs-contact">
           <button class="panel-back" onclick="cBack(null)">← Back</button>
-          <p class="panel-eyebrow" id="cs-contact-label"></p>
-          <p class="panel-title">Your details.</p>
+          <p class="eyebrow" id="cs-contact-label"></p>
+          <p class="dialog-title">Your details.</p>
           <div class="wizard-form">
             <div class="form-field">
               <label class="form-label">Name</label>
@@ -619,17 +619,17 @@
               <label class="form-label">Email</label>
               <input class="form-input" id="collab-email" type="email" placeholder="Your email" />
             </div>
-            <button class="wizard-submit" onclick="cSubmit()">Submit</button>
+            <button class="btn-submit" onclick="cSubmit()">Submit</button>
           </div>
         </div>
 
         <div class="panel-step slide-right" id="cs-confirm">
-          <div class="wizard-confirm">
-            <div class="wizard-confirm-mark">✦</div>
-            <p class="wizard-confirm-title">Submission received.</p>
-            <p class="wizard-confirm-sub">Sir Leo will review and be in touch.</p>
+          <div class="confirm">
+            <div class="confirm-mark">✦</div>
+            <p class="confirm-title">Submission received.</p>
+            <p class="confirm-sub">Sir Leo will review and be in touch.</p>
             <a href="https://calendly.com/PLACEHOLDER" target="_blank" rel="noopener" class="wizard-confirm-sms sl-calendly">Book Your Consultation Call →</a>
-            <a href="#" id="cs-sms-btn" class="wizard-confirm-sms" style="margin-top:8px; border-color:rgba(155,32,32,0.35); color:var(--muted);">Text Sir Leo Now →</a>
+            <a href="#" id="cs-sms-btn" class="confirm-action" style="margin-top:8px; border-color:rgba(155,32,32,0.35); color:var(--muted);">Text Sir Leo Now →</a>
           </div>
         </div>
 
@@ -638,14 +638,14 @@
   </div>
 
   <!-- Contact modal -->
-  <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
-    <div class="modal">
-      <button class="modal-close" onclick="closeModal()">Close</button>
-      <p class="modal-eyebrow">Step Inside</p>
-      <h2 class="modal-title">Stay in the world<br>of Sir Leo.</h2>
-      <p class="modal-sub">Leave your details. I'll be in touch.</p>
+  <div class="dialog-overlay dialog--sm" id="modalOverlay" onclick="handleOverlayClick(event)">
+    <div class="dialog dialog--sm">
+      <button class="dialog-close" onclick="closeModal()">Close</button>
+      <p class="eyebrow">Step Inside</p>
+      <h2 class="dialog-title">Stay in the world<br>of Sir Leo.</h2>
+      <p class="dialog-sub">Leave your details. I'll be in touch.</p>
 
-      <div class="modal-form" id="modalForm">
+      <div class="dialog-form" id="modalForm">
         <div class="form-field">
           <label class="form-label">Name</label>
           <input class="form-input" id="modal-name" type="text" placeholder="Your name" />
@@ -670,10 +670,10 @@
             <div class="check-item" style="margin-top:6px;border-top:1px solid rgba(180,145,90,0.15);padding-top:8px;"><input type="checkbox" id="int-all" onchange="toggleAllInterests(this)"><label for="int-all">All of the above</label></div>
           </div>
         </div>
-        <button class="form-submit" onclick="submitForm()">Enter the World</button>
+        <button class="btn-submit" onclick="submitForm()">Enter the World</button>
       </div>
 
-      <div class="modal-confirm" id="modalConfirm">
+      <div class="confirm" id="modalConfirm">
         <div class="confirm-mark">✦</div>
         <p class="confirm-title">You're inside.</p>
         <p class="confirm-sub">Expect to hear from Sir Leo.</p>
