@@ -41,6 +41,17 @@ function applyRemoteConfig() {
   _setText('sl-roles',   SL.roles);
   _setText('sl-location', SL.location);
 
+  // Social + contact links
+  const _setHref = (id, val) => { if (!val) return; const el = document.getElementById(id); if (el) el.href = val; };
+  _setHref('sl-ig-link',    SL.instagram);
+  _setHref('sl-fb-link',    SL.facebook);
+  _setHref('sl-fl-link',    SL.fetlife);
+  if (SL.email) _setHref('sl-email-link', 'mailto:' + SL.email);
+  if (SL.phone) {
+    const phoneEl = document.getElementById('sl-phone-display');
+    if (phoneEl) phoneEl.textContent = SL.phoneDisplay || SL.phone;
+  }
+
   // Calendly links
   if (SL.calendlyUrl) {
     document.querySelectorAll('.sl-calendly').forEach(a => a.href = SL.calendlyUrl);
