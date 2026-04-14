@@ -191,6 +191,10 @@
             <label>Ref Person <span style="opacity:0.5;font-size:9px">(?ref=)</span></label>
             <input type="text" id="qr-ref" placeholder="e.g. janet" oninput="qrUpdate()" />
           </div>
+          <div class="qr-field">
+            <label>Pre-fill Name <span style="opacity:0.5;font-size:9px">(?name=)</span></label>
+            <input type="text" id="qr-name" placeholder="e.g. Janet" oninput="qrUpdate()" />
+          </div>
           <div class="qr-url-preview" id="qr-url-preview"></div>
           <div class="qr-actions">
             <button class="qr-btn primary" onclick="qrDownload()">Download PNG</button>
@@ -268,9 +272,11 @@
     const base = document.getElementById('qr-base').value.trim();
     const src  = document.getElementById('qr-src').value.trim();
     const ref  = document.getElementById('qr-ref').value.trim();
+    const name = document.getElementById('qr-name').value.trim();
     const params = [];
-    if (src) params.push('src=' + encodeURIComponent(src));
-    if (ref) params.push('ref=' + encodeURIComponent(ref));
+    if (src)  params.push('src='  + encodeURIComponent(src));
+    if (ref)  params.push('ref='  + encodeURIComponent(ref));
+    if (name) params.push('name=' + encodeURIComponent(name));
     return params.length ? base + '?' + params.join('&') : base;
   }
 

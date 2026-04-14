@@ -265,6 +265,14 @@ function logSocialTap(platform) {
   const refParam = params.get('ref');
   if (srcParam) localStorage.setItem('sl_source', srcParam);
   if (refParam) localStorage.setItem('sl_ref', refParam);
+
+  // Pre-fill contact fields from URL params (?name=, ?phone=, ?email=)
+  const nameParam  = params.get('name');
+  const phoneParam = params.get('phone');
+  const emailParam = params.get('email');
+  if (nameParam)  localStorage.setItem('sl_name',  nameParam);
+  if (phoneParam) localStorage.setItem('sl_phone', phoneParam);
+  if (emailParam) localStorage.setItem('sl_email', emailParam);
   const source = localStorage.getItem('sl_source') || '';
   const ref    = localStorage.getItem('sl_ref') || '';
 
