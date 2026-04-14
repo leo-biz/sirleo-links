@@ -371,6 +371,10 @@ _interestIds.forEach(id => {
 if (!localStorage.getItem('sl_submitted')) setTimeout(openModal, 1500);
 
 
+// Version tag
+const _vEl = document.getElementById('sl-version');
+if (_vEl) _vEl.textContent = 'v' + (SL.version || '—');
+
 // Build Text Sir Leo link with name + interest
 function updateTextLink() {
   const name     = localStorage.getItem('sl_name');
