@@ -1,4 +1,66 @@
-// Config loaded from /config.js — edit that file, not here
+// Config loaded from /config.js (fallbacks) + Identity/Config sheets (live values)
+
+// ─── Remote config — fetch Identity + Config sheets, merge into SL ───────────
+(function loadRemoteConfig() {
+  const base = SL.sheetUrl;
+  Promise.all([
+    fetch(base + '?action=identity').then(r => r.json()).catch(() => ({})),
+    fetch(base + '?action=config').then(r => r.json()).catch(() => ({}))
+  ]).then(([identity, config]) => {
+    Object.assign(SL, identity, config);
+    // Booleans arrive as strings from the sheet
+    SL.bookingOpen = config.bookingOpen !== 'false' && config.bookingOpen !== false;
+    SL.collabOpen  = config.collabOpen  !== 'false' && config.collabOpen  !== false;
+    applyRemoteConfig();
+  });
+})();
+
+function _setText(id, val) {
+  if (!val) return;
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+function applyRemoteConfig() {
+  // Hero
+  _setText('sl-tagline', SL.heroTagline || SL.tagline);
+  _setText('sl-name',    SL.nameDisplay);
+  _setText('sl-roles',   SL.roles);
+  _setText('sl-location', SL.location);
+
+  // Calendly links
+  if (SL.calendlyUrl) {
+    document.querySelectorAll('.sl-calendly').forEach(a => a.href = SL.calendlyUrl);
+  }
+
+  // Booking open/closed
+  if (!SL.bookingOpen) {
+    const card = document.getElementById('card-book');
+    if (card) {
+      card.classList.add('sl-closed');
+      const sub = card.querySelector('.expand-sub');
+      if (sub) sub.textContent = 'Bookings currently closed';
+      const hdr = card.querySelector('.expand-header');
+      if (hdr) hdr.onclick = null;
+    }
+  }
+
+  // Collab open/closed
+  if (!SL.collabOpen) {
+    const card = document.getElementById('card-collab');
+    if (card) {
+      card.classList.add('sl-closed');
+      const sub = card.querySelector('.expand-sub');
+      if (sub) sub.textContent = 'Collaborations currently closed';
+      const hdr = card.querySelector('.expand-header');
+      if (hdr) hdr.onclick = null;
+    }
+  }
+
+  // Refresh text link with updated name
+  updateTextLink();
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 // Custom cursor
 const cursor = document.getElementById('cursor');

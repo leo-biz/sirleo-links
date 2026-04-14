@@ -327,6 +327,7 @@ body::before {
   transition: border-color 0.3s ease;
 }
 .expand-card.open { border-color: rgba(180,145,90,0.35); }
+.expand-card.sl-closed { opacity: 0.4; pointer-events: none; }
 
 .expand-header {
   display: flex;

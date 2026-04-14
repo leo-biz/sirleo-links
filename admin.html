@@ -114,20 +114,33 @@
 
 <script>
   // ── Auth ──────────────────────────────────────────────────────────────────
-  // Hash of the admin password — plaintext never stored anywhere in code.
-  // To change password: sha256 the new one and update this constant.
-  const PASS_HASH = '834fe885b8fc5fe3f08273cdfd5a979bd237c743d3a28bfeae22237e964b91ff';
-  const PASS_KEY  = 'sl_admin_auth';
+  // Hash is stored in the Config sheet — never hardcoded here.
+  // To change: update adminPassHash row in the Config sheet.
+  const PASS_KEY = 'sl_admin_auth';
+  let   _passHash = null;
+
+  fetch(SL.sheetUrl + '?action=config')
+    .then(r => r.json())
+    .then(cfg => { _passHash = cfg.adminPassHash || null; })
+    .catch(() => {});
 
   async function checkPw() {
+    if (!_passHash) {
+      const err = document.getElementById('gate-err');
+      err.textContent = 'Config unavailable — try again';
+      err.style.display = 'block';
+      setTimeout(() => err.style.display = 'none', 2500);
+      return;
+    }
     const val = document.getElementById('pw-input').value;
     const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(val));
     const hex = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-    if (hex === PASS_HASH) {
+    if (hex === _passHash) {
       sessionStorage.setItem(PASS_KEY, '1');
       showDash();
     } else {
       const err = document.getElementById('gate-err');
+      err.textContent = 'Incorrect password';
       err.style.display = 'block';
       setTimeout(() => err.style.display = 'none', 2000);
     }

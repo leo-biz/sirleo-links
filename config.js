@@ -1,30 +1,33 @@
-// ─── Sir Leo — Site Config ───────────────────────────────────────────────────
-// Update this file when contact info, URLs, or social handles change.
-// All other files reference these values — never hardcode them elsewhere.
+// ─── Sir Leo — Bootstrap Config ──────────────────────────────────────────────
+// sheetUrl is the only required value — everything else is a fallback used
+// when the sheet is unreachable. Sheet values always win at runtime.
 
 const SL = {
-  // Contact
+  // Sheet — never overridden (it's the source itself)
+  sheetUrl:     'https://script.google.com/macros/s/AKfycbzTBaQIJ52YRMwBr6xe8_UlkR6Z9U4Una1eEuXtKePT94dXf-t4QpRJrQ8z88nUPsqhTg/exec',
+
+  // Identity fallbacks
+  name:         'Sir Leo',
+  nameDisplay:  'SIR LEO',
   phone:        '+17732348238',
   phoneDisplay: '+1 (773) 234-8238',
   email:        'sir.black.leo@gmail.com',
-
-  // Booking / scheduling
-  calendly:     'https://calendly.com/PLACEHOLDER',
-
-  // Site
+  tagline:      'Chicago\'s Archetype of Refined Dominance',
+  roles:        'Dominant · Fire Artist · Educator',
+  location:     'Chicago · Available Nationally',
   siteUrl:      'https://sirleo-links.netlify.app',
-
-  // Socials
   instagram:    'https://instagram.com/sir_black_leo',
   facebook:     'https://www.facebook.com/sirblackleo',
   fetlife:      'https://fetlife.com/Sir__Leo',
-  x:            '', // placeholder — add when ready
-
-  // Google Forms ID
+  x:            '',
   gformId:      '1FAIpQLSfx5oPMT4IMTRQooyo9VIZMAEdrlRKyskOe3cPY7_4WaSaILA',
 
-  // Google Sheet Web App URL
-  sheetUrl:     'https://script.google.com/macros/s/AKfycbzTBaQIJ52YRMwBr6xe8_UlkR6Z9U4Una1eEuXtKePT94dXf-t4QpRJrQ8z88nUPsqhTg/exec',
-
+  // Config fallbacks
+  calendlyUrl:  '',
+  eventName:    '',
+  eventDate:    '',
+  bookingOpen:  true,
+  collabOpen:   true,
+  heroTagline:  '',
 };
 // ─────────────────────────────────────────────────────────────────────────────
