@@ -318,10 +318,12 @@ function submitForm() {
     setTimeout(() => el.style.borderColor = '', 2000);
     return;
   }
-  const interests = ['int-curious','int-session','int-group','int-event','int-collab','int-learn']
-    .filter(id => document.getElementById(id).checked)
-    .map(id => document.querySelector('label[for="'+id+'"]').textContent)
-    .join(', ') || 'Stay Connected';
+  const _allIds = ['int-curious','int-session','int-group','int-event','int-collab','int-learn'];
+  const interests = document.getElementById('int-all').checked
+    ? 'All of the above'
+    : _allIds.filter(id => document.getElementById(id).checked)
+        .map(id => document.querySelector('label[for="'+id+'"]').textContent)
+        .join(', ') || 'Stay Connected';
   saveContact(name, phone, email, interests);
   submitToGoogleForm(name, phone, email, interests, '');
   logContact(name, phone, email, interests, '', '');
@@ -332,6 +334,19 @@ function submitForm() {
   document.getElementById('modalConfirm').classList.add('show');
   setTimeout(closeModal, 2200);
 }
+
+// All of the above checkbox
+const _interestIds = ['int-curious','int-session','int-group','int-event','int-collab','int-learn'];
+function toggleAllInterests(el) {
+  _interestIds.forEach(id => { document.getElementById(id).checked = el.checked; });
+}
+// Uncheck "All of the above" if any individual box is unchecked
+_interestIds.forEach(id => {
+  document.getElementById(id).addEventListener('change', () => {
+    const allChecked = _interestIds.every(i => document.getElementById(i).checked);
+    document.getElementById('int-all').checked = allChecked;
+  });
+});
 
 // Auto-open after 1.5s — skip if already submitted
 if (!localStorage.getItem('sl_submitted')) setTimeout(openModal, 1500);
