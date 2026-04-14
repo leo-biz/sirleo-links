@@ -1,5 +1,14 @@
 // Config loaded from /config.js (fallbacks) + Identity/Config sheets (live values)
 // Shared functions (saveVCard, ICS, remote config) are in /js/shared.js
+
+// ─── Brightness toggle ────────────────────────────────────────────────────────
+(function() {
+  if (localStorage.getItem('sl_hc') === '1') document.body.classList.add('high-contrast');
+})();
+function toggleBrightness() {
+  const on = document.body.classList.toggle('high-contrast');
+  localStorage.setItem('sl_hc', on ? '1' : '0');
+}
 const cursor = document.getElementById('cursor');
 const ring = document.getElementById('cursorRing');
 let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
