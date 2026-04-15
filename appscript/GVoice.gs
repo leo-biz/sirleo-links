@@ -16,16 +16,25 @@ function setupGVoiceTrigger() {
 
 // ── Main watcher ──────────────────────────────────────────────────────────────
 function watchGVoiceEmails() {
+  // Build a set of already-processed message IDs from the Messages sheet
+  const processed = new Set(
+    getRows(SHEET.MESSAGES)
+      .map(r => String(r[MSG.MESSAGE_ID]))
+      .filter(Boolean)
+  );
+
   const threads = GmailApp.search('label:Sir-Leo-Text is:unread', 0, 25);
   threads.forEach(thread => {
     thread.getMessages()
       .filter(m => m.isUnread())
       .forEach(m => {
+        const id = m.getId();
+        if (processed.has(id)) { m.markRead(); return; }
         try {
           _processGVoiceMessage(m);
           m.markRead();
         } catch(e) {
-          Logger.log('GVoice error on msg ' + m.getId() + ': ' + e.message);
+          Logger.log('GVoice error on msg ' + id + ': ' + e.message);
         }
       });
   });
