@@ -536,6 +536,12 @@
     const recentEvents = (d.recentEvents || []).slice(0,20).map(e =>
       `<tr>
         <td style="color:var(--muted)">${fmt(e.timestamp)}</td>
+        <td style="color:var(--muted);font-size:11px">${(e.sessionId||'').slice(0,12)}</td>
+        <td>${e.name||'—'}</td>
+        <td style="color:var(--muted)">${e.ip||'—'}</td>
+        <td>${e.device||'—'}</td>
+        <td>${e.os||'—'}</td>
+        <td>${e.browser||'—'}</td>
         <td>${e.event||'—'}</td>
         <td style="color:var(--muted)">${e.value||''}</td>
       </tr>`).join('');
@@ -579,7 +585,7 @@
       <div class="section">
         <div class="section-title">Event Log</div>
         ${recentEvents
-          ? `<table class="tbl"><thead><tr><th>When</th><th>Event</th><th>Value</th></tr></thead><tbody>${recentEvents}</tbody></table>`
+          ? `<table class="tbl"><thead><tr><th>When</th><th>Session</th><th>Name</th><th>IP</th><th>Device</th><th>OS</th><th>Browser</th><th>Event</th><th>Value</th></tr></thead><tbody>${recentEvents}</tbody></table>`
           : none}
       </div>
     `;

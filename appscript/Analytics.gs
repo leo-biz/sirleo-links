@@ -49,9 +49,21 @@ function getSummary() {
     contacts:     cRows.slice(-15).reverse().map(r => ({
       timestamp: r[0], name: r[2], phone: r[3], email: r[4], interest: r[5]
     })),
-    recentEvents: eRows.slice(-20).reverse().map(r => ({
-      timestamp: r[0], event: r[2], value: r[3]
-    }))
+    recentEvents: (function() {
+      const sessBySid = {};
+      sRows.forEach(r => { sessBySid[r[SESS.SID]] = { ip: r[SESS.IP], device: r[SESS.DEVICE], os: r[SESS.OS], browser: r[SESS.BROWSER] }; });
+      const nameBySid = {};
+      cRows.forEach(r => { nameBySid[r[1]] = r[2]; });
+      return eRows.slice(-20).reverse().map(r => {
+        const sid  = r[1];
+        const sess = sessBySid[sid] || {};
+        return {
+          timestamp: r[0], sessionId: sid, event: r[2], value: r[3],
+          name: nameBySid[sid] || '', ip: sess.ip || '', device: sess.device || '',
+          os: sess.os || '', browser: sess.browser || ''
+        };
+      });
+    })()
   };
 }
 
