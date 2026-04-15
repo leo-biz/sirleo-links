@@ -3,7 +3,7 @@
 // when the sheet is unreachable. Sheet values always win at runtime.
 
 const SL = {
-  version:  '46',
+  version:  '47',
   // Sheet — never overridden (it's the source itself)
   sheetUrl:     'https://script.google.com/macros/s/AKfycbwgB8aP8zvl9eGPraRloNisHhqKPag_eHlYKtbhMHMjn4TgdRzJEPJN-eWqQSb_n1OSIg/exec',
 
@@ -24,7 +24,9 @@ const SL = {
   gformId:      '1FAIpQLSfx5oPMT4IMTRQooyo9VIZMAEdrlRKyskOe3cPY7_4WaSaILA',
 
   // Config fallbacks
-  calendlyUrl:  '',
+  calendlyUrl:    '',   // e.g. https://calendly.com/sir-leo/consultation
+  intakeFormUrl:  '',   // intake form link sent after booking
+  testimonialUrl: '',   // testimonial form link sent post-session
   eventName:    '',
   eventDate:    '',
   bookingOpen:  true,

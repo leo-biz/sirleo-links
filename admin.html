@@ -122,6 +122,36 @@
     .tl-ev { color: var(--text); }
     .tl-val { color: var(--gold); font-size: 11px; }
 
+    /* Pipeline */
+    .pipeline { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 8px; }
+    @media (max-width: 800px) { .pipeline { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .pipeline { grid-template-columns: 1fr; } }
+    .pipe-col-title { font-family:'Cinzel',serif; font-size:10px; letter-spacing:0.2em;
+      color:var(--gold); text-transform:uppercase; margin-bottom:10px; padding-bottom:8px;
+      border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+    .pipe-count { background:var(--surface); border:1px solid var(--border); color:var(--muted);
+      width:20px; height:20px; display:flex; align-items:center; justify-content:center;
+      font-size:11px; border-radius:50%; flex-shrink:0; }
+    .pipe-card { background:var(--surface); border:1px solid var(--border); padding:12px;
+      margin-bottom:8px; transition:border-color 0.2s; }
+    .pipe-card:hover { border-color:rgba(180,145,90,0.35); }
+    .pipe-name { font-size:13px; font-weight:400; color:var(--text); margin-bottom:3px; }
+    .pipe-interest { font-size:11px; color:var(--muted); margin-bottom:8px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .pipe-tags { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:10px; }
+    .pipe-tag { font-size:10px; padding:2px 6px; border:1px solid var(--border); color:var(--muted); }
+    .pipe-tag.gold  { border-color:rgba(180,145,90,0.4); color:var(--gold); }
+    .pipe-tag.green { border-color:rgba(76,175,125,0.4); color:#4caf7d; }
+    .pipe-tag.dim   { border-color:rgba(255,255,255,0.08); }
+    .pipe-actions { display:flex; gap:4px; flex-wrap:wrap; }
+    .pipe-btn { background:none; border:1px solid var(--border); color:var(--muted);
+      padding:5px 8px; font-size:10px; font-family:'Cinzel',serif; letter-spacing:0.08em;
+      cursor:pointer; transition:border-color 0.2s,color 0.2s; }
+    .pipe-btn:hover { border-color:var(--gold); color:var(--gold); }
+    .pipe-btn.primary { border-color:rgba(180,145,90,0.4); color:var(--gold); }
+    .pipe-btn.danger  { border-color:rgba(155,32,32,0.35); color:rgba(192,57,43,0.7); }
+    .pipe-next { font-size:10px; color:rgba(240,232,216,0.25); margin-top:6px; }
+
     /* QR generator */
     .qr-section { margin-bottom: 40px; }
     .qr-body { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: start; }
@@ -210,6 +240,15 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Pipeline -->
+    <div class="section" id="pipeline-section">
+      <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;">
+        Pipeline
+        <button class="refresh-btn" onclick="loadPipeline()">Refresh</button>
+      </div>
+      <div id="pipeline-body"><div class="loading">Loading…</div></div>
     </div>
 
     <div id="dash-body"><div class="loading">Loading data…</div></div>
@@ -325,7 +364,7 @@
 
   // init QR after dash is shown
   const _origShowDash = showDash;
-  showDash = function() { _origShowDash(); qrInit(); };
+  showDash = function() { _origShowDash(); qrInit(); loadPipeline(); };
 
   // ── Data ──────────────────────────────────────────────────────────────────
   function loadData() {
@@ -530,6 +569,76 @@
       return new Date(iso).toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
     } catch { return iso; }
   }
+
+  // ── Pipeline ───────────────────────────────────────────────────────────────
+  const PIPE_PHASES = {
+    1: { title: 'Get to Call',    next: 'markConsulted', nextLabel: '✓ Consulted' },
+    2: { title: 'Get Booked',     next: 'markBooked',    nextLabel: '✓ Booked' },
+    3: { title: 'Pre-Session',    next: 'markSession',   nextLabel: '✓ Session Done' },
+    4: { title: 'Post-Session',   next: 'markComplete',  nextLabel: '✓ Complete' }
+  };
+
+  function loadPipeline() {
+    document.getElementById('pipeline-body').innerHTML = '<div class="loading">Loading…</div>';
+    fetch(SL.sheetUrl + '?action=pipeline')
+      .then(r => r.json())
+      .then(renderPipeline)
+      .catch(() => {
+        document.getElementById('pipeline-body').innerHTML =
+          '<div class="error-msg">Could not load pipeline.</div>';
+      });
+  }
+
+  function renderPipeline(rows) {
+    const cols = { 1:[], 2:[], 3:[], 4:[] };
+    (rows || []).filter(r => r.status !== 'complete').forEach(r => {
+      const p = parseInt(r.phase) || 1;
+      if (cols[p]) cols[p].push(r);
+    });
+
+    const html = Object.entries(PIPE_PHASES).map(([phase, cfg]) => {
+      const items = cols[phase] || [];
+      const cards = items.map(r => {
+        const statusTag = r.status === 'waiting'
+          ? '<span class="pipe-tag dim">Waiting</span>'
+          : r.status === 'paused'
+          ? '<span class="pipe-tag dim">Paused</span>'
+          : '<span class="pipe-tag green">Active</span>';
+        const srcTag = r.source ? `<span class="pipe-tag gold">${r.source}</span>` : '';
+        const nextStr = r.nextDate ? 'Next: ' + fmtShort(r.nextDate) : '';
+        const pauseBtn = r.status === 'paused'
+          ? `<button class="pipe-btn" onclick="pipeAction('resumeSeq','${r.id}')">Resume</button>`
+          : `<button class="pipe-btn" onclick="pipeAction('pauseSeq','${r.id}')">Pause</button>`;
+
+        return `<div class="pipe-card">
+          <div class="pipe-name">${r.name || 'Unknown'}</div>
+          <div class="pipe-interest">${r.interest || '—'}</div>
+          <div class="pipe-tags">${statusTag}${srcTag}</div>
+          <div class="pipe-actions">
+            <button class="pipe-btn primary" onclick="pipeAction('${cfg.next}','${r.id}')">${cfg.nextLabel}</button>
+            ${pauseBtn}
+            <button class="pipe-btn danger" onclick="pipeAction('markComplete','${r.id}')">✕</button>
+          </div>
+          ${nextStr ? `<div class="pipe-next">${nextStr}</div>` : ''}
+        </div>`;
+      }).join('') || '<div style="color:var(--muted);font-size:12px;padding:8px 0">Empty</div>';
+
+      return `<div class="pipe-col">
+        <div class="pipe-col-title">${cfg.title}<span class="pipe-count">${items.length}</span></div>
+        ${cards}
+      </div>`;
+    }).join('');
+
+    document.getElementById('pipeline-body').innerHTML = `<div class="pipeline">${html}</div>`;
+  }
+
+  function pipeAction(action, id) {
+    fetch(SL.sheetUrl + '?action=' + action + '&id=' + encodeURIComponent(id))
+      .then(r => r.json())
+      .then(res => { if (res.ok) loadPipeline(); else alert('Error: ' + (res.error||'unknown')); })
+      .catch(() => alert('Request failed'));
+  }
+
 </script>
 </body>
 </html>
