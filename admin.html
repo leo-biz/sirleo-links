@@ -357,17 +357,31 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
   // ── Auth ────────────────────────────────────────────────────────────────────
-  const PASS_KEY = 'sl_admin_auth';
-  let _passHash  = null;
+  const PASS_KEY      = 'sl_admin_auth';
+  const HASH_CACHE_KEY = 'sl_admin_hash';
+  const HASH_TTL_MS   = 24 * 60 * 60 * 1000; // 24 hours
+  let _passHash = null;
 
-  fetch(SL.sheetUrl + '?action=config')
-    .then(r => r.json())
-    .then(cfg => { _passHash = cfg.adminPassHash || null; })
-    .catch(() => {});
+  // Load hash from localStorage first (instant), then refresh from sheet in background
+  function _loadHash() {
+    const cached = _readCache(HASH_CACHE_KEY);
+    if (cached) _passHash = cached;
+    // always refresh in background so a changed password takes effect within 24h
+    fetchWithTimeout(SL.sheetUrl + '?action=config')
+      .then(r => r.json())
+      .then(cfg => {
+        if (cfg.adminPassHash) {
+          _passHash = cfg.adminPassHash;
+          _writeCache(HASH_CACHE_KEY, cfg.adminPassHash, HASH_TTL_MS);
+        }
+      })
+      .catch(() => {});
+  }
+  _loadHash();
 
   async function checkPw() {
     if (!_passHash) {
-      showErr('Config unavailable — try again', 2500);
+      showErr('Config loading — try again in a moment', 3000);
       return;
     }
     const val = document.getElementById('pw-input').value;
@@ -397,6 +411,47 @@
   }
 
   if (sessionStorage.getItem(PASS_KEY)) showDash();
+
+  // ── Cache helpers ────────────────────────────────────────────────────────────
+  function _writeCache(key, data, ttlMs) {
+    try { localStorage.setItem(key, JSON.stringify({ data, exp: Date.now() + ttlMs })); } catch(e) {}
+  }
+
+  function _readCache(key) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return null;
+      const { data, exp } = JSON.parse(raw);
+      return Date.now() < exp ? data : null;
+    } catch(e) { return null; }
+  }
+
+  // ── Fetch with timeout ───────────────────────────────────────────────────────
+  function fetchWithTimeout(url, ms = 12000) {
+    const ctrl = new AbortController();
+    const tid  = setTimeout(() => ctrl.abort(), ms);
+    return fetch(url, { signal: ctrl.signal }).finally(() => clearTimeout(tid));
+  }
+
+  // ── Stale-while-revalidate ───────────────────────────────────────────────────
+  // Shows cached data immediately, fetches fresh in background, re-renders on arrival
+  function swr(cacheKey, ttlMs, url, renderFn, loadingEl, errorMsg) {
+    const cached = _readCache(cacheKey);
+    if (cached) {
+      renderFn(cached);
+    } else {
+      document.getElementById(loadingEl).innerHTML = '<div class="loading">Loading…</div>';
+    }
+    fetchWithTimeout(SL.sheetUrl + url)
+      .then(r => r.json())
+      .then(data => {
+        _writeCache(cacheKey, data, ttlMs);
+        renderFn(data);
+      })
+      .catch(() => {
+        if (!cached) document.getElementById(loadingEl).innerHTML = `<div class="error-msg">${errorMsg}</div>`;
+      });
+  }
 
   // ── Nav ─────────────────────────────────────────────────────────────────────
   let _currentPage = 'overview';
@@ -449,14 +504,9 @@
 
   // ── Overview ─────────────────────────────────────────────────────────────────
   function loadOverview() {
-    document.getElementById('overview-body').innerHTML = '<div class="loading">Loading…</div>';
-    fetch(SL.sheetUrl + '?action=summary')
-      .then(r => r.json())
-      .then(renderOverview)
-      .catch(() => {
-        document.getElementById('overview-body').innerHTML =
-          '<div class="error-msg">Could not load data. Make sure the Apps Script GET handler is deployed.</div>';
-      });
+    swr('sl_cache_overview', 5 * 60 * 1000, '?action=summary',
+      renderOverview, 'overview-body',
+      'Could not load data. Make sure the Apps Script GET handler is deployed.');
   }
 
   function renderOverview(d) {
@@ -537,14 +587,8 @@
 
   // ── Sessions ─────────────────────────────────────────────────────────────────
   function loadSessions() {
-    document.getElementById('sess-body').innerHTML = '<div class="loading">Loading…</div>';
-    fetch(SL.sheetUrl + '?action=sessions&limit=40')
-      .then(r => r.json())
-      .then(renderSessions)
-      .catch(() => {
-        document.getElementById('sess-body').innerHTML =
-          '<div class="error-msg">Could not load sessions.</div>';
-      });
+    swr('sl_cache_sessions', 2 * 60 * 1000, '?action=sessions&limit=40',
+      renderSessions, 'sess-body', 'Could not load sessions.');
   }
 
   function renderSessions(sessions) {
@@ -591,14 +635,8 @@
   };
 
   function loadPipeline() {
-    document.getElementById('pipeline-body').innerHTML = '<div class="loading">Loading…</div>';
-    fetch(SL.sheetUrl + '?action=pipeline')
-      .then(r => r.json())
-      .then(renderPipeline)
-      .catch(() => {
-        document.getElementById('pipeline-body').innerHTML =
-          '<div class="error-msg">Could not load pipeline.</div>';
-      });
+    swr('sl_cache_pipeline', 2 * 60 * 1000, '?action=pipeline',
+      renderPipeline, 'pipeline-body', 'Could not load pipeline.');
   }
 
   function renderPipeline(rows) {
@@ -645,9 +683,12 @@
   }
 
   function pipeAction(action, id) {
-    fetch(SL.sheetUrl + '?action=' + action + '&id=' + encodeURIComponent(id))
+    fetchWithTimeout(SL.sheetUrl + '?action=' + action + '&id=' + encodeURIComponent(id))
       .then(r => r.json())
-      .then(res => { if (res.ok) loadPipeline(); else alert('Error: ' + (res.error||'unknown')); })
+      .then(res => {
+        localStorage.removeItem('sl_cache_pipeline');
+        if (res.ok) loadPipeline(); else alert('Error: ' + (res.error||'unknown'));
+      })
       .catch(() => alert('Request failed'));
   }
 
