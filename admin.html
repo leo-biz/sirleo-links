@@ -8,19 +8,19 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --black: #080808; --deep: #0e0e0e; --surface: #141414;
+      --black: #080808; --deep: #0e0e0e; --surface: #141414; --sidebar: #0d0d0d;
       --border: rgba(180,145,90,0.18); --gold: #b4915a; --gold-light: #d4af7a;
       --crimson: #9b2020; --muted: rgba(240,232,216,0.45); --text: #e8dcc8;
+      --sidebar-w: 210px;
     }
-    body { background: var(--black); color: var(--text); font-family: 'Raleway', sans-serif;
-      font-weight: 300; min-height: 100vh; padding: 24px 16px 60px; }
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Raleway:wght@200;300;400&display=swap');
+    body { background: var(--black); color: var(--text); font-family: 'Raleway', sans-serif;
+      font-weight: 300; min-height: 100vh; }
 
-    /* Gate */
+    /* ── Gate ─────────────────────────────────────────────────────────────── */
     #gate { display: flex; flex-direction: column; align-items: center; justify-content: center;
-      min-height: 80vh; gap: 16px; }
-    #gate h1 { font-family: 'Cinzel', serif; font-size: 22px; letter-spacing: 0.2em;
-      color: var(--gold); }
+      min-height: 100vh; gap: 16px; }
+    #gate h1 { font-family: 'Cinzel', serif; font-size: 22px; letter-spacing: 0.2em; color: var(--gold); }
     #gate input { background: var(--surface); border: 1px solid var(--border); color: var(--text);
       padding: 12px 16px; font-family: inherit; font-size: 15px; width: 240px;
       text-align: center; outline: none; }
@@ -31,68 +31,107 @@
     #gate button:hover { background: rgba(180,145,90,0.08); }
     #gate-err { color: var(--crimson); font-size: 13px; display: none; }
 
-    /* Dashboard */
-    #dash { display: none; }
-    .dash-header { display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 28px; }
-    .dash-title { font-family: 'Cinzel', serif; font-size: 18px; letter-spacing: 0.2em;
-      color: var(--gold); }
-    .dash-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    /* ── Shell ────────────────────────────────────────────────────────────── */
+    #dash { display: none; min-height: 100vh; }
+    .shell { display: flex; min-height: 100vh; }
+
+    /* ── Sidebar ──────────────────────────────────────────────────────────── */
+    .sidebar {
+      width: var(--sidebar-w); background: var(--sidebar);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 10;
+    }
+    .sidebar-brand {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-brand-name {
+      font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 0.2em; color: var(--gold);
+    }
+    .sidebar-brand-sub {
+      font-size: 10px; color: var(--muted); letter-spacing: 0.1em; margin-top: 3px;
+    }
+    .sidebar-nav { flex: 1; padding: 16px 0; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 20px; font-size: 12px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted);
+      cursor: pointer; transition: color 0.15s, background 0.15s;
+      border-left: 2px solid transparent;
+    }
+    .nav-item:hover { color: var(--text); background: rgba(180,145,90,0.04); }
+    .nav-item.active { color: var(--gold); border-left-color: var(--gold);
+      background: rgba(180,145,90,0.06); }
+    .nav-icon { font-size: 14px; width: 18px; text-align: center; }
+    .sidebar-footer {
+      padding: 16px 20px; border-top: 1px solid var(--border);
+      font-size: 10px; color: rgba(240,232,216,0.2); letter-spacing: 0.08em;
+    }
+
+    /* ── Main ─────────────────────────────────────────────────────────────── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1; padding: 32px 28px 60px;
+      min-width: 0;
+    }
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .page-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
+    }
+    .page-title { font-family: 'Cinzel', serif; font-size: 17px; letter-spacing: 0.18em; color: var(--gold); }
+    .page-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
     .refresh-btn { background: none; border: 1px solid var(--border); color: var(--muted);
       padding: 8px 16px; font-family: inherit; font-size: 12px; cursor: pointer; }
     .refresh-btn:hover { border-color: var(--gold); color: var(--gold); }
 
-    /* Stat row */
+    /* ── Stats ────────────────────────────────────────────────────────────── */
     .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
       gap: 12px; margin-bottom: 32px; }
-    .stat { background: var(--surface); border: 1px solid var(--border); padding: 16px;
-      text-align: center; }
+    .stat { background: var(--surface); border: 1px solid var(--border); padding: 16px; text-align: center; }
     .stat-num { font-family: 'Cinzel', serif; font-size: 28px; color: var(--gold); }
-    .stat-label { font-size: 11px; color: var(--muted); letter-spacing: 0.1em;
-      margin-top: 4px; text-transform: uppercase; }
+    .stat-label { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; margin-top: 4px; text-transform: uppercase; }
+    .stat.live .stat-num { color: #4caf7d; }
+    .stat.dim  .stat-num { color: var(--muted); font-size: 20px; }
 
-    /* Section */
+    /* ── Section ──────────────────────────────────────────────────────────── */
     .section { margin-bottom: 32px; }
-    .section-title { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.2em;
+    .section-title { font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.2em;
       color: var(--gold); text-transform: uppercase; margin-bottom: 12px;
       padding-bottom: 8px; border-bottom: 1px solid var(--border); }
 
-    /* Table */
+    /* ── Table ────────────────────────────────────────────────────────────── */
     .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
     .tbl th { text-align: left; color: var(--muted); font-weight: 400; font-size: 11px;
       letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 8px;
       border-bottom: 1px solid var(--border); }
-    .tbl td { padding: 8px 8px; border-bottom: 1px solid rgba(180,145,90,0.07);
-      vertical-align: top; }
+    .tbl td { padding: 8px 8px; border-bottom: 1px solid rgba(180,145,90,0.07); vertical-align: top; }
     .tbl tr:last-child td { border-bottom: none; }
     .tbl tr:hover td { background: rgba(180,145,90,0.04); }
-    .badge { display: inline-block; padding: 2px 8px; font-size: 11px;
-      border: 1px solid var(--border); color: var(--muted); }
+    .badge { display: inline-block; padding: 2px 8px; font-size: 11px; border: 1px solid var(--border); color: var(--muted); }
     .badge.gold { border-color: rgba(180,145,90,0.4); color: var(--gold); }
 
-    /* Bar chart */
-    .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
-      font-size: 13px; }
-    .bar-label { width: 140px; overflow: hidden; text-overflow: ellipsis;
-      white-space: nowrap; color: var(--muted); flex-shrink: 0; }
+    /* ── Bar chart ────────────────────────────────────────────────────────── */
+    .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 13px; }
+    .bar-label { width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      color: var(--muted); flex-shrink: 0; }
     .bar-track { flex: 1; height: 6px; background: var(--surface); }
     .bar-fill { height: 100%; background: var(--gold); }
     .bar-count { width: 28px; text-align: right; color: var(--gold); font-size: 12px; }
 
-    /* Loading */
+    /* ── Grid ─────────────────────────────────────────────────────────────── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+    @media (max-width: 700px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+    /* ── Loading / error ──────────────────────────────────────────────────── */
     .loading { color: var(--muted); font-size: 13px; text-align: center; padding: 40px; }
     .error-msg { color: var(--crimson); font-size: 13px; text-align: center; padding: 40px; }
 
-    /* Two col layout on wider screens */
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
-    @media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
-
-    /* Stat accents */
-    .stat.live .stat-num { color: #4caf7d; }
-    .stat.dim  .stat-num { color: var(--muted); font-size: 20px; }
-
-    /* Session timeline */
+    /* ── Sessions ─────────────────────────────────────────────────────────── */
     .sess-load-btn { background: none; border: 1px solid var(--border); color: var(--muted);
       padding: 10px 24px; font-family: 'Cinzel', serif; font-size: 11px;
       letter-spacing: 0.15em; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
@@ -101,9 +140,8 @@
     .sess-row:hover .sess-main { background: rgba(180,145,90,0.03); }
     .sess-main { display: grid; grid-template-columns: auto 1fr auto auto; gap: 12px;
       align-items: center; padding: 10px 8px; font-size: 13px; }
-    .sess-live { display: inline-block; padding: 2px 7px; font-size: 9px;
-      letter-spacing: 0.15em; background: rgba(76,175,125,0.15);
-      border: 1px solid rgba(76,175,125,0.4); color: #4caf7d;
+    .sess-live { display: inline-block; padding: 2px 7px; font-size: 9px; letter-spacing: 0.15em;
+      background: rgba(76,175,125,0.15); border: 1px solid rgba(76,175,125,0.4); color: #4caf7d;
       text-transform: uppercase; font-family: 'Cinzel', serif; }
     .sess-name { font-weight: 400; }
     .sess-meta { font-size: 11px; color: var(--muted); }
@@ -115,17 +153,16 @@
     .sess-timeline { display: none; padding: 8px 8px 14px 24px;
       border-top: 1px solid rgba(255,255,255,0.04); }
     .sess-row.open .sess-timeline { display: block; }
-    .tl-item { display: flex; gap: 12px; align-items: baseline;
-      padding: 4px 0; font-size: 12px; border-left: 1px solid rgba(180,145,90,0.15);
-      padding-left: 12px; margin-left: 4px; }
+    .tl-item { display: flex; gap: 12px; align-items: baseline; padding: 4px 0; font-size: 12px;
+      border-left: 1px solid rgba(180,145,90,0.15); padding-left: 12px; margin-left: 4px; }
     .tl-time { color: rgba(240,232,216,0.3); font-size: 10px; white-space: nowrap; flex-shrink: 0; }
     .tl-ev { color: var(--text); }
     .tl-val { color: var(--gold); font-size: 11px; }
 
-    /* Pipeline */
-    .pipeline { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 8px; }
-    @media (max-width: 800px) { .pipeline { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 480px) { .pipeline { grid-template-columns: 1fr; } }
+    /* ── Pipeline ─────────────────────────────────────────────────────────── */
+    .pipeline { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+    @media (max-width: 900px) { .pipeline { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 520px)  { .pipeline { grid-template-columns: 1fr; } }
     .pipe-col-title { font-family:'Cinzel',serif; font-size:10px; letter-spacing:0.2em;
       color:var(--gold); text-transform:uppercase; margin-bottom:10px; padding-bottom:8px;
       border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
@@ -152,8 +189,7 @@
     .pipe-btn.danger  { border-color:rgba(155,32,32,0.35); color:rgba(192,57,43,0.7); }
     .pipe-next { font-size:10px; color:rgba(240,232,216,0.25); margin-top:6px; }
 
-    /* QR generator */
-    .qr-section { margin-bottom: 40px; }
+    /* ── QR ───────────────────────────────────────────────────────────────── */
     .qr-body { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: start; }
     @media (max-width: 560px) { .qr-body { grid-template-columns: 1fr; } }
     .qr-fields { display: flex; flex-direction: column; gap: 10px; }
@@ -164,8 +200,7 @@
       color: var(--text); padding: 10px 14px; font-family: inherit; font-size: 13px;
       outline: none; transition: border-color 0.2s; }
     .qr-field input:focus { border-color: var(--gold); }
-    .qr-url-preview { font-size: 11px; color: rgba(180,145,90,0.6);
-      word-break: break-all; margin-top: 2px; }
+    .qr-url-preview { font-size: 11px; color: rgba(180,145,90,0.6); word-break: break-all; margin-top: 2px; }
     .qr-actions { display: flex; gap: 8px; margin-top: 6px; }
     .qr-btn { flex: 1; background: none; border: 1px solid var(--border); color: var(--muted);
       padding: 9px 14px; font-family: 'Cinzel', serif; font-size: 11px;
@@ -181,6 +216,17 @@
       padding: 5px 10px; font-size: 11px; cursor: pointer; font-family: inherit;
       transition: border-color 0.2s, color 0.2s; }
     .qr-size-btn.active, .qr-size-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ── Mobile sidebar toggle ────────────────────────────────────────────── */
+    .menu-toggle { display: none; position: fixed; top: 14px; left: 14px; z-index: 20;
+      background: var(--surface); border: 1px solid var(--border); color: var(--gold);
+      padding: 8px 12px; font-size: 16px; cursor: pointer; line-height: 1; }
+    @media (max-width: 640px) {
+      .menu-toggle { display: block; }
+      .sidebar { transform: translateX(-100%); transition: transform 0.2s; }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; padding-top: 56px; }
+    }
   </style>
 </head>
 <body>
@@ -196,71 +242,123 @@
 
   <!-- Dashboard -->
   <div id="dash">
-    <div class="dash-header">
-      <div>
-        <div class="dash-title">Dashboard <span id="dash-version" style="font-size:11px;color:var(--muted);letter-spacing:0.1em"></span></div>
-        <div class="dash-sub" id="dash-updated">Loading…</div>
-      </div>
-      <button class="refresh-btn" onclick="loadData()">Refresh</button>
-    </div>
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
 
-    <!-- QR Code Generator -->
-    <div class="section qr-section">
-      <div class="section-title">QR Code Generator</div>
-      <div class="qr-body">
-        <div class="qr-fields">
-          <div class="qr-field">
-            <label>Base URL</label>
-            <input type="text" id="qr-base" placeholder="https://sirleo-links.netlify.app" oninput="qrUpdate()" />
+    <div class="shell">
+      <!-- Sidebar -->
+      <nav class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+          <div class="sidebar-brand-name">SIR LEO</div>
+          <div class="sidebar-brand-sub">Admin <span id="dash-version"></span></div>
+        </div>
+        <div class="sidebar-nav">
+          <div class="nav-item active" data-page="overview" onclick="navTo('overview')">
+            <span class="nav-icon">◈</span> Overview
           </div>
-          <div class="qr-field">
-            <label>Source <span style="opacity:0.5;font-size:9px">(?src=)</span></label>
-            <input type="text" id="qr-src" placeholder="e.g. exxxotica-booth" oninput="qrUpdate()" />
+          <div class="nav-item" data-page="pipeline" onclick="navTo('pipeline')">
+            <span class="nav-icon">◇</span> Pipeline
           </div>
-          <div class="qr-field">
-            <label>Ref Person <span style="opacity:0.5;font-size:9px">(?ref=)</span></label>
-            <input type="text" id="qr-ref" placeholder="e.g. janet" oninput="qrUpdate()" />
+          <div class="nav-item" data-page="sessions" onclick="navTo('sessions')">
+            <span class="nav-icon">◉</span> Sessions
           </div>
-          <div class="qr-field">
-            <label>Pre-fill Name <span style="opacity:0.5;font-size:9px">(?name=)</span></label>
-            <input type="text" id="qr-name" placeholder="e.g. Janet" oninput="qrUpdate()" />
-          </div>
-          <div class="qr-url-preview" id="qr-url-preview"></div>
-          <div class="qr-actions">
-            <button class="qr-btn primary" onclick="qrDownload()">Download PNG</button>
-            <button class="qr-btn" onclick="qrCopy()">Copy URL</button>
+          <div class="nav-item" data-page="qr" onclick="navTo('qr')">
+            <span class="nav-icon">▣</span> QR Codes
           </div>
         </div>
-        <div class="qr-preview-wrap">
-          <div id="qr-canvas-wrap"></div>
-          <div class="qr-size-row">
-            <button class="qr-size-btn" onclick="qrSetSize(160)" data-size="160">S</button>
-            <button class="qr-size-btn active" onclick="qrSetSize(240)" data-size="240">M</button>
-            <button class="qr-size-btn" onclick="qrSetSize(340)" data-size="340">L</button>
+        <div class="sidebar-footer" id="sidebar-updated">—</div>
+      </nav>
+
+      <!-- Main content -->
+      <main class="main">
+
+        <!-- Overview -->
+        <div class="page active" id="page-overview">
+          <div class="page-header">
+            <div>
+              <div class="page-title">Overview</div>
+              <div class="page-sub" id="overview-updated">Loading…</div>
+            </div>
+            <button class="refresh-btn" onclick="loadOverview()">Refresh</button>
+          </div>
+          <div id="overview-body"><div class="loading">Loading data…</div></div>
+        </div>
+
+        <!-- Pipeline -->
+        <div class="page" id="page-pipeline">
+          <div class="page-header">
+            <div>
+              <div class="page-title">Pipeline</div>
+              <div class="page-sub">Active contacts by phase</div>
+            </div>
+            <button class="refresh-btn" onclick="loadPipeline()">Refresh</button>
+          </div>
+          <div id="pipeline-body"><div class="loading">Loading…</div></div>
+        </div>
+
+        <!-- Sessions -->
+        <div class="page" id="page-sessions">
+          <div class="page-header">
+            <div>
+              <div class="page-title">Sessions</div>
+              <div class="page-sub">Visitor activity timeline</div>
+            </div>
+            <button class="sess-load-btn" onclick="loadSessions()">Load Sessions</button>
+          </div>
+          <div id="sess-body"></div>
+        </div>
+
+        <!-- QR Codes -->
+        <div class="page" id="page-qr">
+          <div class="page-header">
+            <div>
+              <div class="page-title">QR Codes</div>
+              <div class="page-sub">Generate tracked links</div>
+            </div>
+          </div>
+          <div class="qr-body">
+            <div class="qr-fields">
+              <div class="qr-field">
+                <label>Base URL</label>
+                <input type="text" id="qr-base" placeholder="https://sirleo-links.netlify.app" oninput="qrUpdate()" />
+              </div>
+              <div class="qr-field">
+                <label>Source <span style="opacity:0.5;font-size:9px">(?src=)</span></label>
+                <input type="text" id="qr-src" placeholder="e.g. exxxotica-booth" oninput="qrUpdate()" />
+              </div>
+              <div class="qr-field">
+                <label>Ref Person <span style="opacity:0.5;font-size:9px">(?ref=)</span></label>
+                <input type="text" id="qr-ref" placeholder="e.g. janet" oninput="qrUpdate()" />
+              </div>
+              <div class="qr-field">
+                <label>Pre-fill Name <span style="opacity:0.5;font-size:9px">(?name=)</span></label>
+                <input type="text" id="qr-name" placeholder="e.g. Janet" oninput="qrUpdate()" />
+              </div>
+              <div class="qr-url-preview" id="qr-url-preview"></div>
+              <div class="qr-actions">
+                <button class="qr-btn primary" onclick="qrDownload()">Download PNG</button>
+                <button class="qr-btn" onclick="qrCopy()">Copy URL</button>
+              </div>
+            </div>
+            <div class="qr-preview-wrap">
+              <div id="qr-canvas-wrap"></div>
+              <div class="qr-size-row">
+                <button class="qr-size-btn" onclick="qrSetSize(160)" data-size="160">S</button>
+                <button class="qr-size-btn active" onclick="qrSetSize(240)" data-size="240">M</button>
+                <button class="qr-size-btn" onclick="qrSetSize(340)" data-size="340">L</button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Pipeline -->
-    <div class="section" id="pipeline-section">
-      <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;">
-        Pipeline
-        <button class="refresh-btn" onclick="loadPipeline()">Refresh</button>
-      </div>
-      <div id="pipeline-body"><div class="loading">Loading…</div></div>
+      </main>
     </div>
-
-    <div id="dash-body"><div class="loading">Loading data…</div></div>
   </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-  // ── Auth ──────────────────────────────────────────────────────────────────
-  // Hash is stored in the Config sheet — never hardcoded here.
-  // To change: update adminPassHash row in the Config sheet.
+  // ── Auth ────────────────────────────────────────────────────────────────────
   const PASS_KEY = 'sl_admin_auth';
-  let   _passHash = null;
+  let _passHash  = null;
 
   fetch(SL.sheetUrl + '?action=config')
     .then(r => r.json())
@@ -269,10 +367,7 @@
 
   async function checkPw() {
     if (!_passHash) {
-      const err = document.getElementById('gate-err');
-      err.textContent = 'Config unavailable — try again';
-      err.style.display = 'block';
-      setTimeout(() => err.style.display = 'none', 2500);
+      showErr('Config unavailable — try again', 2500);
       return;
     }
     const val = document.getElementById('pw-input').value;
@@ -282,107 +377,62 @@
       sessionStorage.setItem(PASS_KEY, '1');
       showDash();
     } else {
-      const err = document.getElementById('gate-err');
-      err.textContent = 'Incorrect password';
-      err.style.display = 'block';
-      setTimeout(() => err.style.display = 'none', 2000);
+      showErr('Incorrect password', 2000);
     }
+  }
+
+  function showErr(msg, ms) {
+    const err = document.getElementById('gate-err');
+    err.textContent = msg;
+    err.style.display = 'block';
+    setTimeout(() => err.style.display = 'none', ms);
   }
 
   function showDash() {
     document.getElementById('gate').style.display = 'none';
-    document.getElementById('dash').style.display = 'block';
-    loadData();
+    document.getElementById('dash').style.display  = 'block';
+    document.getElementById('dash-version').textContent = SL.version ? 'v' + SL.version : '';
+    loadOverview();
+    qrInit();
   }
 
   if (sessionStorage.getItem(PASS_KEY)) showDash();
-  document.getElementById('dash-version').textContent = 'v' + (SL.version || '—');
 
-  // ── QR Generator ─────────────────────────────────────────────────────────
-  let _qr = null;
-  let _qrSize = 240;
+  // ── Nav ─────────────────────────────────────────────────────────────────────
+  let _currentPage = 'overview';
+  const _loaded = {};
 
-  function qrInit() {
-    document.getElementById('qr-base').value = (SL.siteUrl || window.location.origin);
-    qrUpdate();
+  function navTo(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+    document.querySelector('[data-page="' + page + '"]').classList.add('active');
+    _currentPage = page;
+    // close mobile sidebar
+    document.getElementById('sidebar').classList.remove('open');
+    // lazy load on first visit
+    if (!_loaded[page]) {
+      _loaded[page] = true;
+      if (page === 'pipeline') loadPipeline();
+      if (page === 'sessions') loadSessions();
+    }
   }
 
-  function qrBuildUrl() {
-    const base = document.getElementById('qr-base').value.trim();
-    const src  = document.getElementById('qr-src').value.trim();
-    const ref  = document.getElementById('qr-ref').value.trim();
-    const name = document.getElementById('qr-name').value.trim();
-    const params = [];
-    if (src)  params.push('src='  + encodeURIComponent(src));
-    if (ref)  params.push('ref='  + encodeURIComponent(ref));
-    if (name) params.push('name=' + encodeURIComponent(name));
-    return params.length ? base + '?' + params.join('&') : base;
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
   }
 
-  function qrUpdate() {
-    const url = qrBuildUrl();
-    document.getElementById('qr-url-preview').textContent = url;
-    const wrap = document.getElementById('qr-canvas-wrap');
-    wrap.innerHTML = '';
-    _qr = new QRCode(wrap, {
-      text: url,
-      width: _qrSize, height: _qrSize,
-      colorDark: '#f5ede0',
-      colorLight: '#141414',
-      correctLevel: QRCode.CorrectLevel.M
-    });
-  }
-
-  function qrSetSize(size) {
-    _qrSize = size;
-    document.querySelectorAll('.qr-size-btn').forEach(b => {
-      b.classList.toggle('active', parseInt(b.dataset.size) === size);
-    });
-    qrUpdate();
-  }
-
-  function qrDownload() {
-    const canvas = document.querySelector('#qr-canvas-wrap canvas');
-    if (!canvas) return;
-    const src = document.getElementById('qr-src').value.trim();
-    const ref = document.getElementById('qr-ref').value.trim();
-    const name = ['sirleo-qr', src, ref].filter(Boolean).join('-') + '.png';
-    const a = document.createElement('a');
-    a.download = name;
-    a.href = canvas.toDataURL('image/png');
-    a.click();
-  }
-
-  function qrCopy() {
-    navigator.clipboard.writeText(qrBuildUrl()).then(() => {
-      const btn = document.querySelector('.qr-actions .qr-btn:last-child');
-      const orig = btn.textContent;
-      btn.textContent = 'Copied';
-      setTimeout(() => btn.textContent = orig, 1500);
-    });
-  }
-
-  // init QR after dash is shown
-  const _origShowDash = showDash;
-  showDash = function() { _origShowDash(); qrInit(); loadPipeline(); };
-
-  // ── Data ──────────────────────────────────────────────────────────────────
-  function loadData() {
-    document.getElementById('dash-body').innerHTML = '<div class="loading">Loading…</div>';
-    fetch(SL.sheetUrl + '?action=summary')
-      .then(r => r.json())
-      .then(render)
-      .catch(() => {
-        document.getElementById('dash-body').innerHTML =
-          '<div class="error-msg">Could not load data. Make sure the Apps Script GET handler is deployed.</div>';
-      });
-  }
-
+  // ── Helpers ─────────────────────────────────────────────────────────────────
   function fmt(iso) {
     if (!iso) return '—';
-    try {
-      return new Date(iso).toLocaleDateString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
-    } catch { return iso; }
+    try { return new Date(iso).toLocaleDateString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }); }
+    catch { return iso; }
+  }
+
+  function fmtShort(iso) {
+    if (!iso) return '—';
+    try { return new Date(iso).toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }); }
+    catch { return iso; }
   }
 
   function bar(items, maxVal) {
@@ -395,30 +445,36 @@
     ).join('');
   }
 
-  function render(d) {
-    document.getElementById('dash-updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+  const none = '<div style="color:var(--muted);font-size:13px;padding:8px 0">No data yet</div>';
 
-    const topSrc    = Object.entries(d.sources    || {}).sort((a,b)=>b[1]-a[1]).slice(0,8);
-    const topRef    = Object.entries(d.refs       || {}).sort((a,b)=>b[1]-a[1]).slice(0,8);
-    const topEvents = Object.entries(d.topEvents  || {}).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  // ── Overview ─────────────────────────────────────────────────────────────────
+  function loadOverview() {
+    document.getElementById('overview-body').innerHTML = '<div class="loading">Loading…</div>';
+    fetch(SL.sheetUrl + '?action=summary')
+      .then(r => r.json())
+      .then(renderOverview)
+      .catch(() => {
+        document.getElementById('overview-body').innerHTML =
+          '<div class="error-msg">Could not load data. Make sure the Apps Script GET handler is deployed.</div>';
+      });
+  }
+
+  function renderOverview(d) {
+    const now = new Date().toLocaleTimeString();
+    document.getElementById('overview-updated').textContent = 'Updated ' + now;
+    document.getElementById('sidebar-updated').textContent  = 'Updated ' + now;
+
+    const topSrc    = Object.entries(d.sources       || {}).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    const topRef    = Object.entries(d.refs          || {}).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    const topEvents = Object.entries(d.topEvents     || {}).sort((a,b)=>b[1]-a[1]).slice(0,10);
     const devices   = Object.entries(d.deviceCounts  || {}).sort((a,b)=>b[1]-a[1]);
     const oses      = Object.entries(d.osCounts      || {}).sort((a,b)=>b[1]-a[1]);
     const browsers  = Object.entries(d.browserCounts || {}).sort((a,b)=>b[1]-a[1]);
     const countries = Object.entries(d.countryCounts || {}).sort((a,b)=>b[1]-a[1]).slice(0,8);
     const cities    = Object.entries(d.cityCounts    || {}).sort((a,b)=>b[1]-a[1]).slice(0,8);
 
-    const maxSrc  = topSrc[0]?.[1]    || 1;
-    const maxRef  = topRef[0]?.[1]    || 1;
-    const maxEv   = topEvents[0]?.[1] || 1;
-    const maxDev  = devices[0]?.[1]   || 1;
-    const maxOs   = oses[0]?.[1]      || 1;
-    const maxBr   = browsers[0]?.[1]  || 1;
-    const maxCo   = countries[0]?.[1] || 1;
-    const maxCi   = cities[0]?.[1]    || 1;
-
     const convRate = d.totalSessions
-      ? Math.round((d.totalContacts / d.totalSessions) * 100) + '%'
-      : '—';
+      ? Math.round((d.totalContacts / d.totalSessions) * 100) + '%' : '—';
 
     const recentContacts = (d.contacts || []).slice(0,15).map(c =>
       `<tr>
@@ -434,9 +490,7 @@
         <td style="color:var(--muted)">${e.value||''}</td>
       </tr>`).join('');
 
-    const none = '<div style="color:var(--muted);font-size:13px;padding:8px 0">No data yet</div>';
-
-    document.getElementById('dash-body').innerHTML = `
+    document.getElementById('overview-body').innerHTML = `
       <div class="stats">
         <div class="stat"><div class="stat-num">${d.totalContacts??'—'}</div><div class="stat-label">Contacts</div></div>
         <div class="stat"><div class="stat-num">${d.totalSessions??'—'}</div><div class="stat-label">Sessions</div></div>
@@ -448,45 +502,21 @@
       </div>
 
       <div class="grid-2">
-        <div class="section">
-          <div class="section-title">Sources</div>
-          ${topSrc.length ? bar(topSrc,maxSrc) : none}
-        </div>
-        <div class="section">
-          <div class="section-title">Referrals</div>
-          ${topRef.length ? bar(topRef,maxRef) : none}
-        </div>
+        <div class="section"><div class="section-title">Sources</div>${topSrc.length ? bar(topSrc, topSrc[0][1]) : none}</div>
+        <div class="section"><div class="section-title">Referrals</div>${topRef.length ? bar(topRef, topRef[0][1]) : none}</div>
       </div>
 
-      <div class="section">
-        <div class="section-title">Top Actions</div>
-        ${topEvents.length ? bar(topEvents,maxEv) : none}
-      </div>
+      <div class="section"><div class="section-title">Top Actions</div>${topEvents.length ? bar(topEvents, topEvents[0][1]) : none}</div>
 
       <div class="grid-3">
-        <div class="section">
-          <div class="section-title">Device</div>
-          ${devices.length ? bar(devices,maxDev) : none}
-        </div>
-        <div class="section">
-          <div class="section-title">OS</div>
-          ${oses.length ? bar(oses,maxOs) : none}
-        </div>
-        <div class="section">
-          <div class="section-title">Browser</div>
-          ${browsers.length ? bar(browsers,maxBr) : none}
-        </div>
+        <div class="section"><div class="section-title">Device</div>${devices.length ? bar(devices, devices[0][1]) : none}</div>
+        <div class="section"><div class="section-title">OS</div>${oses.length ? bar(oses, oses[0][1]) : none}</div>
+        <div class="section"><div class="section-title">Browser</div>${browsers.length ? bar(browsers, browsers[0][1]) : none}</div>
       </div>
 
       <div class="grid-2">
-        <div class="section">
-          <div class="section-title">Country</div>
-          ${countries.length ? bar(countries,maxCo) : none}
-        </div>
-        <div class="section">
-          <div class="section-title">City</div>
-          ${cities.length ? bar(cities,maxCi) : none}
-        </div>
+        <div class="section"><div class="section-title">Country</div>${countries.length ? bar(countries, countries[0][1]) : none}</div>
+        <div class="section"><div class="section-title">City / State</div>${cities.length ? bar(cities, cities[0][1]) : none}</div>
       </div>
 
       <div class="section">
@@ -502,18 +532,10 @@
           ? `<table class="tbl"><thead><tr><th>When</th><th>Event</th><th>Value</th></tr></thead><tbody>${recentEvents}</tbody></table>`
           : none}
       </div>
-
-      <div class="section" id="sess-section">
-        <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;">
-          Session Timeline
-          <button class="sess-load-btn" onclick="loadSessions()">Load Sessions</button>
-        </div>
-        <div id="sess-body"></div>
-      </div>
     `;
   }
 
-  // ── Session timeline ───────────────────────────────────────────────────────
+  // ── Sessions ─────────────────────────────────────────────────────────────────
   function loadSessions() {
     document.getElementById('sess-body').innerHTML = '<div class="loading">Loading…</div>';
     fetch(SL.sheetUrl + '?action=sessions&limit=40')
@@ -521,7 +543,7 @@
       .then(renderSessions)
       .catch(() => {
         document.getElementById('sess-body').innerHTML =
-          '<div class="error-msg">Could not load sessions. Update the Apps Script first.</div>';
+          '<div class="error-msg">Could not load sessions.</div>';
       });
   }
 
@@ -532,24 +554,21 @@
       return;
     }
     document.getElementById('sess-body').innerHTML = sessions.map((s, i) => {
-      const label = s.name || '<span style="color:var(--muted)">Anonymous</span>';
-      const loc   = [s.city, s.country].filter(Boolean).join(', ') || '—';
-      const src   = s.source ? `<span class="sess-tag">${s.source}</span>` : '';
-      const ref   = s.ref    ? `<span class="sess-tag gold">${s.ref}</span>` : '';
-      const live  = s.active ? '<span class="sess-live">Live</span> ' : '';
-      const evCount = s.events ? s.events.length : 0;
-      const hasContact = s.phone;
-
+      const label    = s.name || '<span style="color:var(--muted)">Anonymous</span>';
+      const loc      = [s.city, s.region, s.country].filter(Boolean).join(', ') || '—';
+      const src      = s.source ? `<span class="sess-tag">${s.source}</span>` : '';
+      const ref      = s.ref    ? `<span class="sess-tag gold">${s.ref}</span>` : '';
+      const live     = s.active ? '<span class="sess-live">Live</span> ' : '';
+      const evCount  = s.events ? s.events.length : 0;
       const timeline = (s.events || []).map(e => {
-        const t = fmtShort(e.timestamp);
         const val = e.value ? `<span class="tl-val">${e.value}</span>` : '';
-        return `<div class="tl-item"><span class="tl-time">${t}</span><span class="tl-ev">${e.event}</span>${val}</div>`;
+        return `<div class="tl-item"><span class="tl-time">${fmtShort(e.timestamp)}</span><span class="tl-ev">${e.event}</span>${val}</div>`;
       }).join('');
 
       return `
         <div class="sess-row" id="sr-${i}" onclick="toggleSessRow(${i})">
           <div class="sess-main">
-            <div>${live}<span class="sess-name">${label}</span>${hasContact ? ' <span class="badge gold">✓</span>' : ''}</div>
+            <div>${live}<span class="sess-name">${label}</span>${s.phone ? ' <span class="badge gold">✓</span>' : ''}</div>
             <div class="sess-meta">${loc} &nbsp;·&nbsp; ${s.device||'?'} &nbsp;·&nbsp; ${src}${ref}</div>
             <div class="sess-meta" style="text-align:right">${evCount} events<br>${fmtShort(s.lastSeen||s.timestamp)}</div>
             <div class="sess-chevron">→</div>
@@ -563,19 +582,12 @@
     document.getElementById('sr-' + i).classList.toggle('open');
   }
 
-  function fmtShort(iso) {
-    if (!iso) return '—';
-    try {
-      return new Date(iso).toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
-    } catch { return iso; }
-  }
-
-  // ── Pipeline ───────────────────────────────────────────────────────────────
+  // ── Pipeline ─────────────────────────────────────────────────────────────────
   const PIPE_PHASES = {
-    1: { title: 'Get to Call',    next: 'markConsulted', nextLabel: '✓ Consulted' },
-    2: { title: 'Get Booked',     next: 'markBooked',    nextLabel: '✓ Booked' },
-    3: { title: 'Pre-Session',    next: 'markSession',   nextLabel: '✓ Session Done' },
-    4: { title: 'Post-Session',   next: 'markComplete',  nextLabel: '✓ Complete' }
+    1: { title: 'Get to Call',  next: 'markConsulted', nextLabel: '✓ Consulted' },
+    2: { title: 'Get Booked',   next: 'markBooked',    nextLabel: '✓ Booked' },
+    3: { title: 'Pre-Session',  next: 'markSession',   nextLabel: '✓ Session Done' },
+    4: { title: 'Post-Session', next: 'markComplete',  nextLabel: '✓ Complete' }
   };
 
   function loadPipeline() {
@@ -604,7 +616,7 @@
           : r.status === 'paused'
           ? '<span class="pipe-tag dim">Paused</span>'
           : '<span class="pipe-tag green">Active</span>';
-        const srcTag = r.source ? `<span class="pipe-tag gold">${r.source}</span>` : '';
+        const srcTag  = r.source ? `<span class="pipe-tag gold">${r.source}</span>` : '';
         const nextStr = r.nextDate ? 'Next: ' + fmtShort(r.nextDate) : '';
         const pauseBtn = r.status === 'paused'
           ? `<button class="pipe-btn" onclick="pipeAction('resumeSeq','${r.id}')">Resume</button>`
@@ -639,6 +651,64 @@
       .catch(() => alert('Request failed'));
   }
 
+  // ── QR Generator ─────────────────────────────────────────────────────────────
+  let _qr = null, _qrSize = 240;
+
+  function qrInit() {
+    document.getElementById('qr-base').value = SL.siteUrl || window.location.origin;
+    qrUpdate();
+  }
+
+  function qrBuildUrl() {
+    const base   = document.getElementById('qr-base').value.trim();
+    const src    = document.getElementById('qr-src').value.trim();
+    const ref    = document.getElementById('qr-ref').value.trim();
+    const name   = document.getElementById('qr-name').value.trim();
+    const params = [];
+    if (src)  params.push('src='  + encodeURIComponent(src));
+    if (ref)  params.push('ref='  + encodeURIComponent(ref));
+    if (name) params.push('name=' + encodeURIComponent(name));
+    return params.length ? base + '?' + params.join('&') : base;
+  }
+
+  function qrUpdate() {
+    const url  = qrBuildUrl();
+    document.getElementById('qr-url-preview').textContent = url;
+    const wrap = document.getElementById('qr-canvas-wrap');
+    wrap.innerHTML = '';
+    _qr = new QRCode(wrap, {
+      text: url, width: _qrSize, height: _qrSize,
+      colorDark: '#f5ede0', colorLight: '#141414',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
+
+  function qrSetSize(size) {
+    _qrSize = size;
+    document.querySelectorAll('.qr-size-btn').forEach(b => {
+      b.classList.toggle('active', parseInt(b.dataset.size) === size);
+    });
+    qrUpdate();
+  }
+
+  function qrDownload() {
+    const canvas = document.querySelector('#qr-canvas-wrap canvas');
+    if (!canvas) return;
+    const src  = document.getElementById('qr-src').value.trim();
+    const ref  = document.getElementById('qr-ref').value.trim();
+    const name = ['sirleo-qr', src, ref].filter(Boolean).join('-') + '.png';
+    const a    = document.createElement('a');
+    a.download = name; a.href = canvas.toDataURL('image/png'); a.click();
+  }
+
+  function qrCopy() {
+    navigator.clipboard.writeText(qrBuildUrl()).then(() => {
+      const btn  = document.querySelector('.qr-actions .qr-btn:last-child');
+      const orig = btn.textContent;
+      btn.textContent = 'Copied';
+      setTimeout(() => btn.textContent = orig, 1500);
+    });
+  }
 </script>
 </body>
 </html>
