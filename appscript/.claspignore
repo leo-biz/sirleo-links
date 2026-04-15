@@ -1,0 +1,4 @@
+# Files clasp should NOT push to Apps Script
+**/.gitignore
+**/.claspignore
+**/README.md

@@ -1,0 +1,8 @@
+# clasp auth — contains your Google OAuth token, never commit
+.clasprc.json
+
+# clasp project config — contains script ID, safe to commit if you want
+# appscript/.clasp.json
+
+# OS
+.DS_Store
