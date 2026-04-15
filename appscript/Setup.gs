@@ -41,6 +41,35 @@ function setupTrigger() {
   Logger.log('Trigger set: runSequences every 6 hours');
 }
 
+// ── 1b. Fill Config with known values — skips keys that already exist ─────────
+function fillConfig() {
+  const ss = db();
+  let sh = ss.getSheetByName(SHEET.CONFIG);
+  if (!sh) { Logger.log('Run setupConfig() first'); return; }
+
+  const existing = getKV(SHEET.CONFIG);
+
+  const values = {
+    notifyEmail:    'sir.black.leo@gmail.com',
+    scriptUrl:      'https://script.google.com/macros/s/AKfycbwgB8aP8zvl9eGPraRloNisHhqKPag_eHlYKtbhMHMjn4TgdRzJEPJN-eWqQSb_n1OSIg/exec',
+    seqEnabled:     'true',
+    confirmSubject: 'Sir Leo — Submission Received',
+    confirmMessage: '{{name}},\n\nYour submission was received. Sir Leo reviews each inquiry personally and will be in touch soon.\n\n— Sir Leo',
+    calendlyUrl:    '',
+    intakeFormUrl:  '',
+    testimonialUrl: ''
+  };
+
+  let added = 0;
+  Object.entries(values).forEach(([key, value]) => {
+    if (existing[key] !== undefined) return;
+    sh.appendRow([key, value]);
+    added++;
+  });
+
+  Logger.log('fillConfig done — ' + added + ' keys added');
+}
+
 // ── Verify ────────────────────────────────────────────────────────────────────
 function testSetup() {
   Logger.log('Sheets:    ' + db().getSheets().map(s => s.getName()).join(', '));
