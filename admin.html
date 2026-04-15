@@ -619,13 +619,14 @@
   function renderLineChart(ts, days) {
     _tsData = ts; _tsDays = days;
     const labels   = ts.labels.slice(-days);
+    const visits   = (ts.visits   || []).slice(-days);
     const sessions = ts.sessions.slice(-days);
     const contacts = ts.contacts.slice(-days);
 
     const W = 800, H = 180, padL = 28, padR = 12, padT = 12, padB = 28;
     const innerW = W - padL - padR;
     const innerH = H - padT - padB;
-    const maxVal = Math.max(1, ...sessions, ...contacts);
+    const maxVal = Math.max(1, ...visits, ...sessions, ...contacts);
     const step   = innerW / Math.max(labels.length - 1, 1);
 
     const xp = i => padL + i * step;
@@ -663,7 +664,8 @@
 
     const svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
       ${gridLines}
-      ${polyline(sessions, '#b4915a', 'rgba(180,145,90,0.08)')}
+      ${visits.length   ? polyline(visits,   'rgba(240,232,216,0.3)', 'rgba(240,232,216,0.04)') : ''}
+      ${polyline(sessions, '#c4a265', 'rgba(196,162,101,0.08)')}
       ${polyline(contacts, '#4caf7d', 'rgba(76,175,125,0.08)')}
       ${xLabels}${yLabels}
     </svg>`;
@@ -727,19 +729,20 @@
 
     document.getElementById('overview-body').innerHTML = `
       <div class="stats">
-        <div class="stat"><div class="stat-num">${d.totalContacts??'—'}</div><div class="stat-label">Contacts</div></div>
-        <div class="stat"><div class="stat-num">${d.totalSessions??'—'}</div><div class="stat-label">Sessions</div></div>
+        <div class="stat"><div class="stat-num">${d.totalVisits??'—'}</div><div class="stat-label">Visits</div></div>
+        <div class="stat dim"><div class="stat-num">${d.totalSessions??'—'}</div><div class="stat-label">Sessions</div></div>
         <div class="stat live"><div class="stat-num">${d.activeSessions??'—'}</div><div class="stat-label">Active Now</div></div>
         <div class="stat dim"><div class="stat-num">${d.returnVisitors??'—'}</div><div class="stat-label">Return</div></div>
+        <div class="stat"><div class="stat-num">${d.totalContacts??'—'}</div><div class="stat-label">Contacts</div></div>
         <div class="stat"><div class="stat-num">${d.bookCompleted??'—'}</div><div class="stat-label">Books</div></div>
-        <div class="stat"><div class="stat-num">${d.collabCompleted??'—'}</div><div class="stat-label">Collabs</div></div>
         <div class="stat dim"><div class="stat-num">${convRate}</div><div class="stat-label">Conv. Rate</div></div>
       </div>
 
       <div class="section">
         <div class="section-title">Traffic Over Time</div>
         <div class="chart-legend">
-          <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#b4915a"></div>Sessions</div>
+          <div class="chart-legend-item"><div class="chart-legend-dot" style="background:rgba(240,232,216,0.4)"></div>Visits</div>
+          <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#c4a265"></div>Sessions</div>
           <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#4caf7d"></div>Contacts</div>
         </div>
         <div class="chart-range">

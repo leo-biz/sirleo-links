@@ -16,7 +16,7 @@ function getSummary() {
   });
 
   const deviceCounts={}, osCounts={}, browserCounts={}, countryCounts={}, cityCounts={};
-  let returnVisitors = 0;
+  let returnVisitors = 0, totalVisits = 0;
   const fiveMinsAgo  = new Date(Date.now() - 5*60*1000);
   const activeIds    = new Set();
 
@@ -24,7 +24,9 @@ function getSummary() {
 
   sRows.forEach(r => {
     if (new Date(r[SESS.TIMESTAMP]) > fiveMinsAgo) activeIds.add(r[SESS.SID]);
-    if (parseInt(r[SESS.PAGE_VIEWS]) > 1) returnVisitors++;
+    const pv = parseInt(r[SESS.PAGE_VIEWS]) || 1;
+    totalVisits += pv;
+    if (pv > 1) returnVisitors++;
     if (r[SESS.SOURCE])  sources[r[SESS.SOURCE]]         = (sources[r[SESS.SOURCE]]||0)         + 1;
     if (r[SESS.REF])     refs[r[SESS.REF]]               = (refs[r[SESS.REF]]||0)               + 1;
     if (r[SESS.DEVICE])  deviceCounts[r[SESS.DEVICE]]    = (deviceCounts[r[SESS.DEVICE]]||0)    + 1;
@@ -41,16 +43,19 @@ function getSummary() {
   const today  = new Date();
   const days   = 30;
   const labels = [];
-  const sessMap = {}, contactMap = {}, eventMap = {};
+  const sessMap = {}, visitsMap = {}, contactMap = {}, eventMap = {};
   for (let i = days - 1; i >= 0; i--) {
     const d = new Date(today); d.setDate(d.getDate() - i);
     const key = d.toISOString().slice(0, 10);
     labels.push(key);
-    sessMap[key] = 0; contactMap[key] = 0; eventMap[key] = 0;
+    sessMap[key] = 0; visitsMap[key] = 0; contactMap[key] = 0; eventMap[key] = 0;
   }
   sRows.forEach(r => {
     const key = String(r[SESS.TIMESTAMP]).slice(0, 10);
-    if (sessMap[key] !== undefined) sessMap[key]++;
+    if (sessMap[key] !== undefined) {
+      sessMap[key]++;
+      visitsMap[key] += parseInt(r[SESS.PAGE_VIEWS]) || 1;
+    }
   });
   cRows.forEach(r => {
     const key = String(r[0]).slice(0, 10);
@@ -62,14 +67,16 @@ function getSummary() {
   });
   const timeSeries = {
     labels,
-    sessions:  labels.map(d => sessMap[d]),
-    contacts:  labels.map(d => contactMap[d]),
-    events:    labels.map(d => eventMap[d])
+    visits:   labels.map(d => visitsMap[d]),
+    sessions: labels.map(d => sessMap[d]),
+    contacts: labels.map(d => contactMap[d]),
+    events:   labels.map(d => eventMap[d])
   };
 
   return {
     totalContacts:   cRows.length,
     totalSessions:   sRows.length,
+    totalVisits,
     totalEvents:     eRows.length,
     bookCompleted,   collabCompleted,
     activeSessions:  activeIds.size,
