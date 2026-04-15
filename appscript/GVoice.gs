@@ -56,8 +56,8 @@ function _processGVoiceMessage(msg) {
   const emailMatch = from.match(/<([^>]+@txt\.voice\.google\.com)>/);
   const replyEmail = emailMatch ? emailMatch[1] : '';
 
-  // Clean the plain body — strip GVoice boilerplate footer
-  const rawBody  = msg.getPlainBody() || '';
+  // Parse HTML body first, fall back to plain
+  const rawBody   = msg.getBody() || msg.getPlainBody() || '';
   const cleanBody = _cleanGVoiceBody(rawBody);
 
   // Match against Contacts sheet
@@ -71,16 +71,32 @@ function _processGVoiceMessage(msg) {
 }
 
 function _cleanGVoiceBody(raw) {
+  // 1. Strip all HTML tags
+  let text = raw.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+                .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+                .replace(/<br\s*\/?>/gi, '\n')
+                .replace(/<\/p>/gi, '\n')
+                .replace(/<[^>]+>/g, '')
+                .replace(/&nbsp;/g, ' ')
+                .replace(/&amp;/g, '&')
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/&quot;/g, '"')
+                .replace(/&#39;/g, "'");
+
+  // 2. Strip GVoice boilerplate lines
   const stopPhrases = [
     'YOUR ACCOUNT', 'HELP CENTER', 'HELP FORUM',
     'txt.voice.google.com', 'Google LLC', '1600 Amphitheatre',
     'Mountain View', 'email notification settings',
-    'This email was sent to you'
+    'This email was sent to you', 'Voice'
   ];
-  return raw.split('\n')
+  text = text.split('\n')
     .filter(line => !stopPhrases.some(p => line.includes(p)))
-    .join('\n')
-    .trim();
+    .join('\n');
+
+  // 3. Collapse multiple blank lines and trim
+  return text.replace(/\n{3,}/g, '\n\n').trim();
 }
 
 // ── Contact lookup by phone ───────────────────────────────────────────────────
