@@ -12,7 +12,7 @@ function bootstrap() {
   _setupSheet(ss, SHEET.IDENTITY,  ['Key', 'Value']);
   _setupSheet(ss, SHEET.CONTACTS,  ['Timestamp','SessionID','Name','Phone','Email','Interest','BookingType','Notes','Source','Ref']);
   _setupSheet(ss, SHEET.EVENTS,    ['Timestamp','SessionID','Event','Value']);
-  _setupSheet(ss, SHEET.SESSIONS,  ['Timestamp','SessionID','IP','City','Region','Country','Device','OS','Browser','PageViews','Source','Ref']);
+  _setupSheet(ss, SHEET.SESSIONS,  ['Timestamp','SessionID','IP','City','Country','Device','OS','Browser','PageViews','Source','Ref']);
   _setupSheet(ss, SHEET.SEQUENCES, ['ID','Enrolled','Name','Phone','Email','Interest','Source','Ref','Phase','Step','Status','NextDate','ConsultDate','BookDate','SessionDate']);
   _setupSheet(ss, SHEET.FLOW,      ['Interest','Phase','Step','Delay (days)','Message']);
 
@@ -67,7 +67,7 @@ function _fillConfig(ss) {
 
   const defaults = [
     ['notifyEmail',    'sir.black.leo@gmail.com'],
-    ['scriptUrl',      'https://script.google.com/macros/s/AKfycbwgB8aP8zvl9eGPraRloNisHhqKPag_eHlYKtbhMHMjn4TgdRzJEPJN-eWqQSb_n1OSIg/exec'],
+    ['scriptUrl',      'https://script.google.com/macros/s/AKfycbymA2alydX-ZdtbbVV4fOG9aCuKeSs56Z9GDH6UnZABzPYwoLlneXmCcvZNunv_5dSlxA/exec'],
     ['seqEnabled',     'true'],
     ['confirmSubject', 'Sir Leo — Submission Received'],
     ['confirmMessage', '{{name}},\n\nYour submission was received. Sir Leo reviews each inquiry personally and will be in touch soon.\n\n— Sir Leo'],

@@ -31,8 +31,8 @@ function getSummary() {
     if (r[SESS.OS])      osCounts[r[SESS.OS]]            = (osCounts[r[SESS.OS]]||0)            + 1;
     if (r[SESS.BROWSER]) browserCounts[r[SESS.BROWSER]]  = (browserCounts[r[SESS.BROWSER]]||0)  + 1;
     if (r[SESS.COUNTRY]) countryCounts[r[SESS.COUNTRY]]  = (countryCounts[r[SESS.COUNTRY]]||0)  + 1;
-    if (r[SESS.CITY] && r[SESS.REGION]) {
-      const loc = r[SESS.CITY] + ', ' + r[SESS.REGION];
+    if (r[SESS.CITY]) {
+      const loc = [r[SESS.CITY], r[SESS.COUNTRY]].filter(Boolean).join(', ');
       cityCounts[loc] = (cityCounts[loc]||0) + 1;
     }
   });
@@ -71,13 +71,13 @@ function getSessionList(limit) {
   });
 
   return sRows.slice(-limit).reverse().map(r => {
-    const [ts, sid, ip, city, region, country, device, os, browser, pageViews, source, ref] = r;
+    const [ts, sid, ip, city, country, device, os, browser, pageViews, source, ref] = r;
     const events  = evBySid[sid]      || [];
     const contact = contactBySid[sid] || {};
     const lastTs  = events.length ? events[events.length-1].timestamp : ts;
     return {
       sessionId: sid, timestamp: ts, lastSeen: lastTs,
-      ip, city, region, country, device, os, browser, pageViews, source, ref,
+      ip, city, country, device, os, browser, pageViews, source, ref,
       name:     contact.name     || null,
       phone:    contact.phone    || null,
       interest: contact.interest || null,

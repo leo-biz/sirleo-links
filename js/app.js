@@ -288,7 +288,7 @@ function logSocialTap(platform) {
   fetch('https://ipapi.co/json/')
     .then(r => r.json())
     .then(ip => {
-      const payload = { ip: ip.ip, city: ip.city, region: ip.region, country: ip.country_name, device, os, browser, pageViews: views, source, ref };
+      const payload = { ip: ip.ip, city: ip.city, country: ip.country_name, device, os, browser, pageViews: views, source, ref };
       console.log('[SL] session payload:', payload);
       logSession(payload);
     })

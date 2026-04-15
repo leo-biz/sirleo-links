@@ -4,8 +4,8 @@
 // When deploying: Deploy → Manage deployments → pencil icon → New version
 // Paste DEPLOY_DESC as the version description, then bump SCRIPT_VERSION.
 
-const SCRIPT_VERSION = '1.1.0';
-const DEPLOY_DESC    = `v${SCRIPT_VERSION} — 12-column session schema with region, SESS constants, SWR cache, sidebar admin`;
+const SCRIPT_VERSION = '1.2.0';
+const DEPLOY_DESC    = `v${SCRIPT_VERSION} — 11-column session schema (region removed), SESS constants, SWR cache, sidebar admin`;
 
 const SPREADSHEET_ID = '1HKQHgBvjA6kM7XfEODkdFUj-pJ2Moa3GF6ygVgR3qok';
 
@@ -37,14 +37,13 @@ const SESS = {
   SID:        1,
   IP:         2,
   CITY:       3,
-  REGION:     4,
-  COUNTRY:    5,
-  DEVICE:     6,
-  OS:         7,
-  BROWSER:    8,
-  PAGE_VIEWS: 9,
-  SOURCE:     10,
-  REF:        11
+  COUNTRY:    4,
+  DEVICE:     5,
+  OS:         6,
+  BROWSER:    7,
+  PAGE_VIEWS: 8,
+  SOURCE:     9,
+  REF:        10
 };
 
 // Sequences sheet column indices — single source of truth
