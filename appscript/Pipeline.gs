@@ -49,21 +49,29 @@ function setStatus(id, status) {
 }
 
 function getPipeline() {
-  return getRows(SHEET.SEQUENCES).map(r => ({
-    id:          r[SEQ.ID],
-    enrolled:    r[SEQ.ENROLLED],
-    name:        r[SEQ.NAME],
-    phone:       r[SEQ.PHONE],
-    email:       r[SEQ.EMAIL],
-    interest:    r[SEQ.INTEREST],
-    source:      r[SEQ.SOURCE],
-    ref:         r[SEQ.REF],
-    phase:       r[SEQ.PHASE],
-    step:        r[SEQ.STEP],
-    status:      r[SEQ.STATUS],
-    nextDate:    r[SEQ.NEXT],
-    consultDate: r[SEQ.CONSULT],
-    bookDate:    r[SEQ.BOOK],
-    sessionDate: r[SEQ.SESSION]
-  }));
+  return getRows(SHEET.SEQUENCES).map(r => {
+    const phase    = parseInt(r[SEQ.PHASE]);
+    const nextStep = parseInt(r[SEQ.STEP]) + 1;
+    const interest = r[SEQ.INTEREST];
+    const msgs     = getMessages(phase, interest);
+    const nextMsg  = msgs[nextStep] ? msgs[nextStep].msg : '';
+    return {
+      id:          r[SEQ.ID],
+      enrolled:    r[SEQ.ENROLLED],
+      name:        r[SEQ.NAME],
+      phone:       r[SEQ.PHONE],
+      email:       r[SEQ.EMAIL],
+      interest:    r[SEQ.INTEREST],
+      source:      r[SEQ.SOURCE],
+      ref:         r[SEQ.REF],
+      phase:       phase,
+      step:        r[SEQ.STEP],
+      status:      r[SEQ.STATUS],
+      nextDate:    r[SEQ.NEXT],
+      consultDate: r[SEQ.CONSULT],
+      bookDate:    r[SEQ.BOOK],
+      sessionDate: r[SEQ.SESSION],
+      nextMessage: nextMsg
+    };
+  });
 }

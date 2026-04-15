@@ -355,6 +355,9 @@
           <div class="nav-item" data-page="pipeline" onclick="navTo('pipeline')">
             <span class="nav-icon">◇</span> Pipeline
           </div>
+          <div class="nav-item" data-page="sequences" onclick="navTo('sequences')">
+            <span class="nav-icon">▶</span> Sequences
+          </div>
           <div class="nav-item" data-page="sessions" onclick="navTo('sessions')">
             <span class="nav-icon">◉</span> Sessions
           </div>
@@ -403,6 +406,18 @@
         <div class="pipe-detail-panel" id="pipe-detail-panel">
           <button class="pipe-detail-close" onclick="closePipeDetail()">×</button>
           <div id="pipe-detail-content"></div>
+        </div>
+
+        <!-- Sequences -->
+        <div class="page" id="page-sequences">
+          <div class="page-header">
+            <div>
+              <div class="page-title">Sequences</div>
+              <div class="page-sub">Active drip sequences by contact</div>
+            </div>
+            <button class="refresh-btn" onclick="loadSequences()">Refresh</button>
+          </div>
+          <div id="sequences-body"><div class="loading">Loading…</div></div>
         </div>
 
         <!-- Sessions -->
@@ -578,8 +593,9 @@
     // lazy load on first visit
     if (!_loaded[page]) {
       _loaded[page] = true;
-      if (page === 'pipeline') loadPipeline();
-      if (page === 'sessions') loadSessions();
+      if (page === 'pipeline')  loadPipeline();
+      if (page === 'sequences') loadSequences();
+      if (page === 'sessions')  loadSessions();
     }
   }
 
@@ -967,6 +983,7 @@
       ${field('Consult Date', r.consultDate ? fmtShort(r.consultDate) : '')}
       ${field('Book Date', r.bookDate ? fmtShort(r.bookDate) : '')}
       ${field('Session Date', r.sessionDate ? fmtShort(r.sessionDate) : '')}
+      ${r.nextMessage ? `<div class="pipe-detail-field"><div class="pipe-detail-label">Next Sequence Message</div><div class="pipe-detail-value" style="font-size:12px;color:var(--muted);font-style:italic">${r.nextMessage}</div></div>` : ''}
       <hr class="pipe-detail-divider"/>
       <div class="section-title" style="margin-bottom:10px">Messages</div>
       <div class="msg-thread" id="msg-thread"><div style="color:var(--muted);font-size:12px">Loading…</div></div>
@@ -1046,6 +1063,53 @@
         if (res.ok) loadPipeline(); else alert('Error: ' + (res.error||'unknown'));
       })
       .catch(() => alert('Request failed'));
+  }
+
+  // ── Sequences ────────────────────────────────────────────────────────────────
+  function loadSequences() {
+    swr('sl_cache_pipeline', 2 * 60 * 1000, '?action=pipeline',
+      renderSequences, 'sequences-body', 'Could not load sequences.');
+  }
+
+  function renderSequences(rows) {
+    const active  = (rows || []).filter(r => r.status !== 'complete');
+    const done    = (rows || []).filter(r => r.status === 'complete');
+
+    if (!active.length && !done.length) {
+      document.getElementById('sequences-body').innerHTML = `<div style="color:var(--muted);font-size:13px;padding:20px 0">No sequences enrolled yet.</div>`;
+      return;
+    }
+
+    const row = r => {
+      const cfg      = PIPE_PHASES[parseInt(r.phase)] || {};
+      const statusCls = r.status === 'active' ? 'green' : 'dim';
+      const nextMsg  = r.nextMessage ? r.nextMessage.slice(0, 80) + (r.nextMessage.length > 80 ? '…' : '') : '—';
+      return `<tr style="cursor:pointer" onclick="openPipeDetail('${r.id}')">
+        <td><b>${r.name||'—'}</b><div style="font-size:11px;color:var(--muted)">${r.phone||''}</div></td>
+        <td><span class="pipe-tag ${statusCls}">${r.status}</span></td>
+        <td>${cfg.title||'—'}</td>
+        <td style="color:var(--muted)">Step ${r.step||0}</td>
+        <td style="color:var(--muted)">${r.nextDate ? fmtShort(r.nextDate) : '—'}</td>
+        <td style="color:var(--muted);font-size:11px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${nextMsg}</td>
+      </tr>`;
+    };
+
+    document.getElementById('sequences-body').innerHTML = `
+      <div class="section">
+        <div class="section-title">Active (${active.length})</div>
+        ${active.length ? `<table class="tbl">
+          <thead><tr><th>Contact</th><th>Status</th><th>Phase</th><th>Step</th><th>Next Send</th><th>Next Message</th></tr></thead>
+          <tbody>${active.map(row).join('')}</tbody>
+        </table>` : '<div style="color:var(--muted);font-size:13px">None</div>'}
+      </div>
+      ${done.length ? `<div class="section">
+        <div class="section-title">Completed (${done.length})</div>
+        <table class="tbl">
+          <thead><tr><th>Contact</th><th>Status</th><th>Phase</th><th>Step</th><th>Next Send</th><th>Next Message</th></tr></thead>
+          <tbody>${done.map(row).join('')}</tbody>
+        </table>
+      </div>` : ''}
+    `;
   }
 
   // ── QR Generator ─────────────────────────────────────────────────────────────

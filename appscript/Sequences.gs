@@ -62,8 +62,7 @@ function deliverStep(phase, step, name, email, phone, interest) {
     .replace(/\{\{testimonial\}\}/g, cfg.testimonialUrl || '');
 
   if (email) MailApp.sendEmail({ to: email, subject: SEQ_EMAIL_SUBJECT, body });
-  // SMS: uncomment when textbelt is deployed
-  // if (phone) sendSms(phone, body);
+  if (phone) sendText(String(phone), body);
 }
 
 function writeNextDate(sh, id, phase, nextStep, interest, rowNum) {
