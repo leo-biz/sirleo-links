@@ -31,6 +31,7 @@ function fillConfig()         { _fillConfig(_getTarget()); }
 function setupTrigger()       { _setupTrigger(); }
 
 function testSetup() {
+  Logger.log('Version:   ' + SCRIPT_VERSION);
   Logger.log('Sheets:    ' + db().getSheets().map(s => s.getName()).join(', '));
   Logger.log('Config:    ' + JSON.stringify(config()));
   Logger.log('Identity:  ' + JSON.stringify(identity()));

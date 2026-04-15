@@ -7,6 +7,7 @@ function doGet(e) {
     const id     = (e.parameter.id     || '').trim();
 
     const routes = {
+      version:       () => ({ version: SCRIPT_VERSION, description: DEPLOY_DESC }),
       identity:      () => getKV(SHEET.IDENTITY),
       config:        () => getKV(SHEET.CONFIG),
       summary:       () => getSummary(),
