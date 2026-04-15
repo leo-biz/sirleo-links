@@ -16,7 +16,7 @@ function setupGVoiceTrigger() {
 
 // ── Main watcher ──────────────────────────────────────────────────────────────
 function watchGVoiceEmails() {
-  const threads = GmailApp.search('from:txt.voice.google.com is:unread', 0, 25);
+  const threads = GmailApp.search('label:Sir-Leo-Text is:unread', 0, 25);
   threads.forEach(thread => {
     thread.getMessages()
       .filter(m => m.isUnread())
