@@ -37,7 +37,7 @@ function setupTrigger() {
   ScriptApp.getProjectTriggers()
     .filter(t => t.getHandlerFunction() === 'runSequences')
     .forEach(t => ScriptApp.deleteTrigger(t));
-  ScriptApp.newTrigger('runSequences').timeBased().everyHours(6).create();
+  ScriptApp.newTrigger('runSequences').timeBased().everyHours(SEQ_INTERVAL_HOURS).create();
   Logger.log('Trigger set: runSequences every 6 hours');
 }
 

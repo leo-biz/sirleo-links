@@ -13,6 +13,8 @@ const SHEET = {
   FLOW:      'SequenceFlow'
 };
 
+const SEQ_INTERVAL_HOURS = 6;  // how often runSequences() fires
+
 // Sequences sheet column indices — single source of truth
 const SEQ = {
   ID:       0,
