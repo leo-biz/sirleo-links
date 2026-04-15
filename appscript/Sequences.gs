@@ -30,7 +30,7 @@ function runSequences() {
     const status   = r[SEQ.STATUS];
     const nextDate = r[SEQ.NEXT];
 
-    if (status !== 'active')                   continue;
+    if (status !== SEQ_STATUS.ACTIVE)           continue;
     if (!nextDate || new Date(nextDate) > now)  continue;
 
     const phase    = parseInt(r[SEQ.PHASE]);
@@ -39,7 +39,7 @@ function runSequences() {
     const msgs     = getMessages(phase, interest);
 
     if (nextStep >= msgs.length) {
-      sh.getRange(i+1, SEQ.STATUS+1).setValue('waiting');
+      sh.getRange(i+1, SEQ.STATUS+1).setValue(SEQ_STATUS.WAITING);
       continue;
     }
 
@@ -61,7 +61,7 @@ function deliverStep(phase, step, name, email, phone, interest) {
     .replace(/\{\{intake\}\}/g,      cfg.intakeFormUrl  || '')
     .replace(/\{\{testimonial\}\}/g, cfg.testimonialUrl || '');
 
-  if (email) MailApp.sendEmail({ to: email, subject: 'Sir Leo', body });
+  if (email) MailApp.sendEmail({ to: email, subject: SEQ_EMAIL_SUBJECT, body });
   // SMS: uncomment when textbelt is deployed
   // if (phone) sendSms(phone, body);
 }
@@ -105,7 +105,7 @@ function getFlow() {
 
 function getMessages(phase, interest) {
   const flow     = getFlow();
-  const specific = flow.filter(r => r.phase === phase && r.interest !== '*' && (interest||'').includes(r.interest));
-  const wildcard = flow.filter(r => r.phase === phase && r.interest === '*');
+  const specific = flow.filter(r => r.phase === phase && r.interest !== FLOW_WILDCARD && (interest||'').includes(r.interest));
+  const wildcard = flow.filter(r => r.phase === phase && r.interest === FLOW_WILDCARD);
   return (specific.length ? specific : wildcard).sort((a, b) => a.step - b.step);
 }

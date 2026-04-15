@@ -26,7 +26,7 @@ function advancePhase(id, newPhase, dateCol) {
 
     sh.getRange(i+1, SEQ.PHASE+1).setValue(newPhase);
     sh.getRange(i+1, SEQ.STEP+1).setValue(0);
-    sh.getRange(i+1, SEQ.STATUS+1).setValue('active');
+    sh.getRange(i+1, SEQ.STATUS+1).setValue(SEQ_STATUS.ACTIVE);
     sh.getRange(i+1, SEQ.NEXT+1).setValue(now);
     sh.getRange(i+1, dateCol+1).setValue(now);
 

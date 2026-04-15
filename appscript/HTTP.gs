@@ -10,14 +10,14 @@ function doGet(e) {
       identity:      () => getKV(SHEET.IDENTITY),
       config:        () => getKV(SHEET.CONFIG),
       summary:       () => getSummary(),
-      sessions:      () => getSessionList(parseInt(e.parameter.limit) || 40),
+      sessions:      () => getSessionList(parseInt(e.parameter.limit) || DEFAULT_SESSION_LIMIT),
       pipeline:      () => getPipeline(),
       markConsulted: () => advancePhase(id, 2, SEQ.CONSULT),
       markBooked:    () => advancePhase(id, 3, SEQ.BOOK),
       markSession:   () => advancePhase(id, 4, SEQ.SESSION),
-      markComplete:  () => setStatus(id, 'complete'),
-      pauseSeq:      () => setStatus(id, 'paused'),
-      resumeSeq:     () => setStatus(id, 'active')
+      markComplete:  () => setStatus(id, SEQ_STATUS.COMPLETE),
+      pauseSeq:      () => setStatus(id, SEQ_STATUS.PAUSED),
+      resumeSeq:     () => setStatus(id, SEQ_STATUS.ACTIVE)
     };
 
     const handler = routes[action];

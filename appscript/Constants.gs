@@ -13,7 +13,17 @@ const SHEET = {
   FLOW:      'SequenceFlow'
 };
 
-const SEQ_INTERVAL_HOURS = 6;  // how often runSequences() fires
+const SEQ_INTERVAL_HOURS  = 6;       // how often runSequences() fires
+const SEQ_EMAIL_SUBJECT   = 'Sir Leo';
+const DEFAULT_SESSION_LIMIT = 40;
+const FLOW_WILDCARD       = '*';
+
+const SEQ_STATUS = {
+  ACTIVE:   'active',
+  PAUSED:   'paused',
+  WAITING:  'waiting',
+  COMPLETE: 'complete'
+};
 
 // Sequences sheet column indices — single source of truth
 const SEQ = {
