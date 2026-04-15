@@ -47,7 +47,7 @@ function doPost(e) {
     }
     else if (d.type === 'session') {
       appendRow(SHEET.SESSIONS, [
-        ts, sid, d.ip||'', d.city||'', d.country||'',
+        ts, sid, d.ip||'', d.city||'', d.region||'', d.country||'',
         d.device||'', d.os||'', d.browser||'', d.pageViews||1, d.source||'', d.ref||''
       ]);
     }

@@ -25,6 +25,22 @@ const SEQ_STATUS = {
   COMPLETE: 'complete'
 };
 
+// Sessions sheet column indices
+const SESS = {
+  TIMESTAMP:  0,
+  SID:        1,
+  IP:         2,
+  CITY:       3,
+  REGION:     4,
+  COUNTRY:    5,
+  DEVICE:     6,
+  OS:         7,
+  BROWSER:    8,
+  PAGE_VIEWS: 9,
+  SOURCE:     10,
+  REF:        11
+};
+
 // Sequences sheet column indices — single source of truth
 const SEQ = {
   ID:       0,

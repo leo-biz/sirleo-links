@@ -23,16 +23,16 @@ function getSummary() {
   eRows.forEach(r => { if (new Date(r[0]) > fiveMinsAgo) activeIds.add(r[1]); });
 
   sRows.forEach(r => {
-    if (new Date(r[0]) > fiveMinsAgo) activeIds.add(r[1]);
-    if (parseInt(r[8]) > 1) returnVisitors++;
-    if (r[9])    sources[r[9]]       = (sources[r[9]]||0)       + 1;
-    if (r[10])   refs[r[10]]         = (refs[r[10]]||0)         + 1;
-    if (r[5])    deviceCounts[r[5]]  = (deviceCounts[r[5]]||0)  + 1;
-    if (r[6])    osCounts[r[6]]      = (osCounts[r[6]]||0)      + 1;
-    if (r[7])    browserCounts[r[7]] = (browserCounts[r[7]]||0) + 1;
-    if (r[4])    countryCounts[r[4]] = (countryCounts[r[4]]||0) + 1;
-    if (r[3] && r[4]) {
-      const loc = r[3] + ', ' + r[4];
+    if (new Date(r[SESS.TIMESTAMP]) > fiveMinsAgo) activeIds.add(r[SESS.SID]);
+    if (parseInt(r[SESS.PAGE_VIEWS]) > 1) returnVisitors++;
+    if (r[SESS.SOURCE])  sources[r[SESS.SOURCE]]         = (sources[r[SESS.SOURCE]]||0)         + 1;
+    if (r[SESS.REF])     refs[r[SESS.REF]]               = (refs[r[SESS.REF]]||0)               + 1;
+    if (r[SESS.DEVICE])  deviceCounts[r[SESS.DEVICE]]    = (deviceCounts[r[SESS.DEVICE]]||0)    + 1;
+    if (r[SESS.OS])      osCounts[r[SESS.OS]]            = (osCounts[r[SESS.OS]]||0)            + 1;
+    if (r[SESS.BROWSER]) browserCounts[r[SESS.BROWSER]]  = (browserCounts[r[SESS.BROWSER]]||0)  + 1;
+    if (r[SESS.COUNTRY]) countryCounts[r[SESS.COUNTRY]]  = (countryCounts[r[SESS.COUNTRY]]||0)  + 1;
+    if (r[SESS.CITY] && r[SESS.REGION]) {
+      const loc = r[SESS.CITY] + ', ' + r[SESS.REGION];
       cityCounts[loc] = (cityCounts[loc]||0) + 1;
     }
   });
@@ -71,13 +71,13 @@ function getSessionList(limit) {
   });
 
   return sRows.slice(-limit).reverse().map(r => {
-    const [ts, sid, ip, city, country, device, os, browser, pageViews, source, ref] = r;
+    const [ts, sid, ip, city, region, country, device, os, browser, pageViews, source, ref] = r;
     const events  = evBySid[sid]      || [];
     const contact = contactBySid[sid] || {};
     const lastTs  = events.length ? events[events.length-1].timestamp : ts;
     return {
       sessionId: sid, timestamp: ts, lastSeen: lastTs,
-      ip, city, country, device, os, browser, pageViews, source, ref,
+      ip, city, region, country, device, os, browser, pageViews, source, ref,
       name:     contact.name     || null,
       phone:    contact.phone    || null,
       interest: contact.interest || null,

@@ -285,7 +285,7 @@ function logSocialTap(platform) {
 
   fetch('https://ipapi.co/json/')
     .then(r => r.json())
-    .then(ip => logSession({ ip: ip.ip, city: ip.city, country: ip.country_name, device, os, browser, pageViews: views, source, ref }))
+    .then(ip => logSession({ ip: ip.ip, city: ip.city, region: ip.region, country: ip.country_name, device, os, browser, pageViews: views, source, ref }))
     .catch(() => logSession({ device, os, browser, pageViews: views, source, ref }));
 })();
 // ─────────────────────────────────────────────────────────────────────────────

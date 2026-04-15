@@ -12,7 +12,7 @@ function bootstrap() {
   _setupSheet(ss, SHEET.IDENTITY,  ['Key', 'Value']);
   _setupSheet(ss, SHEET.CONTACTS,  ['Timestamp','SessionID','Name','Phone','Email','Interest','BookingType','Notes','Source','Ref']);
   _setupSheet(ss, SHEET.EVENTS,    ['Timestamp','SessionID','Event','Value']);
-  _setupSheet(ss, SHEET.SESSIONS,  ['Timestamp','SessionID','IP','City','Country','Device','OS','Browser','PageViews','Source','Ref']);
+  _setupSheet(ss, SHEET.SESSIONS,  ['Timestamp','SessionID','IP','City','Region','Country','Device','OS','Browser','PageViews','Source','Ref']);
   _setupSheet(ss, SHEET.SEQUENCES, ['ID','Enrolled','Name','Phone','Email','Interest','Source','Ref','Phase','Step','Status','NextDate','ConsultDate','BookDate','SessionDate']);
   _setupSheet(ss, SHEET.FLOW,      ['Interest','Phase','Step','Delay (days)','Message']);
 
