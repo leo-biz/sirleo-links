@@ -410,7 +410,7 @@
     qrInit();
   }
 
-  if (sessionStorage.getItem(PASS_KEY)) showDash();
+  // moved to end of script — must run after all let declarations
 
   // ── Cache helpers ────────────────────────────────────────────────────────────
   function _writeCache(key, data, ttlMs) {
@@ -750,6 +750,9 @@
       setTimeout(() => btn.textContent = orig, 1500);
     });
   }
+
+  // Auto-login if session is still valid — runs last so all let declarations exist
+  if (sessionStorage.getItem(PASS_KEY)) showDash();
 </script>
 </body>
 </html>
