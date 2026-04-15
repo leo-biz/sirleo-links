@@ -266,6 +266,26 @@
     .pipe-detail-btn.primary { border-color: rgba(180,145,90,0.5); color: var(--gold); }
     .pipe-detail-btn.danger { border-color: rgba(155,32,32,0.35); color: rgba(192,57,43,0.8); }
 
+    /* ── Messaging thread ─────────────────────────────────────────────────── */
+    .msg-thread { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;
+      max-height: 220px; overflow-y: auto; padding-right: 4px; }
+    .msg-bubble { max-width: 85%; padding: 8px 12px; font-size: 12px; line-height: 1.5;
+      border-radius: 2px; }
+    .msg-bubble.in  { background: var(--surface); border: 1px solid var(--border);
+      align-self: flex-start; color: var(--text); }
+    .msg-bubble.out { background: var(--gold-dim); border: 1px solid rgba(196,162,101,0.25);
+      align-self: flex-end; color: var(--gold-light); }
+    .msg-meta { font-size: 9px; color: var(--muted); margin-top: 3px; opacity: 0.6; }
+    .msg-compose { display: flex; gap: 8px; margin-top: 8px; }
+    .msg-input { flex: 1; background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); padding: 9px 12px; font-family: inherit; font-size: 12px;
+      outline: none; resize: none; border-radius: var(--radius); }
+    .msg-input:focus { border-color: var(--gold); }
+    .msg-send-btn { background: none; border: 1px solid rgba(180,145,90,0.4); color: var(--gold);
+      padding: 9px 14px; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.1em;
+      cursor: pointer; border-radius: var(--radius); white-space: nowrap; }
+    .msg-send-btn:hover { background: var(--gold-dim); }
+
     /* ── QR ───────────────────────────────────────────────────────────────── */
     .qr-body { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: start; }
     @media (max-width: 560px) { .qr-body { grid-template-columns: 1fr; } }
@@ -918,9 +938,12 @@
   }
 
   // ── Detail modal ──────────────────────────────────────────────────────────────
+  let _detailPhone = '';
+
   function openPipeDetail(id) {
     const r = _pipeRows.find(x => x.id === id);
     if (!r) return;
+    _detailPhone = r.phone || '';
     const cfg = PIPE_PHASES[parseInt(r.phase)] || {};
     const pauseBtn = r.status === 'paused'
       ? `<button class="pipe-detail-btn" onclick="pipeDetailAction('resumeSeq','${r.id}')">Resume Sequence</button>`
@@ -942,6 +965,13 @@
       ${field('Book Date', r.bookDate ? fmtShort(r.bookDate) : '')}
       ${field('Session Date', r.sessionDate ? fmtShort(r.sessionDate) : '')}
       <hr class="pipe-detail-divider"/>
+      <div class="section-title" style="margin-bottom:10px">Messages</div>
+      <div class="msg-thread" id="msg-thread"><div style="color:var(--muted);font-size:12px">Loading…</div></div>
+      <div class="msg-compose">
+        <textarea class="msg-input" id="msg-input" rows="2" placeholder="Type a message…"></textarea>
+        <button class="msg-send-btn" onclick="sendDetailText()">Send</button>
+      </div>
+      <hr class="pipe-detail-divider"/>
       <div class="pipe-detail-actions">
         ${cfg.next ? `<button class="pipe-detail-btn primary" onclick="pipeDetailAction('${cfg.next}','${r.id}')">${cfg.nextLabel}</button>` : ''}
         ${pauseBtn}
@@ -949,6 +979,50 @@
       </div>`;
     document.getElementById('pipe-detail-overlay').classList.add('open');
     document.getElementById('pipe-detail-panel').classList.add('open');
+    if (_detailPhone) loadDetailMessages(_detailPhone);
+  }
+
+  function loadDetailMessages(phone) {
+    fetch(SL.sheetUrl + '?action=messages&phone=' + encodeURIComponent(phone))
+      .then(r => r.json())
+      .then(msgs => {
+        const thread = document.getElementById('msg-thread');
+        if (!thread) return;
+        if (!msgs || !msgs.length) {
+          thread.innerHTML = '<div style="color:var(--muted);font-size:12px">No messages yet</div>';
+          return;
+        }
+        thread.innerHTML = msgs.map(m =>
+          `<div>
+            <div class="msg-bubble ${m.direction}">${m.body}</div>
+            <div class="msg-meta" style="text-align:${m.direction==='out'?'right':'left'}">${fmtShort(m.timestamp)}</div>
+          </div>`
+        ).join('');
+        thread.scrollTop = thread.scrollHeight;
+      })
+      .catch(() => {
+        const thread = document.getElementById('msg-thread');
+        if (thread) thread.innerHTML = '<div style="color:var(--muted);font-size:12px">Could not load messages</div>';
+      });
+  }
+
+  function sendDetailText() {
+    const input = document.getElementById('msg-input');
+    const body  = input ? input.value.trim() : '';
+    if (!body || !_detailPhone) return;
+    input.value = '';
+    input.disabled = true;
+    fetch(SL.sheetUrl, {
+      method: 'POST',
+      body: JSON.stringify({ type: 'replyText', phone: _detailPhone, body })
+    })
+    .then(r => r.json())
+    .then(res => {
+      input.disabled = false;
+      if (res.ok) loadDetailMessages(_detailPhone);
+      else alert('Send failed: ' + (res.error || 'unknown'));
+    })
+    .catch(() => { input.disabled = false; alert('Send failed'); });
   }
 
   function closePipeDetail() {

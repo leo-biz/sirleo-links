@@ -4,7 +4,7 @@
 // When deploying: Deploy → Manage deployments → pencil icon → New version
 // Paste DEPLOY_DESC as the version description, then bump SCRIPT_VERSION.
 
-const SCRIPT_VERSION = '2.0.9';
+const SCRIPT_VERSION = '2.1.0';
 const DEPLOY_DESC    = `v${SCRIPT_VERSION} — 11-column session schema (region removed), SESS constants, SWR cache, sidebar admin`;
 
 const SPREADSHEET_ID = '1HKQHgBvjA6kM7XfEODkdFUj-pJ2Moa3GF6ygVgR3qok';
@@ -16,7 +16,19 @@ const SHEET = {
   IDENTITY:  'Identity',
   CONFIG:    'Config',
   SEQUENCES: 'Sequences',
-  FLOW:      'SequenceFlow'
+  FLOW:      'SequenceFlow',
+  MESSAGES:  'Messages'
+};
+
+// Messages sheet column indices
+const MSG = {
+  TIMESTAMP:   0,
+  PHONE:       1,
+  NAME:        2,
+  DIRECTION:   3,  // 'in' | 'out'
+  BODY:        4,
+  REPLY_EMAIL: 5,
+  MESSAGE_ID:  6
 };
 
 const SEQ_INTERVAL_HOURS  = 6;       // how often runSequences() fires

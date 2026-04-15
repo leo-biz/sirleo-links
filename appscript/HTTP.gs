@@ -18,7 +18,8 @@ function doGet(e) {
       markSession:   () => advancePhase(id, 4, SEQ.SESSION),
       markComplete:  () => setStatus(id, SEQ_STATUS.COMPLETE),
       pauseSeq:      () => setStatus(id, SEQ_STATUS.PAUSED),
-      resumeSeq:     () => setStatus(id, SEQ_STATUS.ACTIVE)
+      resumeSeq:     () => setStatus(id, SEQ_STATUS.ACTIVE),
+      messages:      () => getMessagesForPhone(e.parameter.phone || '')
     };
 
     const handler = routes[action];
@@ -36,6 +37,15 @@ function doPost(e) {
     const sid = d.sessionId || '';
     Logger.log('doPost v' + SCRIPT_VERSION + ' type=' + d.type);
 
+    if (d.type === 'sendText') {
+      return jsonOut(sendText(d.phone, d.body));
+    }
+    if (d.type === 'replyText') {
+      return jsonOut(replyToText(d.phone, d.body));
+    }
+    if (d.type === 'sendSeqMessage') {
+      return jsonOut(sendSequenceMessage(d.seqId, d.body));
+    }
     if (d.type === 'contact') {
       appendRow(SHEET.CONTACTS, [
         ts, sid, d.name||'', d.phone||'', d.email||'',

@@ -15,6 +15,7 @@ function bootstrap() {
   _setupSheet(ss, SHEET.SESSIONS,  ['Timestamp','SessionID','IP','City','Country','Device','OS','Browser','PageViews','Source','Ref']);
   _setupSheet(ss, SHEET.SEQUENCES, ['ID','Enrolled','Name','Phone','Email','Interest','Source','Ref','Phase','Step','Status','NextDate','ConsultDate','BookDate','SessionDate']);
   _setupSheet(ss, SHEET.FLOW,      ['Interest','Phase','Step','Delay (days)','Message']);
+  _setupSheet(ss, SHEET.MESSAGES,  ['Timestamp','Phone','Name','Direction','Body','ReplyEmail','MessageID']);
 
   _fillConfig(ss);
   _fillIdentity(ss);
