@@ -34,6 +34,7 @@ function doPost(e) {
     const d   = JSON.parse(e.postData.contents);
     const ts  = d.timestamp || new Date().toISOString();
     const sid = d.sessionId || '';
+    Logger.log('doPost v' + SCRIPT_VERSION + ' type=' + d.type);
 
     if (d.type === 'contact') {
       appendRow(SHEET.CONTACTS, [

@@ -232,7 +232,9 @@ function _send(payload) {
 
 function _post(payload) {
   if (!SL.sheetUrl) return;
-  _send(Object.assign({ sessionId: getSession(), timestamp: new Date().toISOString() }, payload));
+  const full = Object.assign({ sessionId: getSession(), timestamp: new Date().toISOString() }, payload);
+  console.log('[SL] posting to:', SL.sheetUrl, full);
+  _send(full);
 }
 
 // Drain any queued payloads from previous offline visits
@@ -285,8 +287,16 @@ function logSocialTap(platform) {
 
   fetch('https://ipapi.co/json/')
     .then(r => r.json())
-    .then(ip => logSession({ ip: ip.ip, city: ip.city, region: ip.region, country: ip.country_name, device, os, browser, pageViews: views, source, ref }))
-    .catch(() => logSession({ device, os, browser, pageViews: views, source, ref }));
+    .then(ip => {
+      const payload = { ip: ip.ip, city: ip.city, region: ip.region, country: ip.country_name, device, os, browser, pageViews: views, source, ref };
+      console.log('[SL] session payload:', payload);
+      logSession(payload);
+    })
+    .catch(() => {
+      const payload = { device, os, browser, pageViews: views, source, ref };
+      console.log('[SL] session payload (no geo):', payload);
+      logSession(payload);
+    });
 })();
 // ─────────────────────────────────────────────────────────────────────────────
 

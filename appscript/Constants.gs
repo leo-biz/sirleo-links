@@ -4,8 +4,8 @@
 // When deploying: Deploy → Manage deployments → pencil icon → New version
 // Paste DEPLOY_DESC as the version description, then bump SCRIPT_VERSION.
 
-const SCRIPT_VERSION = '1.0.0';
-const DEPLOY_DESC    = `v${SCRIPT_VERSION} — region tracking, SESS/SEQ_STATUS constants, bootstrap(), sheet-driven sequences`;
+const SCRIPT_VERSION = '1.1.0';
+const DEPLOY_DESC    = `v${SCRIPT_VERSION} — 12-column session schema with region, SESS constants, SWR cache, sidebar admin`;
 
 const SPREADSHEET_ID = '1HKQHgBvjA6kM7XfEODkdFUj-pJ2Moa3GF6ygVgR3qok';
 
