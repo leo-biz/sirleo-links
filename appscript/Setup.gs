@@ -73,7 +73,8 @@ function _fillConfig(ss) {
     ['confirmMessage', '{{name}},\n\nYour submission was received. Sir Leo reviews each inquiry personally and will be in touch soon.\n\n— Sir Leo'],
     ['calendlyUrl',    ''],
     ['intakeFormUrl',  ''],
-    ['testimonialUrl', '']
+    ['testimonialUrl', ''],
+    ['adminPassHash',  'a6152b6e6b64e083725e9178930532dddf91d6c9c9eb9831aec24c32ad6d495d']
   ];
 
   let added = 0;
