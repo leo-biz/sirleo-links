@@ -4,20 +4,73 @@
 // When deploying: Deploy → Manage deployments → pencil icon → New version
 // Paste DEPLOY_DESC as the version description, then bump SCRIPT_VERSION.
 
-const SCRIPT_VERSION = '2.1.1';
-const DEPLOY_DESC    = `v${SCRIPT_VERSION} — 11-column session schema (region removed), SESS constants, SWR cache, sidebar admin`;
+const SCRIPT_VERSION = '3.1.0';
+const DEPLOY_DESC    = `v${SCRIPT_VERSION} — Pipeline/Flows/Enrollments rearchitecture; new CRM stages, multi-flow drip, GVoice messaging`;
 
 const SPREADSHEET_ID = '1HKQHgBvjA6kM7XfEODkdFUj-pJ2Moa3GF6ygVgR3qok';
 
 const SHEET = {
-  CONTACTS:  'Contacts',
-  EVENTS:    'Events',
-  SESSIONS:  'Sessions',
-  IDENTITY:  'Identity',
-  CONFIG:    'Config',
-  SEQUENCES: 'Sequences',
-  FLOW:      'SequenceFlow',
-  MESSAGES:  'Messages'
+  CONTACTS:    'Contacts',
+  EVENTS:      'Events',
+  SESSIONS:    'Sessions',
+  IDENTITY:    'Identity',
+  CONFIG:      'Config',
+  MESSAGES:    'Messages',
+  // CRM
+  PIPELINE:    'Pipeline',
+  // Drip flows
+  FLOWS:       'Flows',
+  ENROLLMENTS: 'Enrollments',
+  // Legacy (kept for backward compat)
+  SEQUENCES:   'Sequences',
+  FLOW:        'SequenceFlow'
+};
+
+// Pipeline sheet column indices
+const PIPE = {
+  PHONE:      0,
+  NAME:       1,
+  STAGE:      2,
+  INTEREST:   3,
+  SOURCE:     4,
+  UPDATED_AT: 5,
+  NOTES:      6
+};
+
+const PIPE_STAGES = [
+  'New Lead', 'Reached Out', 'Responded',
+  'Consulted', 'Booked', 'Session Done'
+];
+
+// Flows sheet column indices
+const FLOW_COL = {
+  ID:      0,
+  NAME:    1,
+  STEP:    2,
+  DELAY:   3,
+  CHANNEL: 4,
+  SUBJECT: 5,
+  MESSAGE: 6
+};
+
+// Enrollments sheet column indices
+const ENR = {
+  ID:           0,
+  PHONE:        1,
+  NAME:         2,
+  FLOW_ID:      3,
+  FLOW_NAME:    4,
+  STEP:         5,
+  STATUS:       6,
+  NEXT_DATE:    7,
+  ENROLLED_AT:  8,
+  COMPLETED_AT: 9
+};
+
+const ENR_STATUS = {
+  ACTIVE:   'active',
+  PAUSED:   'paused',
+  COMPLETE: 'complete'
 };
 
 // Messages sheet column indices

@@ -356,7 +356,10 @@
             <span class="nav-icon">◇</span> Pipeline
           </div>
           <div class="nav-item" data-page="sequences" onclick="navTo('sequences')">
-            <span class="nav-icon">▶</span> Sequences
+            <span class="nav-icon">▶</span> Enrollments
+          </div>
+          <div class="nav-item" data-page="flows" onclick="navTo('flows')">
+            <span class="nav-icon">≡</span> Flows
           </div>
           <div class="nav-item" data-page="sessions" onclick="navTo('sessions')">
             <span class="nav-icon">◉</span> Sessions
@@ -408,16 +411,28 @@
           <div id="pipe-detail-content"></div>
         </div>
 
-        <!-- Sequences -->
+        <!-- Enrollments -->
         <div class="page" id="page-sequences">
           <div class="page-header">
             <div>
-              <div class="page-title">Sequences</div>
-              <div class="page-sub">Active drip sequences by contact</div>
+              <div class="page-title">Enrollments</div>
+              <div class="page-sub">Active drip flow enrollments per contact</div>
             </div>
             <button class="refresh-btn" onclick="loadSequences()">Refresh</button>
           </div>
           <div id="sequences-body"><div class="loading">Loading…</div></div>
+        </div>
+
+        <!-- Flows -->
+        <div class="page" id="page-flows">
+          <div class="page-header">
+            <div>
+              <div class="page-title">Flows</div>
+              <div class="page-sub">Message flow templates</div>
+            </div>
+            <button class="refresh-btn" onclick="loadFlows()">Refresh</button>
+          </div>
+          <div id="flows-body"><div class="loading">Loading…</div></div>
         </div>
 
         <!-- Sessions -->
@@ -595,6 +610,7 @@
       _loaded[page] = true;
       if (page === 'pipeline')  loadPipeline();
       if (page === 'sequences') loadSequences();
+      if (page === 'flows')     loadFlows();
       if (page === 'sessions')  loadSessions();
     }
   }
@@ -847,16 +863,12 @@
   }
 
   // ── Pipeline ─────────────────────────────────────────────────────────────────
-  const PIPE_PHASES = {
-    1: { title: 'Get to Call',  next: 'markConsulted', nextLabel: '✓ Consulted' },
-    2: { title: 'Get Booked',   next: 'markBooked',    nextLabel: '✓ Booked' },
-    3: { title: 'Pre-Session',  next: 'markSession',   nextLabel: '✓ Session Done' },
-    4: { title: 'Post-Session', next: 'markComplete',  nextLabel: '✓ Complete' }
-  };
+  const PIPE_STAGES = ['New Lead','Reached Out','Responded','Consulted','Booked','Session Done'];
 
   let _pipeView = 'kanban';
   let _pipeRows = [];
-  let _pipeColsOpen = { 1: true, 2: true, 3: true, 4: true };
+  let _pipeFlows = [];
+  let _pipeColsOpen = {};
 
   function setPipeView(view) {
     _pipeView = view;
@@ -868,52 +880,61 @@
   }
 
   function loadPipeline() {
-    swr('sl_cache_pipeline', 2 * 60 * 1000, '?action=pipeline',
-      renderPipeline, 'pipeline-body', 'Could not load pipeline.');
+    // Fetch pipeline + flows in parallel
+    Promise.all([
+      fetchWithTimeout(SL.sheetUrl + '?action=pipeline').then(r => r.json()),
+      fetchWithTimeout(SL.sheetUrl + '?action=flows').then(r => r.json())
+    ])
+    .then(([rows, flows]) => {
+      _pipeRows  = Array.isArray(rows)  ? rows  : [];
+      _pipeFlows = Array.isArray(flows) ? flows : [];
+      _pipeView === 'list' ? renderList(_pipeRows) : renderKanban(_pipeRows);
+    })
+    .catch(() => {
+      document.getElementById('pipeline-body').innerHTML =
+        '<div style="color:var(--muted);font-size:13px;padding:20px 0">Could not load pipeline.</div>';
+    });
   }
 
-  function renderPipeline(rows) {
-    _pipeRows = (rows || []).filter(r => r.status !== 'complete');
-    _pipeView === 'list' ? renderList(_pipeRows) : renderKanban(_pipeRows);
-  }
-
-  function _buildCols(rows) {
-    const cols = { 1:[], 2:[], 3:[], 4:[] };
-    rows.forEach(r => { const p = parseInt(r.phase)||1; if (cols[p]) cols[p].push(r); });
+  function _buildStageCols(rows) {
+    const cols = {};
+    PIPE_STAGES.forEach(s => { cols[s] = []; });
+    rows.forEach(r => {
+      const s = r.stage || PIPE_STAGES[0];
+      if (!cols[s]) cols[s] = [];
+      cols[s].push(r);
+    });
     return cols;
   }
 
-  function _statusTag(r) {
-    return r.status === 'waiting' ? '<span class="pipe-tag dim">Waiting</span>'
-         : r.status === 'paused'  ? '<span class="pipe-tag dim">Paused</span>'
-         : '<span class="pipe-tag green">Active</span>';
+  function _stageTag(stage) {
+    const idx = PIPE_STAGES.indexOf(stage);
+    const cls = idx >= 4 ? 'green' : idx >= 2 ? 'gold' : 'dim';
+    return `<span class="pipe-tag ${cls}">${stage || 'New Lead'}</span>`;
   }
 
   // ── Kanban view ───────────────────────────────────────────────────────────────
   function renderKanban(rows) {
-    const cols = _buildCols(rows);
-    const html = Object.entries(PIPE_PHASES).map(([phase, cfg]) => {
-      const items = cols[phase] || [];
+    const cols = _buildStageCols(rows);
+    const html = PIPE_STAGES.map(stage => {
+      const items = cols[stage] || [];
+      const nextStage = PIPE_STAGES[PIPE_STAGES.indexOf(stage) + 1];
       const cards = items.map(r => {
+        const phone   = r.phone || '';
         const srcTag  = r.source ? `<span class="pipe-tag gold">${r.source}</span>` : '';
-        const nextStr = r.nextDate ? 'Next: ' + fmtShort(r.nextDate) : '';
-        const pauseBtn = r.status === 'paused'
-          ? `<button class="pipe-btn" onclick="pipeAction('resumeSeq','${r.id}')">Resume</button>`
-          : `<button class="pipe-btn" onclick="pipeAction('pauseSeq','${r.id}')">Pause</button>`;
-        return `<div class="pipe-card" onclick="openPipeDetail('${r.id}')" style="cursor:pointer">
+        const enrBadge = r.enrollments && r.enrollments.length
+          ? `<span class="pipe-tag green">${r.enrollments.length} flow${r.enrollments.length>1?'s':''}</span>` : '';
+        return `<div class="pipe-card" onclick="openPipeDetail('${_esc(phone)}')" style="cursor:pointer">
           <div class="pipe-name">${r.name || 'Unknown'}</div>
           <div class="pipe-interest">${r.interest || '—'}</div>
-          <div class="pipe-tags">${_statusTag(r)}${srcTag}</div>
-          <div class="pipe-actions" onclick="event.stopPropagation()">
-            <button class="pipe-btn primary" onclick="pipeAction('${cfg.next}','${r.id}')">${cfg.nextLabel}</button>
-            ${pauseBtn}
-            <button class="pipe-btn danger" onclick="pipeAction('markComplete','${r.id}')">✕</button>
-          </div>
-          ${nextStr ? `<div class="pipe-next">${nextStr}</div>` : ''}
+          <div class="pipe-tags">${srcTag}${enrBadge}</div>
+          ${nextStage ? `<div class="pipe-actions" onclick="event.stopPropagation()">
+            <button class="pipe-btn primary" onclick="pipeSetStage('${_esc(phone)}','${_esc(nextStage)}')">→ ${nextStage}</button>
+          </div>` : ''}
         </div>`;
       }).join('') || '<div style="color:var(--muted);font-size:12px;padding:8px 0">Empty</div>';
       return `<div class="pipe-col">
-        <div class="pipe-col-title">${cfg.title}<span class="pipe-count">${items.length}</span></div>
+        <div class="pipe-col-title">${stage}<span class="pipe-count">${items.length}</span></div>
         ${cards}
       </div>`;
     }).join('');
@@ -922,26 +943,26 @@
 
   // ── List view ─────────────────────────────────────────────────────────────────
   function renderList(rows) {
-    const cols = _buildCols(rows);
-    const html = Object.entries(PIPE_PHASES).map(([phase, cfg]) => {
-      const items = cols[phase] || [];
-      const isOpen = _pipeColsOpen[phase] !== false;
+    const cols = _buildStageCols(rows);
+    const html = PIPE_STAGES.map(stage => {
+      const items  = cols[stage] || [];
+      const isOpen = _pipeColsOpen[stage] !== false;
       const rowsHtml = items.map(r => {
-        const nextStr = r.nextDate ? fmtShort(r.nextDate) : '—';
-        return `<div class="pipe-list-row" onclick="openPipeDetail('${r.id}')">
+        const phone = r.phone || '';
+        return `<div class="pipe-list-row" onclick="openPipeDetail('${_esc(phone)}')">
           <div>
             <div class="pipe-list-name">${r.name || 'Unknown'}</div>
             <div class="pipe-list-interest">${r.interest || '—'}</div>
           </div>
-          <div>${_statusTag(r)}</div>
-          <div class="pipe-list-next">${nextStr}</div>
+          <div>${_stageTag(r.stage)}</div>
+          <div class="pipe-list-next">${r.updatedAt ? fmtShort(r.updatedAt) : '—'}</div>
           <div style="color:var(--muted);font-size:14px">›</div>
         </div>`;
       }).join('') || `<div style="color:var(--muted);font-size:12px;padding:12px 16px">Empty</div>`;
-      return `<div class="pipe-stage${isOpen ? ' open' : ''}" id="pipe-stage-${phase}">
-        <div class="pipe-stage-header" onclick="togglePipeStage(${phase})">
+      return `<div class="pipe-stage${isOpen ? ' open' : ''}" id="pipe-stage-${stage.replace(/ /g,'_')}">
+        <div class="pipe-stage-header" onclick="togglePipeStage('${_esc(stage)}')">
           <span class="pipe-stage-arrow">›</span>
-          <span class="pipe-stage-name">${cfg.title}</span>
+          <span class="pipe-stage-name">${stage}</span>
           <span class="pipe-stage-count">${items.length}</span>
         </div>
         <div class="pipe-stage-body">${rowsHtml}</div>
@@ -950,40 +971,75 @@
     document.getElementById('pipeline-body').innerHTML = `<div class="pipe-list">${html}</div>`;
   }
 
-  function togglePipeStage(phase) {
-    const el = document.getElementById('pipe-stage-' + phase);
+  function togglePipeStage(stage) {
+    const el = document.getElementById('pipe-stage-' + stage.replace(/ /g,'_'));
+    if (!el) return;
     const isOpen = el.classList.toggle('open');
-    _pipeColsOpen[phase] = isOpen;
+    _pipeColsOpen[stage] = isOpen;
+  }
+
+  function pipeSetStage(phone, stage) {
+    fetch(SL.sheetUrl, {
+      method: 'POST',
+      body: JSON.stringify({ type: 'setStage', phone, stage })
+    })
+    .then(r => r.json())
+    .then(res => {
+      if (res.ok) { localStorage.removeItem('sl_cache_pipeline'); loadPipeline(); }
+      else alert('Error: ' + (res.error || 'unknown'));
+    })
+    .catch(() => alert('Request failed'));
   }
 
   // ── Detail modal ──────────────────────────────────────────────────────────────
   let _detailPhone = '';
 
-  function openPipeDetail(id) {
-    const r = _pipeRows.find(x => x.id === id);
+  function openPipeDetail(phone) {
+    const r = _pipeRows.find(x => (x.phone || '') === phone);
     if (!r) return;
-    _detailPhone = r.phone || '';
-    const cfg = PIPE_PHASES[parseInt(r.phase)] || {};
-    const pauseBtn = r.status === 'paused'
-      ? `<button class="pipe-detail-btn" onclick="pipeDetailAction('resumeSeq','${r.id}')">Resume Sequence</button>`
-      : `<button class="pipe-detail-btn" onclick="pipeDetailAction('pauseSeq','${r.id}')">Pause Sequence</button>`;
+    _detailPhone = phone;
+
     const field = (label, val) => val
       ? `<div class="pipe-detail-field"><div class="pipe-detail-label">${label}</div><div class="pipe-detail-value">${val}</div></div>`
       : '';
+
+    const stageIdx  = PIPE_STAGES.indexOf(r.stage);
+    const nextStage = PIPE_STAGES[stageIdx + 1];
+
+    const enrHtml = (r.enrollments && r.enrollments.length)
+      ? r.enrollments.map(e => `
+          <div class="pipe-detail-field">
+            <div class="pipe-detail-label">${e.flowName} — step ${e.step}</div>
+            <div class="pipe-detail-value" style="display:flex;gap:8px;align-items:center">
+              <span class="pipe-tag ${e.status==='active'?'green':'dim'}">${e.status}</span>
+              ${e.status !== 'complete' ? `<button class="pipe-btn danger" style="font-size:10px;padding:3px 8px" onclick="enrollAction('${e.id}','complete')">Stop</button>` : ''}
+            </div>
+          </div>`).join('')
+      : '<div style="color:var(--muted);font-size:12px">No active enrollments</div>';
+
+    const flowOptions = _pipeFlows.map(f =>
+      `<option value="${_esc(f.id)}">${f.name} (${f.steps.length} steps)</option>`
+    ).join('');
+
     document.getElementById('pipe-detail-content').innerHTML = `
       <div class="pipe-detail-name">${r.name || 'Unknown'}</div>
       <div class="pipe-detail-interest">${r.interest || '—'}</div>
-      ${field('Phase', cfg.title)}
-      ${field('Status', r.status)}
+      ${field('Stage', _stageTag(r.stage))}
       ${field('Phone', r.phone ? `<a href="tel:${r.phone}" style="color:var(--gold)">${r.phone}</a>` : '')}
-      ${field('Email', r.email ? `<a href="mailto:${r.email}" style="color:var(--gold)">${r.email}</a>` : '')}
       ${field('Source', r.source)}
-      ${field('Enrolled', r.enrolled ? fmtShort(r.enrolled) : '')}
-      ${field('Next Step', r.nextDate ? fmtShort(r.nextDate) : '')}
-      ${field('Consult Date', r.consultDate ? fmtShort(r.consultDate) : '')}
-      ${field('Book Date', r.bookDate ? fmtShort(r.bookDate) : '')}
-      ${field('Session Date', r.sessionDate ? fmtShort(r.sessionDate) : '')}
-      ${r.nextMessage ? `<div class="pipe-detail-field"><div class="pipe-detail-label">Next Sequence Message</div><div class="pipe-detail-value" style="font-size:12px;color:var(--muted);font-style:italic">${r.nextMessage}</div></div>` : ''}
+      ${field('Updated', r.updatedAt ? fmtShort(r.updatedAt) : '')}
+      <hr class="pipe-detail-divider"/>
+      <div class="section-title" style="margin-bottom:10px">Stage</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        ${PIPE_STAGES.map(s => `<button class="pipe-btn${r.stage===s?' primary':''}" onclick="pipeSetStage('${_esc(phone)}','${_esc(s)}')">${s}</button>`).join('')}
+      </div>
+      <hr class="pipe-detail-divider"/>
+      <div class="section-title" style="margin-bottom:10px">Enrollments</div>
+      ${enrHtml}
+      ${flowOptions ? `<div style="display:flex;gap:8px;margin-top:10px">
+        <select id="enr-flow-sel" style="flex:1;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:6px;font-size:12px">${flowOptions}</select>
+        <button class="pipe-btn primary" onclick="enrollFromDetail('${_esc(phone)}','${_esc(r.name||'')}')">Enroll</button>
+      </div>` : ''}
       <hr class="pipe-detail-divider"/>
       <div class="section-title" style="margin-bottom:10px">Messages</div>
       <div class="msg-thread" id="msg-thread"><div style="color:var(--muted);font-size:12px">Loading…</div></div>
@@ -991,15 +1047,54 @@
         <textarea class="msg-input" id="msg-input" rows="2" placeholder="Type a message…"></textarea>
         <button class="msg-send-btn" onclick="sendDetailText()">Send</button>
       </div>
-      <hr class="pipe-detail-divider"/>
-      <div class="pipe-detail-actions">
-        ${cfg.next ? `<button class="pipe-detail-btn primary" onclick="pipeDetailAction('${cfg.next}','${r.id}')">${cfg.nextLabel}</button>` : ''}
-        ${pauseBtn}
-        <button class="pipe-detail-btn danger" onclick="pipeDetailAction('markComplete','${r.id}')">Mark Complete</button>
-      </div>`;
+      ${r.notes !== undefined ? `<hr class="pipe-detail-divider"/>
+      <div class="section-title" style="margin-bottom:10px">Notes</div>
+      <textarea id="pipe-notes" rows="3" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px;font-size:12px;resize:vertical">${r.notes || ''}</textarea>
+      <button class="pipe-btn primary" style="margin-top:6px" onclick="saveNotes('${_esc(phone)}')">Save Notes</button>` : ''}
+    `;
     document.getElementById('pipe-detail-overlay').classList.add('open');
     document.getElementById('pipe-detail-panel').classList.add('open');
-    if (_detailPhone) loadDetailMessages(_detailPhone);
+    loadDetailMessages(phone);
+  }
+
+  function enrollFromDetail(phone, name) {
+    const sel = document.getElementById('enr-flow-sel');
+    if (!sel) return;
+    const flowId = sel.value;
+    fetch(SL.sheetUrl, {
+      method: 'POST',
+      body: JSON.stringify({ type: 'enroll', phone, name, flowId })
+    })
+    .then(r => r.json())
+    .then(res => {
+      if (res.ok) { localStorage.removeItem('sl_cache_pipeline'); loadPipeline(); openPipeDetail(phone); }
+      else alert('Enroll failed: ' + (res.error || 'unknown'));
+    })
+    .catch(() => alert('Request failed'));
+  }
+
+  function enrollAction(enrollmentId, status) {
+    fetch(SL.sheetUrl, {
+      method: 'POST',
+      body: JSON.stringify({ type: 'enrollStatus', id: enrollmentId, status })
+    })
+    .then(r => r.json())
+    .then(res => {
+      if (res.ok) { localStorage.removeItem('sl_cache_pipeline'); loadPipeline(); }
+      else alert('Error: ' + (res.error || 'unknown'));
+    })
+    .catch(() => alert('Request failed'));
+  }
+
+  function saveNotes(phone) {
+    const notes = (document.getElementById('pipe-notes') || {}).value || '';
+    fetch(SL.sheetUrl, {
+      method: 'POST',
+      body: JSON.stringify({ type: 'updateNotes', phone, notes })
+    })
+    .then(r => r.json())
+    .then(res => { if (!res.ok) alert('Save failed: ' + (res.error || 'unknown')); })
+    .catch(() => alert('Request failed'));
   }
 
   function loadDetailMessages(phone) {
@@ -1050,47 +1145,42 @@
     document.getElementById('pipe-detail-panel').classList.remove('open');
   }
 
-  function pipeDetailAction(action, id) {
-    closePipeDetail();
-    pipeAction(action, id);
-  }
+  function _esc(s) { return String(s).replace(/'/g, "\\'"); }
 
-  function pipeAction(action, id) {
-    fetchWithTimeout(SL.sheetUrl + '?action=' + action + '&id=' + encodeURIComponent(id))
-      .then(r => r.json())
-      .then(res => {
-        localStorage.removeItem('sl_cache_pipeline');
-        if (res.ok) loadPipeline(); else alert('Error: ' + (res.error||'unknown'));
-      })
-      .catch(() => alert('Request failed'));
-  }
-
-  // ── Sequences ────────────────────────────────────────────────────────────────
+  // ── Enrollments ───────────────────────────────────────────────────────────────
   function loadSequences() {
-    swr('sl_cache_pipeline', 2 * 60 * 1000, '?action=pipeline',
-      renderSequences, 'sequences-body', 'Could not load sequences.');
+    fetchWithTimeout(SL.sheetUrl + '?action=enrollments')
+      .then(r => r.json())
+      .then(renderEnrollments)
+      .catch(() => {
+        document.getElementById('sequences-body').innerHTML =
+          '<div style="color:var(--muted);font-size:13px;padding:20px 0">Could not load enrollments.</div>';
+      });
   }
 
-  function renderSequences(rows) {
-    const active  = (rows || []).filter(r => r.status !== 'complete');
-    const done    = (rows || []).filter(r => r.status === 'complete');
+  function renderEnrollments(rows) {
+    rows = rows || [];
+    const active = rows.filter(r => r.status !== 'complete');
+    const done   = rows.filter(r => r.status === 'complete');
 
-    if (!active.length && !done.length) {
-      document.getElementById('sequences-body').innerHTML = `<div style="color:var(--muted);font-size:13px;padding:20px 0">No sequences enrolled yet.</div>`;
+    if (!rows.length) {
+      document.getElementById('sequences-body').innerHTML =
+        '<div style="color:var(--muted);font-size:13px;padding:20px 0">No enrollments yet.</div>';
       return;
     }
 
     const row = r => {
-      const cfg      = PIPE_PHASES[parseInt(r.phase)] || {};
       const statusCls = r.status === 'active' ? 'green' : 'dim';
-      const nextMsg  = r.nextMessage ? r.nextMessage.slice(0, 80) + (r.nextMessage.length > 80 ? '…' : '') : '—';
-      return `<tr style="cursor:pointer" onclick="openPipeDetail('${r.id}')">
+      const nextMsg   = r.nextMessage ? r.nextMessage.slice(0, 80) + (r.nextMessage.length > 80 ? '…' : '') : '—';
+      const progress  = r.totalSteps ? `${r.step + 1}/${r.totalSteps}` : r.step;
+      return `<tr>
         <td><b>${r.name||'—'}</b><div style="font-size:11px;color:var(--muted)">${r.phone||''}</div></td>
         <td><span class="pipe-tag ${statusCls}">${r.status}</span></td>
-        <td>${cfg.title||'—'}</td>
-        <td style="color:var(--muted)">Step ${r.step||0}</td>
+        <td style="color:var(--gold)">${r.flowName||'—'}</td>
+        <td style="color:var(--muted)">Step ${progress}</td>
         <td style="color:var(--muted)">${r.nextDate ? fmtShort(r.nextDate) : '—'}</td>
         <td style="color:var(--muted);font-size:11px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${nextMsg}</td>
+        <td>${r.status !== 'complete' ? `<button class="pipe-btn danger" style="font-size:10px" onclick="enrollAction('${r.id}','complete')">Stop</button>` : ''}</td>
       </tr>`;
     };
 
@@ -1098,18 +1188,58 @@
       <div class="section">
         <div class="section-title">Active (${active.length})</div>
         ${active.length ? `<table class="tbl">
-          <thead><tr><th>Contact</th><th>Status</th><th>Phase</th><th>Step</th><th>Next Send</th><th>Next Message</th></tr></thead>
+          <thead><tr><th>Contact</th><th>Status</th><th>Flow</th><th>Step</th><th>Next Send</th><th>Next Message</th><th></th></tr></thead>
           <tbody>${active.map(row).join('')}</tbody>
-        </table>` : '<div style="color:var(--muted);font-size:13px">None</div>'}
+        </table>` : '<div style="color:var(--muted);font-size:13px">None active</div>'}
       </div>
       ${done.length ? `<div class="section">
         <div class="section-title">Completed (${done.length})</div>
         <table class="tbl">
-          <thead><tr><th>Contact</th><th>Status</th><th>Phase</th><th>Step</th><th>Next Send</th><th>Next Message</th></tr></thead>
+          <thead><tr><th>Contact</th><th>Status</th><th>Flow</th><th>Step</th><th>Next Send</th><th>Next Message</th><th></th></tr></thead>
           <tbody>${done.map(row).join('')}</tbody>
         </table>
       </div>` : ''}
     `;
+  }
+
+  // ── Flows ─────────────────────────────────────────────────────────────────────
+  function loadFlows() {
+    fetchWithTimeout(SL.sheetUrl + '?action=flows')
+      .then(r => r.json())
+      .then(renderFlows)
+      .catch(() => {
+        document.getElementById('flows-body').innerHTML =
+          '<div style="color:var(--muted);font-size:13px;padding:20px 0">Could not load flows.</div>';
+      });
+  }
+
+  function renderFlows(flows) {
+    flows = flows || [];
+    if (!flows.length) {
+      document.getElementById('flows-body').innerHTML =
+        '<div style="color:var(--muted);font-size:13px;padding:20px 0">No flows defined yet. Add rows to the Flows sheet.</div>';
+      return;
+    }
+
+    const html = flows.map(f => {
+      const steps = (f.steps || []).map((s, i) =>
+        `<tr>
+          <td style="color:var(--muted)">${i + 1}</td>
+          <td style="color:var(--muted)">${s.delay ? '+' + s.delay + 'd' : 'Immediately'}</td>
+          <td style="color:var(--gold);text-transform:uppercase;font-size:10px">${s.channel || 'sms'}</td>
+          <td style="font-size:12px">${s.subject ? `<b>${s.subject}</b><br>` : ''}${s.message || '—'}</td>
+        </tr>`
+      ).join('');
+      return `<div class="section" style="margin-bottom:20px">
+        <div class="section-title" style="color:var(--gold)">${f.name} <span style="color:var(--muted);font-size:11px;font-weight:300">${f.steps.length} step${f.steps.length!==1?'s':''}</span></div>
+        <table class="tbl" style="margin-top:10px">
+          <thead><tr><th>#</th><th>Delay</th><th>Channel</th><th>Message</th></tr></thead>
+          <tbody>${steps}</tbody>
+        </table>
+      </div>`;
+    }).join('');
+
+    document.getElementById('flows-body').innerHTML = html;
   }
 
   // ── QR Generator ─────────────────────────────────────────────────────────────

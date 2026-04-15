@@ -1,77 +1,82 @@
-// ── Pipeline.gs ───────────────────────────────────────────────────────────────
-// Phase transitions and pipeline view. Owns the Sequences sheet structure.
-
-function seqSheet() {
-  const ss = db();
-  let sh = ss.getSheetByName(SHEET.SEQUENCES);
-  if (!sh) {
-    sh = ss.insertSheet(SHEET.SEQUENCES);
-    sh.appendRow([
-      'ID', 'Enrolled', 'Name', 'Phone', 'Email', 'Interest', 'Source', 'Ref',
-      'Phase', 'Step', 'Status', 'NextDate', 'ConsultDate', 'BookDate', 'SessionDate'
-    ]);
-    sh.setFrozenRows(1);
-  }
-  return sh;
-}
-
-function advancePhase(id, newPhase, dateCol) {
-  const sh   = seqSheet();
-  const rows = sh.getDataRange().getValues();
-
-  for (let i = 1; i < rows.length; i++) {
-    if (String(rows[i][SEQ.ID]) !== String(id)) continue;
-    const r   = rows[i];
-    const now = new Date();
-
-    sh.getRange(i+1, SEQ.PHASE+1).setValue(newPhase);
-    sh.getRange(i+1, SEQ.STEP+1).setValue(0);
-    sh.getRange(i+1, SEQ.STATUS+1).setValue(SEQ_STATUS.ACTIVE);
-    sh.getRange(i+1, SEQ.NEXT+1).setValue(now);
-    sh.getRange(i+1, dateCol+1).setValue(now);
-
-    deliverStep(newPhase, 0, r[SEQ.NAME], r[SEQ.EMAIL], r[SEQ.PHONE], r[SEQ.INTEREST]);
-    writeNextDate(sh, null, newPhase, 1, r[SEQ.INTEREST], i+1);
-    return { ok: true, id, phase: newPhase };
-  }
-  return { ok: false, error: 'id not found' };
-}
-
-function setStatus(id, status) {
-  const sh   = seqSheet();
-  const rows = sh.getDataRange().getValues();
-  for (let i = 1; i < rows.length; i++) {
-    if (String(rows[i][SEQ.ID]) !== String(id)) continue;
-    sh.getRange(i+1, SEQ.STATUS+1).setValue(status);
-    return { ok: true, id, status };
-  }
-  return { ok: false, error: 'id not found' };
-}
+// ── Pipeline.gs ────────────────────────────────────────────────────────────────
+// CRM pipeline — tracks contact stages independently from drip sequences.
+//
+// Pipeline sheet: Phone | Name | Stage | Interest | Source | UpdatedAt | Notes
+// Stages: New Lead → Reached Out → Responded → Consulted → Booked → Session Done
 
 function getPipeline() {
-  return getRows(SHEET.SEQUENCES).map(r => {
-    const phase    = parseInt(r[SEQ.PHASE]);
-    const nextStep = parseInt(r[SEQ.STEP]) + 1;
-    const interest = r[SEQ.INTEREST];
-    const msgs     = getMessages(phase, interest);
-    const nextMsg  = msgs[nextStep] ? msgs[nextStep].msg : '';
+  const pRows  = getRows(SHEET.PIPELINE);
+  const enrRows = getRows(SHEET.ENROLLMENTS);
+
+  // Build active enrollment summary keyed by last-10 phone digits
+  const enrByPhone = {};
+  enrRows.forEach(r => {
+    const key = String(r[ENR.PHONE]).replace(/\D/g, '').slice(-10);
+    if (!enrByPhone[key]) enrByPhone[key] = [];
+    enrByPhone[key].push({
+      id:       r[ENR.ID],
+      flowName: r[ENR.FLOW_NAME],
+      status:   r[ENR.STATUS],
+      step:     r[ENR.STEP]
+    });
+  });
+
+  return pRows.map(r => {
+    const key = String(r[PIPE.PHONE]).replace(/\D/g, '').slice(-10);
     return {
-      id:          r[SEQ.ID],
-      enrolled:    r[SEQ.ENROLLED],
-      name:        r[SEQ.NAME],
-      phone:       r[SEQ.PHONE],
-      email:       r[SEQ.EMAIL],
-      interest:    r[SEQ.INTEREST],
-      source:      r[SEQ.SOURCE],
-      ref:         r[SEQ.REF],
-      phase:       phase,
-      step:        r[SEQ.STEP],
-      status:      r[SEQ.STATUS],
-      nextDate:    r[SEQ.NEXT],
-      consultDate: r[SEQ.CONSULT],
-      bookDate:    r[SEQ.BOOK],
-      sessionDate: r[SEQ.SESSION],
-      nextMessage: nextMsg
+      phone:       r[PIPE.PHONE],
+      name:        r[PIPE.NAME],
+      stage:       r[PIPE.STAGE],
+      interest:    r[PIPE.INTEREST],
+      source:      r[PIPE.SOURCE],
+      updatedAt:   r[PIPE.UPDATED_AT],
+      notes:       r[PIPE.NOTES],
+      enrollments: (enrByPhone[key] || []).filter(e => e.status !== ENR_STATUS.COMPLETE)
     };
   });
+}
+
+function setStage(phone, stage) {
+  if (!PIPE_STAGES.includes(stage)) return { ok: false, error: 'invalid stage: ' + stage };
+
+  const sh     = db().getSheetByName(SHEET.PIPELINE);
+  if (!sh) return { ok: false, error: 'Pipeline sheet missing' };
+
+  const digits = String(phone).replace(/\D/g, '').slice(-10);
+  const rows   = sh.getDataRange().getValues();
+
+  for (let i = 1; i < rows.length; i++) {
+    const p = String(rows[i][PIPE.PHONE]).replace(/\D/g, '').slice(-10);
+    if (p !== digits) continue;
+    sh.getRange(i+1, PIPE.STAGE+1).setValue(stage);
+    sh.getRange(i+1, PIPE.UPDATED_AT+1).setValue(new Date());
+    return { ok: true, phone, stage };
+  }
+  return { ok: false, error: 'contact not found in pipeline' };
+}
+
+function addToPipeline(phone, name, interest, source) {
+  const digits   = String(phone).replace(/\D/g, '').slice(-10);
+  const existing = getRows(SHEET.PIPELINE)
+    .find(r => String(r[PIPE.PHONE]).replace(/\D/g, '').slice(-10) === digits);
+  if (existing) return { ok: true, existing: true };
+
+  appendRow(SHEET.PIPELINE, [
+    phone, name, PIPE_STAGES[0], interest||'', source||'', new Date(), ''
+  ]);
+  return { ok: true, existing: false };
+}
+
+function updatePipelineNotes(phone, notes) {
+  const sh     = db().getSheetByName(SHEET.PIPELINE);
+  if (!sh) return { ok: false };
+  const digits = String(phone).replace(/\D/g, '').slice(-10);
+  const rows   = sh.getDataRange().getValues();
+  for (let i = 1; i < rows.length; i++) {
+    const p = String(rows[i][PIPE.PHONE]).replace(/\D/g, '').slice(-10);
+    if (p !== digits) continue;
+    sh.getRange(i+1, PIPE.NOTES+1).setValue(notes);
+    return { ok: true };
+  }
+  return { ok: false, error: 'not found' };
 }

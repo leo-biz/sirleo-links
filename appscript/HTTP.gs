@@ -13,12 +13,12 @@ function doGet(e) {
       summary:       () => getSummary(),
       sessions:      () => getSessionList(parseInt(e.parameter.limit) || DEFAULT_SESSION_LIMIT),
       pipeline:      () => getPipeline(),
-      markConsulted: () => advancePhase(id, 2, SEQ.CONSULT),
-      markBooked:    () => advancePhase(id, 3, SEQ.BOOK),
-      markSession:   () => advancePhase(id, 4, SEQ.SESSION),
-      markComplete:  () => setStatus(id, SEQ_STATUS.COMPLETE),
-      pauseSeq:      () => setStatus(id, SEQ_STATUS.PAUSED),
-      resumeSeq:     () => setStatus(id, SEQ_STATUS.ACTIVE),
+      // Pipeline
+      pipeline:      () => getPipeline(),
+      // Flows + Enrollments
+      flows:         () => getFlows(),
+      enrollments:   () => getEnrollments(),
+      // Messages (GVoice)
       messages:      () => getMessagesForPhone(e.parameter.phone || '')
     };
 
@@ -37,21 +37,20 @@ function doPost(e) {
     const sid = d.sessionId || '';
     Logger.log('doPost v' + SCRIPT_VERSION + ' type=' + d.type);
 
-    if (d.type === 'sendText') {
-      return jsonOut(sendText(d.phone, d.body));
-    }
-    if (d.type === 'replyText') {
-      return jsonOut(replyToText(d.phone, d.body));
-    }
-    if (d.type === 'sendSeqMessage') {
-      return jsonOut(sendSequenceMessage(d.seqId, d.body));
-    }
+    if (d.type === 'sendText')       return jsonOut(sendText(d.phone, d.body));
+    if (d.type === 'replyText')      return jsonOut(replyToText(d.phone, d.body));
+    if (d.type === 'setStage')       return jsonOut(setStage(d.phone, d.stage));
+    if (d.type === 'enroll')         return jsonOut(enrollContact(d.phone, d.name, d.flowId));
+    if (d.type === 'enrollStatus')   return jsonOut(setEnrollmentStatus(d.id, d.status));
+    if (d.type === 'addToPipeline')  return jsonOut(addToPipeline(d.phone, d.name, d.interest, d.source));
+    if (d.type === 'updateNotes')    return jsonOut(updatePipelineNotes(d.phone, d.notes));
     if (d.type === 'contact') {
       appendRow(SHEET.CONTACTS, [
         ts, sid, d.name||'', d.phone||'', d.email||'',
         d.interest||'', d.bookingType||'', d.notes||'', d.source||'', d.ref||''
       ]);
-      enrollSequence(d, sid);
+      // Add to CRM pipeline
+      addToPipeline(d.phone||'', d.name||'', d.interest||'', d.source||'');
       notifyAndConfirm(d);
     }
     else if (d.type === 'event') {

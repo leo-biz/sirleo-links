@@ -14,8 +14,11 @@ function bootstrap() {
   _setupSheet(ss, SHEET.EVENTS,    ['Timestamp','SessionID','Event','Value']);
   _setupSheet(ss, SHEET.SESSIONS,  ['Timestamp','SessionID','IP','City','Country','Device','OS','Browser','PageViews','Source','Ref']);
   _setupSheet(ss, SHEET.SEQUENCES, ['ID','Enrolled','Name','Phone','Email','Interest','Source','Ref','Phase','Step','Status','NextDate','ConsultDate','BookDate','SessionDate']);
-  _setupSheet(ss, SHEET.FLOW,      ['Interest','Phase','Step','Delay (days)','Message']);
-  _setupSheet(ss, SHEET.MESSAGES,  ['Timestamp','Phone','Name','Direction','Body','ReplyEmail','MessageID']);
+  _setupSheet(ss, SHEET.FLOW,        ['Interest','Phase','Step','Delay (days)','Message']);
+  _setupSheet(ss, SHEET.MESSAGES,    ['Timestamp','Phone','Name','Direction','Body','ReplyEmail','MessageID']);
+  _setupSheet(ss, SHEET.PIPELINE,    ['Phone','Name','Stage','Interest','Source','UpdatedAt','Notes']);
+  _setupSheet(ss, SHEET.FLOWS,       ['FlowID','FlowName','Step','DelayDays','Channel','Subject','Message']);
+  _setupSheet(ss, SHEET.ENROLLMENTS, ['EnrollmentID','Phone','Name','FlowID','FlowName','Step','Status','NextDate','EnrolledAt','CompletedAt']);
 
   _fillConfig(ss);
   _fillIdentity(ss);
