@@ -37,6 +37,36 @@ function getSummary() {
     }
   });
 
+  // ── Time series — last 30 days bucketed by date ───────────────────────────
+  const today  = new Date();
+  const days   = 30;
+  const labels = [];
+  const sessMap = {}, contactMap = {}, eventMap = {};
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(today); d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0, 10);
+    labels.push(key);
+    sessMap[key] = 0; contactMap[key] = 0; eventMap[key] = 0;
+  }
+  sRows.forEach(r => {
+    const key = String(r[SESS.TIMESTAMP]).slice(0, 10);
+    if (sessMap[key] !== undefined) sessMap[key]++;
+  });
+  cRows.forEach(r => {
+    const key = String(r[0]).slice(0, 10);
+    if (contactMap[key] !== undefined) contactMap[key]++;
+  });
+  eRows.forEach(r => {
+    const key = String(r[0]).slice(0, 10);
+    if (eventMap[key] !== undefined) eventMap[key]++;
+  });
+  const timeSeries = {
+    labels,
+    sessions:  labels.map(d => sessMap[d]),
+    contacts:  labels.map(d => contactMap[d]),
+    events:    labels.map(d => eventMap[d])
+  };
+
   return {
     totalContacts:   cRows.length,
     totalSessions:   sRows.length,
@@ -46,6 +76,7 @@ function getSummary() {
     returnVisitors,
     sources, refs, topEvents,
     deviceCounts, osCounts, browserCounts, countryCounts, cityCounts,
+    timeSeries,
     contacts:     cRows.slice(-15).reverse().map(r => ({
       timestamp: r[0], name: r[2], phone: r[3], email: r[4], interest: r[5]
     })),
