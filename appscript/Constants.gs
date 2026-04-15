@@ -4,7 +4,7 @@
 // When deploying: Deploy → Manage deployments → pencil icon → New version
 // Paste DEPLOY_DESC as the version description, then bump SCRIPT_VERSION.
 
-const SCRIPT_VERSION = '2.1.0';
+const SCRIPT_VERSION = '2.1.1';
 const DEPLOY_DESC    = `v${SCRIPT_VERSION} — 11-column session schema (region removed), SESS constants, SWR cache, sidebar admin`;
 
 const SPREADSHEET_ID = '1HKQHgBvjA6kM7XfEODkdFUj-pJ2Moa3GF6ygVgR3qok';
