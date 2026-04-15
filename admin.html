@@ -8,10 +8,11 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --black: #080808; --deep: #0e0e0e; --surface: #141414; --sidebar: #0d0d0d;
-      --border: rgba(180,145,90,0.18); --gold: #b4915a; --gold-light: #d4af7a;
-      --crimson: #9b2020; --muted: rgba(240,232,216,0.45); --text: #e8dcc8;
-      --sidebar-w: 210px;
+      --black: #080808; --deep: #0c0c0c; --surface: #111111; --sidebar: #0a0a0a;
+      --border: rgba(180,145,90,0.14); --border-hover: rgba(180,145,90,0.35);
+      --gold: #c4a265; --gold-light: #d4af7a; --gold-dim: rgba(196,162,101,0.15);
+      --crimson: #9b2020; --muted: rgba(240,232,216,0.4); --text: #e8dcc8;
+      --sidebar-w: 220px; --radius: 3px;
     }
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Raleway:wght@200;300;400&display=swap');
     body { background: var(--black); color: var(--text); font-family: 'Raleway', sans-serif;
@@ -41,32 +42,33 @@
       border-right: 1px solid var(--border);
       display: flex; flex-direction: column;
       position: fixed; top: 0; left: 0; bottom: 0; z-index: 10;
+      box-shadow: 4px 0 24px rgba(0,0,0,0.4);
     }
     .sidebar-brand {
-      padding: 24px 20px 20px;
+      padding: 28px 22px 22px;
       border-bottom: 1px solid var(--border);
     }
     .sidebar-brand-name {
-      font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 0.2em; color: var(--gold);
+      font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.22em; color: var(--gold);
     }
     .sidebar-brand-sub {
-      font-size: 10px; color: var(--muted); letter-spacing: 0.1em; margin-top: 3px;
+      font-size: 9px; color: var(--muted); letter-spacing: 0.12em; margin-top: 4px; text-transform: uppercase;
     }
-    .sidebar-nav { flex: 1; padding: 16px 0; }
+    .sidebar-nav { flex: 1; padding: 12px 0; }
     .nav-item {
       display: flex; align-items: center; gap: 10px;
-      padding: 11px 20px; font-size: 12px; letter-spacing: 0.12em;
+      padding: 10px 22px; font-size: 11px; letter-spacing: 0.14em;
       text-transform: uppercase; color: var(--muted);
-      cursor: pointer; transition: color 0.15s, background 0.15s;
-      border-left: 2px solid transparent;
+      cursor: pointer; transition: color 0.2s, background 0.2s;
+      border-left: 2px solid transparent; margin: 1px 0;
     }
-    .nav-item:hover { color: var(--text); background: rgba(180,145,90,0.04); }
+    .nav-item:hover { color: var(--text); background: rgba(180,145,90,0.05); }
     .nav-item.active { color: var(--gold); border-left-color: var(--gold);
-      background: rgba(180,145,90,0.06); }
-    .nav-icon { font-size: 14px; width: 18px; text-align: center; }
+      background: var(--gold-dim); }
+    .nav-icon { font-size: 13px; width: 18px; text-align: center; opacity: 0.8; }
     .sidebar-footer {
-      padding: 16px 20px; border-top: 1px solid var(--border);
-      font-size: 10px; color: rgba(240,232,216,0.2); letter-spacing: 0.08em;
+      padding: 14px 22px; border-top: 1px solid var(--border);
+      font-size: 9px; color: rgba(240,232,216,0.18); letter-spacing: 0.1em;
     }
 
     /* ── Main ─────────────────────────────────────────────────────────────── */
@@ -85,23 +87,29 @@
     .page-title { font-family: 'Cinzel', serif; font-size: 17px; letter-spacing: 0.18em; color: var(--gold); }
     .page-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
     .refresh-btn { background: none; border: 1px solid var(--border); color: var(--muted);
-      padding: 8px 16px; font-family: inherit; font-size: 12px; cursor: pointer; }
+      padding: 8px 18px; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.12em;
+      cursor: pointer; border-radius: var(--radius); transition: border-color 0.2s, color 0.2s; text-transform: uppercase; }
     .refresh-btn:hover { border-color: var(--gold); color: var(--gold); }
 
     /* ── Stats ────────────────────────────────────────────────────────────── */
     .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 12px; margin-bottom: 32px; }
-    .stat { background: var(--surface); border: 1px solid var(--border); padding: 16px; text-align: center; }
-    .stat-num { font-family: 'Cinzel', serif; font-size: 28px; color: var(--gold); }
-    .stat-label { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; margin-top: 4px; text-transform: uppercase; }
-    .stat.live .stat-num { color: #4caf7d; }
-    .stat.dim  .stat-num { color: var(--muted); font-size: 20px; }
+      gap: 10px; margin-bottom: 32px; }
+    .stat { background: var(--surface); border: 1px solid var(--border); padding: 18px 16px;
+      text-align: center; border-radius: var(--radius);
+      border-top: 2px solid rgba(180,145,90,0.2); transition: border-color 0.2s; }
+    .stat:hover { border-top-color: var(--gold); }
+    .stat-num { font-family: 'Cinzel', serif; font-size: 30px; color: var(--gold);
+      text-shadow: 0 0 20px rgba(196,162,101,0.25); }
+    .stat-label { font-size: 10px; color: var(--muted); letter-spacing: 0.12em; margin-top: 6px; text-transform: uppercase; }
+    .stat.live .stat-num { color: #4caf7d; text-shadow: 0 0 20px rgba(76,175,125,0.3); }
+    .stat.dim  .stat-num { color: var(--muted); font-size: 20px; text-shadow: none; }
 
     /* ── Section ──────────────────────────────────────────────────────────── */
-    .section { margin-bottom: 32px; }
-    .section-title { font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.2em;
-      color: var(--gold); text-transform: uppercase; margin-bottom: 12px;
-      padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .section { margin-bottom: 28px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px; }
+    .section-title { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.22em;
+      color: var(--gold); text-transform: uppercase; margin-bottom: 16px;
+      padding-bottom: 10px; border-bottom: 1px solid var(--border); opacity: 0.85; }
 
     /* ── Table ────────────────────────────────────────────────────────────── */
     .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -111,8 +119,9 @@
     .tbl td { padding: 8px 8px; border-bottom: 1px solid rgba(180,145,90,0.07); vertical-align: top; }
     .tbl tr:last-child td { border-bottom: none; }
     .tbl tr:hover td { background: rgba(180,145,90,0.04); }
-    .badge { display: inline-block; padding: 2px 8px; font-size: 11px; border: 1px solid var(--border); color: var(--muted); }
-    .badge.gold { border-color: rgba(180,145,90,0.4); color: var(--gold); }
+    .badge { display: inline-block; padding: 3px 9px; font-size: 10px; border: 1px solid var(--border);
+      color: var(--muted); border-radius: var(--radius); letter-spacing: 0.06em; }
+    .badge.gold { border-color: rgba(196,162,101,0.4); color: var(--gold); background: rgba(196,162,101,0.06); }
 
     /* ── Bar chart ────────────────────────────────────────────────────────── */
     .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 13px; }
@@ -181,9 +190,9 @@
     .pipe-count { background:var(--surface); border:1px solid var(--border); color:var(--muted);
       width:20px; height:20px; display:flex; align-items:center; justify-content:center;
       font-size:11px; border-radius:50%; flex-shrink:0; }
-    .pipe-card { background:var(--surface); border:1px solid var(--border); padding:12px;
-      margin-bottom:8px; transition:border-color 0.2s; }
-    .pipe-card:hover { border-color:rgba(180,145,90,0.35); }
+    .pipe-card { background:var(--deep); border:1px solid var(--border); padding:14px;
+      margin-bottom:8px; border-radius:var(--radius); transition:border-color 0.2s, box-shadow 0.2s; }
+    .pipe-card:hover { border-color:var(--border-hover); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
     .pipe-name { font-size:13px; font-weight:400; color:var(--text); margin-bottom:3px; }
     .pipe-interest { font-size:11px; color:var(--muted); margin-bottom:8px;
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -200,6 +209,62 @@
     .pipe-btn.primary { border-color:rgba(180,145,90,0.4); color:var(--gold); }
     .pipe-btn.danger  { border-color:rgba(155,32,32,0.35); color:rgba(192,57,43,0.7); }
     .pipe-next { font-size:10px; color:rgba(240,232,216,0.25); margin-top:6px; }
+
+    /* ── Pipeline list view ──────────────────────────────────────────────── */
+    .pipe-view-toggle { display: flex; gap: 6px; }
+    .pipe-view-btn { background: none; border: 1px solid var(--border); color: var(--muted);
+      padding: 6px 14px; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.12em;
+      cursor: pointer; text-transform: uppercase; transition: border-color 0.2s, color 0.2s; }
+    .pipe-view-btn.active { border-color: var(--gold); color: var(--gold); }
+
+    .pipe-list { display: flex; flex-direction: column; gap: 8px; }
+    .pipe-stage { border: 1px solid var(--border); }
+    .pipe-stage-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+      cursor: pointer; user-select: none; transition: background 0.15s; }
+    .pipe-stage-header:hover { background: rgba(180,145,90,0.04); }
+    .pipe-stage-arrow { color: var(--muted); font-size: 11px; transition: transform 0.2s; flex-shrink: 0; }
+    .pipe-stage.open .pipe-stage-arrow { transform: rotate(90deg); }
+    .pipe-stage-name { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.18em;
+      color: var(--gold); text-transform: uppercase; flex: 1; }
+    .pipe-stage-count { font-size: 11px; color: var(--muted); }
+    .pipe-stage-body { display: none; border-top: 1px solid var(--border); }
+    .pipe-stage.open .pipe-stage-body { display: block; }
+    .pipe-list-row { display: grid; grid-template-columns: 1fr auto auto auto; gap: 12px;
+      align-items: center; padding: 10px 16px; border-bottom: 1px solid rgba(180,145,90,0.06);
+      cursor: pointer; transition: background 0.15s; font-size: 13px; }
+    .pipe-list-row:last-child { border-bottom: none; }
+    .pipe-list-row:hover { background: rgba(180,145,90,0.04); }
+    .pipe-list-name { font-weight: 400; }
+    .pipe-list-interest { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .pipe-list-next { font-size: 11px; color: rgba(240,232,216,0.3); white-space: nowrap; }
+
+    /* ── Detail modal ─────────────────────────────────────────────────────── */
+    .pipe-detail-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+      z-index: 100; }
+    .pipe-detail-overlay.open { display: block; }
+    .pipe-detail-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 380px; max-width: 100%;
+      background: var(--deep); border-left: 1px solid var(--border);
+      z-index: 101; overflow-y: auto; padding: 28px 24px 40px;
+      transform: translateX(100%); transition: transform 0.25s ease; }
+    .pipe-detail-panel.open { transform: translateX(0); }
+    .pipe-detail-close { background: none; border: none; color: var(--muted); font-size: 20px;
+      cursor: pointer; float: right; line-height: 1; padding: 0; }
+    .pipe-detail-close:hover { color: var(--gold); }
+    .pipe-detail-name { font-family: 'Cinzel', serif; font-size: 18px; color: var(--gold);
+      letter-spacing: 0.12em; margin: 16px 0 4px; clear: both; }
+    .pipe-detail-interest { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+    .pipe-detail-field { margin-bottom: 14px; }
+    .pipe-detail-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted); font-family: 'Cinzel', serif; margin-bottom: 4px; }
+    .pipe-detail-value { font-size: 13px; color: var(--text); }
+    .pipe-detail-divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+    .pipe-detail-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
+    .pipe-detail-btn { background: none; border: 1px solid var(--border); color: var(--muted);
+      padding: 10px 16px; font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.12em;
+      cursor: pointer; text-align: left; transition: border-color 0.2s, color 0.2s; }
+    .pipe-detail-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .pipe-detail-btn.primary { border-color: rgba(180,145,90,0.5); color: var(--gold); }
+    .pipe-detail-btn.danger { border-color: rgba(155,32,32,0.35); color: rgba(192,57,43,0.8); }
 
     /* ── QR ───────────────────────────────────────────────────────────────── */
     .qr-body { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: start; }
@@ -302,9 +367,22 @@
               <div class="page-title">Pipeline</div>
               <div class="page-sub">Active contacts by phase</div>
             </div>
-            <button class="refresh-btn" onclick="loadPipeline()">Refresh</button>
+            <div style="display:flex;gap:10px;align-items:center">
+              <div class="pipe-view-toggle">
+                <button class="pipe-view-btn active" id="btn-kanban" onclick="setPipeView('kanban')">Kanban</button>
+                <button class="pipe-view-btn" id="btn-list" onclick="setPipeView('list')">List</button>
+              </div>
+              <button class="refresh-btn" onclick="loadPipeline()">Refresh</button>
+            </div>
           </div>
           <div id="pipeline-body"><div class="loading">Loading…</div></div>
+        </div>
+
+        <!-- Detail modal -->
+        <div class="pipe-detail-overlay" id="pipe-detail-overlay" onclick="closePipeDetail()"></div>
+        <div class="pipe-detail-panel" id="pipe-detail-panel">
+          <button class="pipe-detail-close" onclick="closePipeDetail()">×</button>
+          <div id="pipe-detail-content"></div>
         </div>
 
         <!-- Sessions -->
@@ -737,37 +815,57 @@
     4: { title: 'Post-Session', next: 'markComplete',  nextLabel: '✓ Complete' }
   };
 
+  let _pipeView = 'kanban';
+  let _pipeRows = [];
+  let _pipeColsOpen = { 1: true, 2: true, 3: true, 4: true };
+
+  function setPipeView(view) {
+    _pipeView = view;
+    document.getElementById('btn-kanban').classList.toggle('active', view === 'kanban');
+    document.getElementById('btn-list').classList.toggle('active', view === 'list');
+    if (_pipeRows.length) {
+      view === 'kanban' ? renderKanban(_pipeRows) : renderList(_pipeRows);
+    }
+  }
+
   function loadPipeline() {
     swr('sl_cache_pipeline', 2 * 60 * 1000, '?action=pipeline',
       renderPipeline, 'pipeline-body', 'Could not load pipeline.');
   }
 
   function renderPipeline(rows) {
-    const cols = { 1:[], 2:[], 3:[], 4:[] };
-    (rows || []).filter(r => r.status !== 'complete').forEach(r => {
-      const p = parseInt(r.phase) || 1;
-      if (cols[p]) cols[p].push(r);
-    });
+    _pipeRows = (rows || []).filter(r => r.status !== 'complete');
+    _pipeView === 'list' ? renderList(_pipeRows) : renderKanban(_pipeRows);
+  }
 
+  function _buildCols(rows) {
+    const cols = { 1:[], 2:[], 3:[], 4:[] };
+    rows.forEach(r => { const p = parseInt(r.phase)||1; if (cols[p]) cols[p].push(r); });
+    return cols;
+  }
+
+  function _statusTag(r) {
+    return r.status === 'waiting' ? '<span class="pipe-tag dim">Waiting</span>'
+         : r.status === 'paused'  ? '<span class="pipe-tag dim">Paused</span>'
+         : '<span class="pipe-tag green">Active</span>';
+  }
+
+  // ── Kanban view ───────────────────────────────────────────────────────────────
+  function renderKanban(rows) {
+    const cols = _buildCols(rows);
     const html = Object.entries(PIPE_PHASES).map(([phase, cfg]) => {
       const items = cols[phase] || [];
       const cards = items.map(r => {
-        const statusTag = r.status === 'waiting'
-          ? '<span class="pipe-tag dim">Waiting</span>'
-          : r.status === 'paused'
-          ? '<span class="pipe-tag dim">Paused</span>'
-          : '<span class="pipe-tag green">Active</span>';
         const srcTag  = r.source ? `<span class="pipe-tag gold">${r.source}</span>` : '';
         const nextStr = r.nextDate ? 'Next: ' + fmtShort(r.nextDate) : '';
         const pauseBtn = r.status === 'paused'
           ? `<button class="pipe-btn" onclick="pipeAction('resumeSeq','${r.id}')">Resume</button>`
           : `<button class="pipe-btn" onclick="pipeAction('pauseSeq','${r.id}')">Pause</button>`;
-
-        return `<div class="pipe-card">
+        return `<div class="pipe-card" onclick="openPipeDetail('${r.id}')" style="cursor:pointer">
           <div class="pipe-name">${r.name || 'Unknown'}</div>
           <div class="pipe-interest">${r.interest || '—'}</div>
-          <div class="pipe-tags">${statusTag}${srcTag}</div>
-          <div class="pipe-actions">
+          <div class="pipe-tags">${_statusTag(r)}${srcTag}</div>
+          <div class="pipe-actions" onclick="event.stopPropagation()">
             <button class="pipe-btn primary" onclick="pipeAction('${cfg.next}','${r.id}')">${cfg.nextLabel}</button>
             ${pauseBtn}
             <button class="pipe-btn danger" onclick="pipeAction('markComplete','${r.id}')">✕</button>
@@ -775,14 +873,92 @@
           ${nextStr ? `<div class="pipe-next">${nextStr}</div>` : ''}
         </div>`;
       }).join('') || '<div style="color:var(--muted);font-size:12px;padding:8px 0">Empty</div>';
-
       return `<div class="pipe-col">
         <div class="pipe-col-title">${cfg.title}<span class="pipe-count">${items.length}</span></div>
         ${cards}
       </div>`;
     }).join('');
-
     document.getElementById('pipeline-body').innerHTML = `<div class="pipeline">${html}</div>`;
+  }
+
+  // ── List view ─────────────────────────────────────────────────────────────────
+  function renderList(rows) {
+    const cols = _buildCols(rows);
+    const html = Object.entries(PIPE_PHASES).map(([phase, cfg]) => {
+      const items = cols[phase] || [];
+      const isOpen = _pipeColsOpen[phase] !== false;
+      const rowsHtml = items.map(r => {
+        const nextStr = r.nextDate ? fmtShort(r.nextDate) : '—';
+        return `<div class="pipe-list-row" onclick="openPipeDetail('${r.id}')">
+          <div>
+            <div class="pipe-list-name">${r.name || 'Unknown'}</div>
+            <div class="pipe-list-interest">${r.interest || '—'}</div>
+          </div>
+          <div>${_statusTag(r)}</div>
+          <div class="pipe-list-next">${nextStr}</div>
+          <div style="color:var(--muted);font-size:14px">›</div>
+        </div>`;
+      }).join('') || `<div style="color:var(--muted);font-size:12px;padding:12px 16px">Empty</div>`;
+      return `<div class="pipe-stage${isOpen ? ' open' : ''}" id="pipe-stage-${phase}">
+        <div class="pipe-stage-header" onclick="togglePipeStage(${phase})">
+          <span class="pipe-stage-arrow">›</span>
+          <span class="pipe-stage-name">${cfg.title}</span>
+          <span class="pipe-stage-count">${items.length}</span>
+        </div>
+        <div class="pipe-stage-body">${rowsHtml}</div>
+      </div>`;
+    }).join('');
+    document.getElementById('pipeline-body').innerHTML = `<div class="pipe-list">${html}</div>`;
+  }
+
+  function togglePipeStage(phase) {
+    const el = document.getElementById('pipe-stage-' + phase);
+    const isOpen = el.classList.toggle('open');
+    _pipeColsOpen[phase] = isOpen;
+  }
+
+  // ── Detail modal ──────────────────────────────────────────────────────────────
+  function openPipeDetail(id) {
+    const r = _pipeRows.find(x => x.id === id);
+    if (!r) return;
+    const cfg = PIPE_PHASES[parseInt(r.phase)] || {};
+    const pauseBtn = r.status === 'paused'
+      ? `<button class="pipe-detail-btn" onclick="pipeDetailAction('resumeSeq','${r.id}')">Resume Sequence</button>`
+      : `<button class="pipe-detail-btn" onclick="pipeDetailAction('pauseSeq','${r.id}')">Pause Sequence</button>`;
+    const field = (label, val) => val
+      ? `<div class="pipe-detail-field"><div class="pipe-detail-label">${label}</div><div class="pipe-detail-value">${val}</div></div>`
+      : '';
+    document.getElementById('pipe-detail-content').innerHTML = `
+      <div class="pipe-detail-name">${r.name || 'Unknown'}</div>
+      <div class="pipe-detail-interest">${r.interest || '—'}</div>
+      ${field('Phase', cfg.title)}
+      ${field('Status', r.status)}
+      ${field('Phone', r.phone ? `<a href="tel:${r.phone}" style="color:var(--gold)">${r.phone}</a>` : '')}
+      ${field('Email', r.email ? `<a href="mailto:${r.email}" style="color:var(--gold)">${r.email}</a>` : '')}
+      ${field('Source', r.source)}
+      ${field('Enrolled', r.enrolled ? fmtShort(r.enrolled) : '')}
+      ${field('Next Step', r.nextDate ? fmtShort(r.nextDate) : '')}
+      ${field('Consult Date', r.consultDate ? fmtShort(r.consultDate) : '')}
+      ${field('Book Date', r.bookDate ? fmtShort(r.bookDate) : '')}
+      ${field('Session Date', r.sessionDate ? fmtShort(r.sessionDate) : '')}
+      <hr class="pipe-detail-divider"/>
+      <div class="pipe-detail-actions">
+        ${cfg.next ? `<button class="pipe-detail-btn primary" onclick="pipeDetailAction('${cfg.next}','${r.id}')">${cfg.nextLabel}</button>` : ''}
+        ${pauseBtn}
+        <button class="pipe-detail-btn danger" onclick="pipeDetailAction('markComplete','${r.id}')">Mark Complete</button>
+      </div>`;
+    document.getElementById('pipe-detail-overlay').classList.add('open');
+    document.getElementById('pipe-detail-panel').classList.add('open');
+  }
+
+  function closePipeDetail() {
+    document.getElementById('pipe-detail-overlay').classList.remove('open');
+    document.getElementById('pipe-detail-panel').classList.remove('open');
+  }
+
+  function pipeDetailAction(action, id) {
+    closePipeDetail();
+    pipeAction(action, id);
   }
 
   function pipeAction(action, id) {
