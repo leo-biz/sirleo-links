@@ -1,5 +1,11 @@
 // ── Constants.gs ──────────────────────────────────────────────────────────────
 // Structural IDs and names only. No logic, no URLs, no content.
+//
+// When deploying: Deploy → Manage deployments → pencil icon → New version
+// Paste DEPLOY_DESC as the version description, then bump SCRIPT_VERSION.
+
+const SCRIPT_VERSION = '1.0.0';
+const DEPLOY_DESC    = `v${SCRIPT_VERSION} — region tracking, SESS/SEQ_STATUS constants, bootstrap(), sheet-driven sequences`;
 
 const SPREADSHEET_ID = '1HKQHgBvjA6kM7XfEODkdFUj-pJ2Moa3GF6ygVgR3qok';
 
