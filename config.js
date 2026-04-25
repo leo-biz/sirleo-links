@@ -3,7 +3,7 @@
 // when the sheet is unreachable. Sheet values always win at runtime.
 
 const SL = {
-  version:  '51',
+  version:  '52',
   // Sheet — never overridden (it's the source itself)
   sheetUrl:     'https://script.google.com/macros/s/AKfycbymA2alydX-ZdtbbVV4fOG9aCuKeSs56Z9GDH6UnZABzPYwoLlneXmCcvZNunv_5dSlxA/exec',
 
